@@ -1,0 +1,5 @@
+vm\vmtrials\checking\GetNumberOfObjectsInDataset.class
+vm\vmtrials\checking\UpdateDatasetSizes.class
+vm\vmtrials\simRelEuclidSpace\PrintStatsOverCoordinates.class
+vm\vmtrials\distanceDensityTrials\PrintDDOfNearNeighboursAndDataset.class
+vm\vmtrials\simRelEuclidSpace\EvaluateSimRelKNNWithPrinting.class
