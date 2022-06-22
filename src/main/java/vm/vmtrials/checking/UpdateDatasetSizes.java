@@ -11,8 +11,8 @@ import java.sql.Statement;
 import vm.db.DBGlobal;
 import vm.db.metricSpaceImpl.DBMetricSpaceImpl;
 import vm.db.metricSpaceImpl.DBMetricSpacesStorage;
-import vm.metricSpace.MetricSpaceInterface;
 import vm.metricSpace.dataToStringConvertors.SingularisedConvertors;
+import vm.metricSpace.AbstractMetricSpace;
 
 /**
  *
@@ -21,7 +21,7 @@ import vm.metricSpace.dataToStringConvertors.SingularisedConvertors;
 public class UpdateDatasetSizes {
 
     public static void main(String[] args) throws SQLException {
-        MetricSpaceInterface metricSpace = new DBMetricSpaceImpl();
+        AbstractMetricSpace metricSpace = new DBMetricSpaceImpl();
         DBMetricSpacesStorage dbMetricSpacesStorage = new DBMetricSpacesStorage(metricSpace, SingularisedConvertors.FLOAT_VECTOR_SPACE);
         Statement st = DBGlobal.getSingularConnectionFromPredefinedIniFile().createStatement();
 

@@ -16,10 +16,10 @@ import vm.db.metricSpaceImpl.DBMetricSpaceImpl;
 import vm.db.metricSpaceImpl.DBMetricSpacesStorage;
 import vm.queryResults.GroundTruthEvaluator;
 import vm.metricSpace.MetricDomainTools;
-import vm.metricSpace.MetricSpaceInterface;
 import vm.metricSpace.MetricSpacesStorageInterface;
 import vm.metricSpace.dataToStringConvertors.impl.FloatVectorConvertor;
 import vm.metricSpace.distance.DistanceFunction;
+import vm.metricSpace.AbstractMetricSpace;
 
 /**
  *
@@ -35,7 +35,7 @@ public class PrintDDOfNearNeighboursAndDataset {
         transformedDatasetName = "decaf_1m_PCA4";
         float transformedDistInterval = 1.0f;
 
-        MetricSpaceInterface metricSpace = new DBMetricSpaceImpl<>();
+        AbstractMetricSpace metricSpace = new DBMetricSpaceImpl<>();
         DistanceFunction distanceFunction = metricSpace.getDistanceFunctionForDataset(datasetName);
         MetricSpacesStorageInterface metricSpacesStorage = new DBMetricSpacesStorage<>(metricSpace, new FloatVectorConvertor());
 
@@ -62,12 +62,12 @@ public class PrintDDOfNearNeighboursAndDataset {
         printDistsOfRandomAndNearNeighbours(transformedDatasetName, transformedDistInterval, ddRandomSampleTransformed, ddOfNNSampleTransformed);
     }
 
-    private static SortedMap<Float, Float> createDDOfRandomSample(MetricSpaceInterface metricSpace, MetricSpacesStorageInterface metricSpacesStorage, DistanceFunction distanceFunction, String datasetName, int objCount, int distCount, float distInterval, List<Object[]> examinedPairs) {
+    private static SortedMap<Float, Float> createDDOfRandomSample(AbstractMetricSpace metricSpace, MetricSpacesStorageInterface metricSpacesStorage, DistanceFunction distanceFunction, String datasetName, int objCount, int distCount, float distInterval, List<Object[]> examinedPairs) {
         List<Object> metricObjects = metricSpacesStorage.getSampleOfDataset(datasetName, objCount);
         return MetricDomainTools.createDistanceDensityPlot(metricSpace, metricObjects, distanceFunction, distCount, distInterval, examinedPairs);
     }
 
-    private static SortedMap<Float, Float> createDDOfNNSample(MetricSpaceInterface metricSpace, MetricSpacesStorageInterface metricSpacesStorage, DistanceFunction distanceFunction, String datasetName, int queryObjCount, int sampleCount, int k, float distInterval, List<Object[]> idsOfNNPairs) {
+    private static SortedMap<Float, Float> createDDOfNNSample(AbstractMetricSpace metricSpace, MetricSpacesStorageInterface metricSpacesStorage, DistanceFunction distanceFunction, String datasetName, int queryObjCount, int sampleCount, int k, float distInterval, List<Object[]> idsOfNNPairs) {
         List<Object> queryObjects = metricSpacesStorage.getSampleOfDataset(datasetName, queryObjCount);
         List<Object> metricObjects = metricSpacesStorage.getSampleOfDataset(datasetName, sampleCount + queryObjCount);
         for (int i = 0; i < queryObjCount; i++) {
@@ -88,7 +88,7 @@ public class PrintDDOfNearNeighboursAndDataset {
         return MetricDomainTools.createDistanceDensityPlot(distances, distInterval);
     }
 
-    private static SortedMap<Float, Float> evaluateDDForPairs(MetricSpaceInterface metricSpace, DistanceFunction distanceFunction, List<Object[]> idsPairs, Map<Object, Object> metricObjects, float distInterval) {
+    private static SortedMap<Float, Float> evaluateDDForPairs(AbstractMetricSpace metricSpace, DistanceFunction distanceFunction, List<Object[]> idsPairs, Map<Object, Object> metricObjects, float distInterval) {
         List<Float> distances = new ArrayList<>();
         for (Object[] idsPair : idsPairs) {
             Object o1 = metricObjects.get(idsPair[0]);
