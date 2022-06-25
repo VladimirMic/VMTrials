@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,7 +23,7 @@ import vm.simRel.impl.SimRelEuclideanPCAImpl;
  * @param <T>
  */
 @Deprecated
-public class PureSimRelSequentialScanKNN<T> implements SearchingAlgorithm<T> {
+public class PureSimRelSequentialScanKNN<T> extends SearchingAlgorithm<T> {
 
     private static final Logger LOG = Logger.getLogger(PureSimRelSequentialScanKNN.class.getName());
     private final SimRelInterface<T> simRelFunc;
@@ -34,7 +35,7 @@ public class PureSimRelSequentialScanKNN<T> implements SearchingAlgorithm<T> {
     }
 
     @Override
-    public TreeSet<Map.Entry<Object, Float>> knnSearch(AbstractMetricSpace<T> metricSpace, Object queryObject, int k, Iterator<Object> objects, Object... paramsToExtractDataFromMetricObject) {
+    public TreeSet<Map.Entry<Object, Float>> completeKnnSearch(AbstractMetricSpace<T> metricSpace, Object queryObject, int k, Iterator<Object> objects, Object... paramsToExtractDataFromMetricObject) {
         if (simRelFunc instanceof SimRelEuclideanPCAImpl) {
             SimRelEuclideanPCAImpl euclid = (SimRelEuclideanPCAImpl) simRelFunc;
             euclid.resetEarlyStopsOnCoordsCounts();
@@ -117,4 +118,10 @@ public class PureSimRelSequentialScanKNN<T> implements SearchingAlgorithm<T> {
         }
         return ret;
     }
+
+    @Override
+    public Set<Object> candSetKnnSearch(AbstractMetricSpace<T> metricSpace, Object queryObject, int k, Iterator<Object> objects, Object... paramsToExtractDataFromMetricObject) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

@@ -16,11 +16,21 @@
                     <groupId>vm</groupId>
                     <artifactId>VMGenericTools</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>vm</groupId>
+                    <artifactId>VMMetricSpaceTechniquesImpl</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
             <groupId>vm</groupId>
             <artifactId>VMGenericTools</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>vm</groupId>
+            <artifactId>VMMetricSpaceTechniquesImpl</artifactId>
             <version>1.0-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
