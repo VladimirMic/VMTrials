@@ -86,7 +86,7 @@ public class PureSimRelSequentialScanKNN<T> extends SearchingAlgorithm<T> {
             T oLastData = retData.get(ret.get(i));
             simRelEvalCounter++;
             short moreSimilar = simRelFunc.getMoreSimilar(queryObjectData, oLastData, oData);
-            if (moreSimilar == -1) {
+            if (moreSimilar == 1) {
                 if (i < k - 1) {
                     ret.add(i + 1, idOfO);
                     retData.put(idOfO, oData);
@@ -97,7 +97,7 @@ public class PureSimRelSequentialScanKNN<T> extends SearchingAlgorithm<T> {
                 }
                 return;
             }
-            if (moreSimilar == 1) {
+            if (moreSimilar == 2) {
                 add = true;
             }
         }
