@@ -1,6 +1,8 @@
 vm\vmtrials\checking\GetNumberOfObjectsInDataset.class
-vm\trials\deprecated\PureSimRelSequentialScanKNN.class
 vm\vmtrials\checking\UpdateDatasetSizes.class
+vm\vmtrials\deprecated\PureSimRelSequentialScanKNN.class
+vm\vmtrials\distanceDensityTrials\PrintDDOfDataset.class
+vm\vmtrials\checking\sketching\LearnSketches.class
+vm\vmtrials\distanceDensityTrials\PrintDDOfNearNeighboursAndDatasetOrigAndTransformed.class
 vm\vmtrials\simRelEuclidSpace\PrintStatsOverCoordinates.class
-vm\vmtrials\distanceDensityTrials\PrintDDOfNearNeighboursAndDataset.class
 vm\vmtrials\simRelEuclidSpace\EvaluateSimRelKNNWithPrinting.class

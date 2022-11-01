@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package vm.vmtrials.distanceDensityTrials;
 
 import java.sql.SQLException;
@@ -11,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeSet;
-import vm.datatools.Tools;
 import vm.db.metricSpaceImpl.DBMetricSpaceImpl;
 import vm.db.metricSpaceImpl.DBMetricSpacesStorage;
 import vm.queryResults.GroundTruthEvaluator;
@@ -25,7 +19,7 @@ import vm.metricSpace.AbstractMetricSpace;
  *
  * @author Vlada
  */
-public class PrintDDOfNearNeighboursAndDataset {
+public class PrintDDOfNearNeighboursAndDatasetOrigAndTransformed {
 
     public static void main(String[] args) throws SQLException {
         String datasetName;
@@ -46,10 +40,10 @@ public class PrintDDOfNearNeighboursAndDataset {
         int k = 100;
         List<Object[]> idsOfRandomPairs = new ArrayList<>();
         List<Object[]> idsOfNNPairs = new ArrayList<>();
-        SortedMap<Float, Float> ddRandomSample = createDDOfRandomSample(metricSpace, metricSpacesStorage, distanceFunction, datasetName, objCount, distCount, distInterval, idsOfRandomPairs);
+        SortedMap<Float, Float> ddRandomSample = PrintDDOfDataset.createDDOfRandomSample(metricSpace, metricSpacesStorage, distanceFunction, datasetName, objCount, distCount, distInterval, idsOfRandomPairs);
         SortedMap<Float, Float> ddOfNNSample = createDDOfNNSample(metricSpace, metricSpacesStorage, distanceFunction, datasetName, queriesCount, objCount, k, distInterval, idsOfNNPairs);
 //      print
-        printDistsOfRandomAndNearNeighbours(datasetName, distInterval, ddRandomSample, ddOfNNSample);
+        printDDOfRandomAndNearNeighbours(datasetName, distInterval, ddRandomSample, ddOfNNSample);
 
 //      find the same pairs in the transformed dataset and print corresponding distances
         List<Object> transformedObjects = metricSpacesStorage.getSampleOfDataset(transformedDatasetName, -1);
@@ -59,12 +53,7 @@ public class PrintDDOfNearNeighboursAndDataset {
         SortedMap<Float, Float> ddOfNNSampleTransformed = evaluateDDForPairs(metricSpace, distanceFunctionForTransformedDataset, idsOfNNPairs, metricObjectsAsIdObjectMap, transformedDistInterval);
 
 //      print
-        printDistsOfRandomAndNearNeighbours(transformedDatasetName, transformedDistInterval, ddRandomSampleTransformed, ddOfNNSampleTransformed);
-    }
-
-    private static SortedMap<Float, Float> createDDOfRandomSample(AbstractMetricSpace metricSpace, MetricSpacesStorageInterface metricSpacesStorage, DistanceFunction distanceFunction, String datasetName, int objCount, int distCount, float distInterval, List<Object[]> examinedPairs) {
-        List<Object> metricObjects = metricSpacesStorage.getSampleOfDataset(datasetName, objCount);
-        return MetricDomainTools.createDistanceDensityPlot(metricSpace, metricObjects, distanceFunction, distCount, distInterval, examinedPairs);
+        printDDOfRandomAndNearNeighbours(transformedDatasetName, transformedDistInterval, ddRandomSampleTransformed, ddOfNNSampleTransformed);
     }
 
     private static SortedMap<Float, Float> createDDOfNNSample(AbstractMetricSpace metricSpace, MetricSpacesStorageInterface metricSpacesStorage, DistanceFunction distanceFunction, String datasetName, int queryObjCount, int sampleCount, int k, float distInterval, List<Object[]> idsOfNNPairs) {
@@ -101,7 +90,7 @@ public class PrintDDOfNearNeighboursAndDataset {
         return MetricDomainTools.createDistanceDensityPlot(distances, distInterval);
     }
 
-    private static void printDistsOfRandomAndNearNeighbours(String datasetName, float distInterval, SortedMap<Float, Float> ddRandomSample, SortedMap<Float, Float> ddOfNNSample) {
+    private static void printDDOfRandomAndNearNeighbours(String datasetName, float distInterval, SortedMap<Float, Float> ddRandomSample, SortedMap<Float, Float> ddOfNNSample) {
         System.out.println(datasetName);
         System.out.println("Distance;Density of random sample; Density of distances to near neighbours");
         for (float dist = 0; true; dist += distInterval) {

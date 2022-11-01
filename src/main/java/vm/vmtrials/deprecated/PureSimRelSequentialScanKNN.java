@@ -1,4 +1,4 @@
-package vm.trials.deprecated;
+package vm.vmtrials.deprecated;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
