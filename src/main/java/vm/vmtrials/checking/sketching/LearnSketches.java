@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package vm.vmtrials.checking.sketching;
 
 import java.sql.SQLException;
@@ -17,13 +12,12 @@ import vm.objTransforms.storeLearned.GHPSketchingPivotPairsStoreInterface;
  */
 public class LearnSketches {
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException, InterruptedException {
         Dataset dataset = new DBDatasetInstance.DeCAFDataset();
         GHPSketchingPivotPairsStoreInterface sketchingTechStorage = new GHPSketchingPivotPairsStoreInterface();
-        int sampleSize = 10000;
+        int sampleSize = 50000;
         int[] sketchesLengths = new int[]{64, 256};
         LearningSketchingGHP learn = new LearningSketchingGHP(dataset.getMetricSpace(), dataset.getMetricSpacesStorage(), sketchingTechStorage);
-        learn.execute(dataset.getDatasetName(), dataset.getDatasetName(), sampleSize, sketchesLengths, 0.5f);
-        
+        learn.execute(dataset.getDatasetName(), dataset.getDatasetName(), sampleSize, sketchesLengths, 0.5f);       
     }
 }
