@@ -13,10 +13,10 @@ import vm.datatools.Tools;
 import vm.db.metricSpaceImpl.DBMetricSpaceImpl;
 import vm.db.metricSpaceImpl.DBMetricSpacesStorage;
 import vm.distEstimation.limitedAngles.foursome.ToolsPtolemaionsLikeCoefs;
-import vm.metricSpace.AbstractMetricSpace;
-import vm.metricSpace.MetricSpacesStorageInterface;
-import vm.metricSpace.dataToStringConvertors.impl.FloatVectorConvertor;
-import vm.metricSpace.distance.DistanceFunction;
+import vm.metricspace.AbstractMetricSpace;
+import vm.metricspace.MetricSpacesStorageInterface;
+import vm.metricspace.dataToStringConvertors.impl.FloatVectorConvertor;
+import vm.metricspace.distance.DistanceFunction;
 import vm.structures.ConvexHull2DEuclid;
 import static vm.vmtrials.ptolemaios.PrintFirstStatsOfDataset.getData;
 

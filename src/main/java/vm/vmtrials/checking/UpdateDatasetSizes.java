@@ -30,7 +30,7 @@ public class UpdateDatasetSizes {
     }
 
     private static void updateDatasetSize(String datasetName, DBMetricSpacesStorage dbMetricSpacesStorage, Statement st) throws SQLException {
-        int numberOfObjectsInDataset = dbMetricSpacesStorage.getNumberOfObjectsInDataset(datasetName);
+        int numberOfObjectsInDataset = dbMetricSpacesStorage.reevaluatetNumberOfObjectsInDataset(datasetName);
         String sql = "UPDATE dataset SET obj_count=" + numberOfObjectsInDataset + " WHERE name='" + datasetName + "'";
         System.out.println(datasetName + ": " + numberOfObjectsInDataset + " metric objects");
         st.execute(sql);

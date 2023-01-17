@@ -11,7 +11,7 @@ import vm.db.metricSpaceImpl.DBMetricSpacesStorage;
 import vm.math.Tools;
 import vm.metricSpace.MetricDomainTools;
 import vm.metricSpace.MetricSpacesStorageInterface;
-import vm.metricSpace.dataToStringConvertors.impl.FloatVectorConvertor;
+import vm.metricspace.dataToStringConvertors.impl2.FloatVectorConvertor;
 
 /**
  *

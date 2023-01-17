@@ -10,7 +10,7 @@ import java.util.Iterator;
 import vm.db.metricSpaceImpl.DBMetricSpaceImpl;
 import vm.db.metricSpaceImpl.DBMetricSpacesStorage;
 import vm.metricSpace.MetricSpacesStorageInterface;
-import vm.metricSpace.dataToStringConvertors.impl.FloatVectorConvertor;
+import vm.metricspace.dataToStringConvertors.impl2.FloatVectorConvertor;
 
 /**
  *
