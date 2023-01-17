@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package vm.vmtrials.checking;
 
 import java.sql.ResultSet;
@@ -11,8 +6,8 @@ import java.sql.Statement;
 import vm.db.DBGlobal;
 import vm.db.metricSpaceImpl.DBMetricSpaceImpl;
 import vm.db.metricSpaceImpl.DBMetricSpacesStorage;
-import vm.metricSpace.dataToStringConvertors.SingularisedConvertors;
-import vm.metricSpace.AbstractMetricSpace;
+import vm.metricspace.dataToStringConvertors.SingularisedConvertors;
+import vm.metricspace.AbstractMetricSpace;
 
 /**
  *

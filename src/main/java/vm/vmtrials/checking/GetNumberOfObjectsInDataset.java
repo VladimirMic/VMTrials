@@ -1,16 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package vm.vmtrials.checking;
 
 import java.sql.SQLException;
 import java.util.Iterator;
 import vm.db.metricSpaceImpl.DBMetricSpaceImpl;
 import vm.db.metricSpaceImpl.DBMetricSpacesStorage;
-import vm.metricSpace.MetricSpacesStorageInterface;
-import vm.metricspace.dataToStringConvertors.impl2.FloatVectorConvertor;
+import vm.metricspace.MetricSpacesStorageInterface;
+import vm.metricspace.dataToStringConvertors.impl.FloatVectorConvertor;
 
 /**
  *

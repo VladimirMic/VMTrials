@@ -7,7 +7,7 @@ package vm.vmtrials.ptolemaios;
 
 import java.sql.SQLException;
 import vm.db.DBDatasetInstance;
-import vm.metricSpace.Dataset;
+import vm.metricspace.Dataset;
 import vm.metricspace.distance.bounding.twopivots.TwoPivotsFiltering;
 import vm.metricspace.distance.bounding.twopivots.impl.PtolemaiosFiltering;
 import vm.metricspace.distance.bounding.twopivots.impl.PtolemaiosFilteringWithLimitedAngles;
