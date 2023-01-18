@@ -39,14 +39,14 @@ public class PureSimRelSequentialScanKNN<T> extends SearchingAlgorithm<T> {
             SimRelEuclideanPCAImpl euclid = (SimRelEuclideanPCAImpl) simRelFunc;
             euclid.resetEarlyStopsOnCoordsCounts();
         }
-        T queryObjectData = metricSpace.getMetricObjectData(queryObject, paramsToExtractDataFromMetricObject);
+        T queryObjectData = metricSpace.getDataOfMetricObject(queryObject, paramsToExtractDataFromMetricObject);
         List<Object> ret = new ArrayList<>();
         Map<Object, T> retData = new HashMap<>();
         simRelEvalCounter = 0;
         for (int i = 1; objects.hasNext(); i++) {
             Object metricObject = objects.next();
             Object idOfMetricObject = metricSpace.getIDOfMetricObject(metricObject);
-            T metricObjectData = metricSpace.getMetricObjectData(metricObject, paramsToExtractDataFromMetricObject);
+            T metricObjectData = metricSpace.getDataOfMetricObject(metricObject, paramsToExtractDataFromMetricObject);
             addOToAnswer(k, queryObjectData, metricObjectData, idOfMetricObject, ret, retData);
             if (i % 1000000 == 0) {
                 LOG.log(Level.INFO, "Processed {0} objects, evaluated {1} distances", new Object[]{i, simRelEvalCounter});

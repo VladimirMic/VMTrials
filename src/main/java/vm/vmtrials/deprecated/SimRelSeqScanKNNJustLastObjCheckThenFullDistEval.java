@@ -22,7 +22,7 @@ import vm.simRel.impl.SimRelEuclideanPCAImpl;
  *
  * @author Vlada
  * @param <T> data type of the metric objects used to evaluate the distance and
- * the simrel. See metricSpace.getMetricObjectData method
+ the simrel. See metricSpace.getDataOfMetricObject method
  */
 @Deprecated
 public class SimRelSeqScanKNNJustLastObjCheckThenFullDistEval<T> extends SearchingAlgorithm<T> {
@@ -44,14 +44,14 @@ public class SimRelSeqScanKNNJustLastObjCheckThenFullDistEval<T> extends Searchi
             SimRelEuclideanPCAImpl euclid = (SimRelEuclideanPCAImpl) simRelFunc;
             euclid.resetEarlyStopsOnCoordsCounts();
         }
-        T queryObjectData = metricSpace.getMetricObjectData(queryObject, paramsToExtractDataFromMetricObject);
+        T queryObjectData = metricSpace.getDataOfMetricObject(queryObject, paramsToExtractDataFromMetricObject);
         TreeSet<Map.Entry<Object, Float>> ret = new TreeSet<>(new Tools.MapByValueComparator());
         Map<Object, T> retData = new HashMap<>();
         distCounter = 0;
         for (int i = 1; objects.hasNext(); i++) {
             Object metricObject = objects.next();
             Object idOfMetricObject = metricSpace.getIDOfMetricObject(metricObject);
-            T metricObjectData = metricSpace.getMetricObjectData(metricObject, paramsToExtractDataFromMetricObject);
+            T metricObjectData = metricSpace.getDataOfMetricObject(metricObject, paramsToExtractDataFromMetricObject);
             if (ret.size() < k) {
                 float distance = fullDistanceFunction.getDistance(queryObjectData, metricObjectData);
                 distCounter++;

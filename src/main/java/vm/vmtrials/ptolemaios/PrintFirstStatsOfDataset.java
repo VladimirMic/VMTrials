@@ -98,7 +98,7 @@ public class PrintFirstStatsOfDataset {
     public static Object[] getData(Object[] fourObjects, AbstractMetricSpace metricSpace) {
         Object[] ret = new Object[fourObjects.length];
         for (int i = 0; i < ret.length; i++) {
-            ret[i] = metricSpace.getMetricObjectData(fourObjects[i]);
+            ret[i] = metricSpace.getDataOfMetricObject(fourObjects[i]);
         }
         return ret;
     }

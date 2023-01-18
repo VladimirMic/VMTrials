@@ -1,0 +1,13 @@
+vm\vmtrials\checking\GetNumberOfObjectsInDataset.class
+vm\vmtrials\ptolemaios\LearnConvexHullsForPivotPairs.class
+vm\vmtrials\ptolemaios\PrintFirstStatsOfDataset.class
+vm\vmtrials\ptolemaios\MainKNNQueriesWithFiltering.class
+vm\vmtrials\ptolemaios\LearnConvexHullsForPivotPairs$PointComparatorX.class
+vm\vmtrials\simRelEuclidSpace\EvaluateSimRelKNNWithPrinting.class
+vm\vmtrials\checking\UpdateDatasetSizes.class
+vm\vmtrials\deprecated\PureSimRelSequentialScanKNN.class
+vm\vmtrials\deprecated\SimRelSeqScanKNNJustLastObjCheckThenFullDistEval.class
+vm\vmtrials\ptolemaios\LearnConvexHullsForPivotPairs$PointComparatorY.class
+vm\vmtrials\checking\sketching\LearnSketches.class
+vm\vmtrials\ptolemaios\LearnConvexHullsForPivotPairs$1.class
+vm\vmtrials\simRelEuclidSpace\PrintStatsOverCoordinates.class

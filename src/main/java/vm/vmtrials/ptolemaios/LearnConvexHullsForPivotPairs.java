@@ -10,12 +10,10 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.datatools.Tools;
-import vm.db.metricSpaceImpl.DBMetricSpaceImpl;
-import vm.db.metricSpaceImpl.DBMetricSpacesStorage;
+import vm.db.DBDatasetInstance;
 import vm.distEstimation.limitedAngles.foursome.ToolsPtolemaionsLikeCoefs;
 import vm.metricspace.AbstractMetricSpace;
-import vm.metricspace.MetricSpacesStorageInterface;
-import vm.metricspace.dataToStringConvertors.impl.FloatVectorConvertor;
+import vm.metricspace.Dataset;
 import vm.metricspace.distance.DistanceFunction;
 import vm.structures.ConvexHull2DEuclid;
 import static vm.vmtrials.ptolemaios.PrintFirstStatsOfDataset.getData;
@@ -27,24 +25,22 @@ import static vm.vmtrials.ptolemaios.PrintFirstStatsOfDataset.getData;
 public class LearnConvexHullsForPivotPairs {
 
     public static final Float RATIO_OF_OUTLIERS_TO_CUT = 0.01f; // in total, i.e., half if this number is cut from each side on the x axis
-    public static final Integer NUMBER_OF_TETRAHEDRONS = 100000;
+    public static final Integer NUMBER_OF_TETRAHEDRONS = 500000;
     public static final Integer SAMPLE_SET_SIZE = 100000;
     public static final Integer PIVOT_PAIRS = 128;
 
     public static void main(String[] args) throws SQLException, IOException {
-        String datasetName = "decaf_1m";
+        Dataset dataset = new DBDatasetInstance.SIFTdataset();
+        AbstractMetricSpace metricSpace = dataset.getMetricSpace();
 
-        AbstractMetricSpace metricSpace = new DBMetricSpaceImpl<>();
-        MetricSpacesStorageInterface metricSpacesStorage = new DBMetricSpacesStorage<>(metricSpace, new FloatVectorConvertor());
-
-        DistanceFunction df = metricSpace.getDistanceFunctionForDataset(datasetName);
-        String output = "h:\\Skola\\2022\\Ptolemaions_limited\\EFgetBD\\Hulls\\DeCAF_convex_hulls__tetrahedrons_" + NUMBER_OF_TETRAHEDRONS + "__RATIO_OF_OUTLIERS_TO_CUT" + RATIO_OF_OUTLIERS_TO_CUT + "__PIVOT_PAIRS_" + PIVOT_PAIRS + ".csv";
+        DistanceFunction df = dataset.getDistanceFunction();
+        String output = "h:\\Skola\\2022\\Ptolemaions_limited\\EFgetBD\\Hulls\\" + dataset.getDatasetName() + "__tetrahedrons_" + NUMBER_OF_TETRAHEDRONS + "__ratio_of_outliers_to_cut_" + RATIO_OF_OUTLIERS_TO_CUT + "__pivot_pairs_" + PIVOT_PAIRS + ".csv";
         PrintStream err = System.err;
         System.setOut(new PrintStream(output + "_redable.csv"));
 
-        List<Object> metricObjects = metricSpacesStorage.getSampleOfDataset(datasetName, SAMPLE_SET_SIZE);
-        List<Object> pivots = metricSpacesStorage.getMetricPivots(datasetName);
-        for (int p = 0; p < 2 * PIVOT_PAIRS && p < pivots.size(); p += 2) {
+        List<Object> metricObjects = dataset.getSampleOfDataset(SAMPLE_SET_SIZE);
+        List<Object> pivots = dataset.getPivotsForTheSameDataset(2 * PIVOT_PAIRS);
+        for (int p = 0; p < pivots.size(); p += 2) {
             Object[] fourObjects = new Object[4];
             fourObjects[0] = pivots.get(p);
             fourObjects[1] = pivots.get(p + 1);
