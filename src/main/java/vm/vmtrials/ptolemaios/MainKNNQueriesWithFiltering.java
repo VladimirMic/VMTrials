@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 import vm.datatools.DataTypeConvertor;
-import vm.db.DBDatasetInstance;
+import vm.db.dataset.DBDatasetInstanceSingularizator;
 import vm.metricspace.AbstractMetricSpace;
 import vm.metricspace.Dataset;
 import vm.metricspace.MetricSpacesStorageInterface;
@@ -21,7 +21,7 @@ import vm.search.impl.KNNSearchWithTwoPivotFiltering;
 public class MainKNNQueriesWithFiltering {
 
     public static void main(String[] args) throws SQLException {
-        Dataset dataset = new DBDatasetInstance.DeCAFDataset();
+        Dataset dataset = new DBDatasetInstanceSingularizator.DeCAFDataset();
         String pathToHulls = "h:\\Skola\\2022\\Ptolemaions_limited\\EFgetBD\\Hulls\\" + dataset.getDatasetName() + "___tetrahedrons_100000__ratio_of_outliers_to_cut_0.01__pivot_pairs_128.csv";
         int k = 100;
 

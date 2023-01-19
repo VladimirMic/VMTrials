@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.datatools.Tools;
-import vm.db.DBDatasetInstance;
+import vm.db.dataset.DBDatasetInstanceSingularizator;
 import vm.distEstimation.limitedAngles.foursome.ToolsPtolemaionsLikeCoefs;
 import vm.metricspace.AbstractMetricSpace;
 import vm.metricspace.Dataset;
@@ -30,7 +30,7 @@ public class LearnConvexHullsForPivotPairs {
     public static final Integer PIVOT_PAIRS = 128;
 
     public static void main(String[] args) throws SQLException, IOException {
-        Dataset dataset = new DBDatasetInstance.SIFTdataset();
+        Dataset dataset = new DBDatasetInstanceSingularizator.SIFTdataset();
         AbstractMetricSpace metricSpace = dataset.getMetricSpace();
 
         DistanceFunction df = dataset.getDistanceFunction();
