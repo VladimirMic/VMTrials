@@ -77,7 +77,7 @@ public class EvaluateSimRelKNNWithPrinting {
     }
 
     private static float[] learnSimRelUncertainThresholdsEuclid(AbstractMetricSpace metricSpace, MetricSpacesStorageInterface metricSpacesStorage, String pcaDatasetName, int querySampleCount, int dataSampleCount, int pcaLength, int kPCA, float percentileWrong) {
-        List<Object> querySamples = metricSpacesStorage.getMetricPivots(pcaDatasetName, querySampleCount);
+        List<Object> querySamples = metricSpacesStorage.getPivots(pcaDatasetName, querySampleCount);
         List<Object> sampleOfDataset = metricSpacesStorage.getSampleOfDataset(pcaDatasetName, dataSampleCount);
 
         SimRelEuclideanPCALearn simRelLearn = new SimRelEuclideanPCALearn();
@@ -99,13 +99,13 @@ public class EvaluateSimRelKNNWithPrinting {
     }
 
     private static void testQueries(AbstractMetricSpace metricSpace, MetricSpacesStorageInterface metricSpacesStorage, SimRelEuclideanPCAImpl simRel, boolean involveObjWithUnknownRelation, String fullQuerySetName, String pcaQuerySetName, String fullDatasetName, String pcaDatasetName, int kPCA, int k, QueryNearestNeighboursStoreInterface resultsStorage, String resultName, QueryExecutionStatsStoreInterface statsStorage) {
-        List<Object> pcaData = Tools.getObjectsFromIterator(metricSpacesStorage.getMetricObjectsFromDataset(pcaDatasetName));
+        List<Object> pcaData = Tools.getObjectsFromIterator(metricSpacesStorage.getObjectsFromDataset(pcaDatasetName));
         List<Object> fullData = null;
         if (RERANK) {
-            fullData = Tools.getObjectsFromIterator(metricSpacesStorage.getMetricObjectsFromDataset(fullDatasetName));
+            fullData = Tools.getObjectsFromIterator(metricSpacesStorage.getObjectsFromDataset(fullDatasetName));
         }
-        List<Object> fullQueries = metricSpacesStorage.getMetricQueryObjects(fullQuerySetName);
-        Map<Object, Object> pcaQueries = MetricDomainTools.getMetricObjectsAsIdObjectMap(metricSpace, metricSpacesStorage.getMetricQueryObjects(pcaQuerySetName));
+        List<Object> fullQueries = metricSpacesStorage.getQueryObjects(fullQuerySetName);
+        Map<Object, Object> pcaQueries = MetricDomainTools.getMetricObjectsAsIdObjectMap(metricSpace, metricSpacesStorage.getQueryObjects(pcaQuerySetName));
         SimRelSeqScanKNNCandSetThenFullDistEval alg = new SimRelSeqScanKNNCandSetThenFullDistEval<>(simRel, kPCA, metricSpace.getDistanceFunctionForDataset(fullDatasetName), involveObjWithUnknownRelation);
         for (int i = 0; i < fullQueries.size(); i++) {
             Object fullQueryObj = fullQueries.get(i);

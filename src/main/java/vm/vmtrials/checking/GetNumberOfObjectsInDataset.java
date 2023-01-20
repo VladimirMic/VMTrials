@@ -20,7 +20,7 @@ public class GetNumberOfObjectsInDataset {
         DBMetricSpaceImpl metricSpace = new DBMetricSpaceImpl<>();
         MetricSpacesStorageInterface metricSpacesStorage = new DBMetricSpacesStorage<>(metricSpace, new FloatVectorConvertor());
 
-        Iterator<Object> metricObjects = metricSpacesStorage.getMetricObjectsFromDataset(datasetName);
+        Iterator<Object> metricObjects = metricSpacesStorage.getObjectsFromDataset(datasetName);
         int counter = 0;
         for (counter = 0; metricObjects.hasNext(); counter++) {
             metricObjects.next();

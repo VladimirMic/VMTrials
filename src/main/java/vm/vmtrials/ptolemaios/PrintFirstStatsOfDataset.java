@@ -34,7 +34,7 @@ public class PrintFirstStatsOfDataset {
         System.setErr(new PrintStream("h:\\Skola\\2022\\Ptolemaions_limited\\EFgetBD\\DeCAF_stats_per_pairs_oriented_" + NUMBER_OF_TETRAHEDRONS + ".csv"));
 
         List<Object> metricObjects = metricSpacesStorage.getSampleOfDataset(datasetName, SAMPLE_SET_SIZE);
-        List<Object> pivots = metricSpacesStorage.getMetricPivots(datasetName);
+        List<Object> pivots = metricSpacesStorage.getPivots(datasetName);
         for (int p = 0; p < 2 * PIVOT_PAIRS; p += 2) {
             Object[] fourObjects = new Object[4];
             fourObjects[0] = pivots.get(p);
