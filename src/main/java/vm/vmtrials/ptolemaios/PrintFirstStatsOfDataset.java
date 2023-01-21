@@ -11,7 +11,7 @@ import vm.distEstimation.limitedAngles.foursome.ToolsPtolemaionsLikeCoefs;
 import vm.metricspace.AbstractMetricSpace;
 import vm.metricspace.MetricSpacesStorageInterface;
 import vm.metricspace.dataToStringConvertors.impl.FloatVectorConvertor;
-import vm.metricspace.distance.DistanceFunction;
+import vm.metricspace.distance.DistanceFunctionInterface;
 
 /**
  *
@@ -29,7 +29,7 @@ public class PrintFirstStatsOfDataset {
         AbstractMetricSpace metricSpace = new DBMetricSpaceImpl<>();
         MetricSpacesStorageInterface metricSpacesStorage = new DBMetricSpacesStorage<>(metricSpace, new FloatVectorConvertor());
 
-        DistanceFunction df = metricSpace.getDistanceFunctionForDataset(datasetName);
+        DistanceFunctionInterface df = metricSpace.getDistanceFunctionForDataset(datasetName);
 
         System.setErr(new PrintStream("h:\\Skola\\2022\\Ptolemaions_limited\\EFgetBD\\DeCAF_stats_per_pairs_oriented_" + NUMBER_OF_TETRAHEDRONS + ".csv"));
 

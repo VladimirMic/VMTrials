@@ -2,16 +2,17 @@ package vm.vmtrials.simRelEuclidSpace;
 
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 import vm.datatools.DataTypeConvertor;
 import vm.datatools.Tools;
-import vm.db.main.queryResults.DBQueryExecutionStatsStoreImpl;
 import vm.db.metricSpaceImpl.DBMetricSpaceImpl;
 import vm.db.metricSpaceImpl.DBMetricSpacesStorage;
 import vm.db.store.queryResults.DBNearestNeighboursStorageImpl;
+import vm.fs.main.queryResults.FSQueryExecutionStatsStoreImpl;
 import vm.metricspace.AbstractMetricSpace;
 import vm.metricspace.MetricDomainTools;
 import vm.metricspace.MetricSpacesStorageInterface;
@@ -72,7 +73,15 @@ public class EvaluateSimRelKNNWithPrinting {
         /* Storage to store the results of the kNN queries */
         QueryNearestNeighboursStoreInterface resultsStorage = new DBNearestNeighboursStorageImpl();
         /* Storage to store the stats about the kNN queries */
-        QueryExecutionStatsStoreInterface statsStorage = new DBQueryExecutionStatsStoreImpl(fullDatasetName, fullQuerySetName, k, pcaDatasetName, pcaQuerySetName, resultName, null);
+
+        Map<FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME, String> fileNameData = new HashMap<>();
+        fileNameData.put(FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME.ground_truth_name, fullDatasetName);
+        fileNameData.put(FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME.ground_truth_query_set_name, fullQuerySetName);
+        fileNameData.put(FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME.ground_truth_nn_count, Integer.toString(k));
+        fileNameData.put(FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME.cand_set_name, pcaDatasetName);
+        fileNameData.put(FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME.cand_set_query_set_name, pcaQuerySetName);
+        fileNameData.put(FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME.storing_result_name, resultName);
+        QueryExecutionStatsStoreInterface statsStorage = new FSQueryExecutionStatsStoreImpl(fileNameData);
         testQueries(metricSpace, metricSpacesStorage, simRel, INVOLVE_OBJS_UNKNOWN_RELATION, fullQuerySetName, pcaQuerySetName, fullDatasetName, pcaDatasetName, kPCA, k, resultsStorage, resultName, statsStorage);
     }
 

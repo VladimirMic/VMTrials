@@ -14,9 +14,9 @@ import vm.db.dataset.DBDatasetInstanceSingularizator;
 import vm.distEstimation.limitedAngles.foursome.ToolsPtolemaionsLikeCoefs;
 import vm.metricspace.AbstractMetricSpace;
 import vm.metricspace.Dataset;
-import vm.metricspace.distance.DistanceFunction;
 import vm.structures.ConvexHull2DEuclid;
 import static vm.vmtrials.ptolemaios.PrintFirstStatsOfDataset.getData;
+import vm.metricspace.distance.DistanceFunctionInterface;
 
 /**
  *
@@ -33,7 +33,7 @@ public class LearnConvexHullsForPivotPairs {
         Dataset dataset = new DBDatasetInstanceSingularizator.SIFTdataset();
         AbstractMetricSpace metricSpace = dataset.getMetricSpace();
 
-        DistanceFunction df = dataset.getDistanceFunction();
+        DistanceFunctionInterface df = dataset.getDistanceFunction();
         String output = "h:\\Skola\\2022\\Ptolemaions_limited\\EFgetBD\\Hulls\\" + dataset.getDatasetName() + "__tetrahedrons_" + NUMBER_OF_TETRAHEDRONS + "__ratio_of_outliers_to_cut_" + RATIO_OF_OUTLIERS_TO_CUT + "__pivot_pairs_" + PIVOT_PAIRS + ".csv";
         PrintStream err = System.err;
         System.setOut(new PrintStream(output + "_redable.csv"));

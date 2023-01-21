@@ -9,11 +9,11 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.datatools.Tools;
-import vm.metricspace.distance.DistanceFunction;
 import vm.metricspace.AbstractMetricSpace;
 import vm.search.SearchingAlgorithm;
 import vm.simRel.SimRelInterface;
 import vm.simRel.impl.SimRelEuclideanPCAImpl;
+import vm.metricspace.distance.DistanceFunctionInterface;
 
 /**
  * Simple filtering with the simRel function. If o cannot be filtered thanks to
@@ -29,11 +29,11 @@ public class SimRelSeqScanKNNJustLastObjCheckThenFullDistEval<T> extends Searchi
 
     private static final Logger LOG = Logger.getLogger(SimRelSeqScanKNNJustLastObjCheckThenFullDistEval.class.getName());
     private final SimRelInterface<T> simRelFunc;
-    private final DistanceFunction<T> fullDistanceFunction;
+    private final DistanceFunctionInterface<T> fullDistanceFunction;
 
     private int distCounter;
 
-    public SimRelSeqScanKNNJustLastObjCheckThenFullDistEval(SimRelInterface<T> simRelFunc, DistanceFunction<T> fullDistanceFunction) {
+    public SimRelSeqScanKNNJustLastObjCheckThenFullDistEval(SimRelInterface<T> simRelFunc, DistanceFunctionInterface<T> fullDistanceFunction) {
         this.simRelFunc = simRelFunc;
         this.fullDistanceFunction = fullDistanceFunction;
     }
