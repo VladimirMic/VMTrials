@@ -85,8 +85,8 @@ public class SimRelSeqScanKNNJustLastObjCheckThenFullDistEval<T> extends Searchi
     }
 
     @Override
-    public Integer getTimeOfLastExecutedQuery() {
-        return null;
+    public long getTimeOfLastExecutedQuery() {
+        return -1;
     }
 
     public Object getSimRelStatsOfLastExecutedQuery() {

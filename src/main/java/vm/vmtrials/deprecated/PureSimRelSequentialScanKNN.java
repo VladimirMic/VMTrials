@@ -62,8 +62,8 @@ public class PureSimRelSequentialScanKNN<T> extends SearchingAlgorithm<T> {
     }
 
     @Override
-    public Integer getTimeOfLastExecutedQuery() {
-        return null;
+    public long getTimeOfLastExecutedQuery() {
+        return -1;
     }
 
     public Object getSimRelStatsOfLastExecutedQuery() {
