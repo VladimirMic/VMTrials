@@ -12,7 +12,7 @@ import vm.datatools.Tools;
 import vm.db.metricSpaceImpl.DBMetricSpaceImpl;
 import vm.db.metricSpaceImpl.DBMetricSpacesStorage;
 import vm.db.store.queryResults.DBNearestNeighboursStorageImpl;
-import vm.fs.main.queryResults.FSQueryExecutionStatsStoreImpl;
+import vm.fs.store.queryResults.FSQueryExecutionStatsStoreImpl;
 import vm.metricspace.AbstractMetricSpace;
 import vm.metricspace.MetricDomainTools;
 import vm.metricspace.MetricSpacesStorageInterface;
