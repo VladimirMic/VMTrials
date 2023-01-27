@@ -22,7 +22,7 @@ import vm.metricspace.distance.DistanceFunctionInterface;
  *
  * @author Vlada
  * @param <T> data type of the metric objects used to evaluate the distance and
- the simrel. See metricSpace.getDataOfMetricObject method
+ * the simrel. See metricSpace.getDataOfMetricObject method
  */
 @Deprecated
 public class SimRelSeqScanKNNJustLastObjCheckThenFullDistEval<T> extends SearchingAlgorithm<T> {
@@ -79,16 +79,6 @@ public class SimRelSeqScanKNNJustLastObjCheckThenFullDistEval<T> extends Searchi
         return ret;
     }
 
-    @Override
-    public Integer getDistCompsOfLastExecutedQuery() {
-        return distCounter;
-    }
-
-    @Override
-    public long getTimeOfLastExecutedQuery() {
-        return -1;
-    }
-
     public Object getSimRelStatsOfLastExecutedQuery() {
         if (simRelFunc instanceof SimRelEuclideanPCAImpl) {
             SimRelEuclideanPCAImpl euclid = (SimRelEuclideanPCAImpl) simRelFunc;
@@ -101,4 +91,5 @@ public class SimRelSeqScanKNNJustLastObjCheckThenFullDistEval<T> extends Searchi
     public List<Object> candSetKnnSearch(AbstractMetricSpace<T> metricSpace, Object queryObject, int k, Iterator<Object> objects, Object... paramsToExtractDataFromMetricObject) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
 }

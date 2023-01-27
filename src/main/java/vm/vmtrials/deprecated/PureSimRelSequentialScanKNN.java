@@ -56,16 +56,6 @@ public class PureSimRelSequentialScanKNN<T> extends SearchingAlgorithm<T> {
         return transformListToAbstractDists(ret);
     }
 
-    @Override
-    public Integer getDistCompsOfLastExecutedQuery() {
-        return simRelEvalCounter;
-    }
-
-    @Override
-    public long getTimeOfLastExecutedQuery() {
-        return -1;
-    }
-
     public Object getSimRelStatsOfLastExecutedQuery() {
         if (simRelFunc instanceof SimRelEuclideanPCAImpl) {
             SimRelEuclideanPCAImpl euclid = (SimRelEuclideanPCAImpl) simRelFunc;

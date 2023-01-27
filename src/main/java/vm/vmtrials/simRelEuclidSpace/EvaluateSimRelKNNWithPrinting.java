@@ -129,7 +129,7 @@ public class EvaluateSimRelKNNWithPrinting {
             int[] earlyStopsPerCoords = (int[]) alg.getSimRelStatsOfLastExecutedQuery();
             String earlyStopsPerCoordsString = DataTypeConvertor.intsToString(earlyStopsPerCoords, ";");
             if (STORE_RESULTS) {
-                statsStorage.storeStatsForQuery(queryObjId, alg.getDistCompsOfLastExecutedQuery(), alg.getTimeOfLastExecutedQuery(), earlyStopsPerCoordsString);
+                statsStorage.storeStatsForQuery(queryObjId, alg.getDistCompsForQuery(queryObjId), alg.getTimeOfQuery(queryObjId), earlyStopsPerCoordsString);
             } else {
                 System.out.println(earlyStopsPerCoordsString);
             }
