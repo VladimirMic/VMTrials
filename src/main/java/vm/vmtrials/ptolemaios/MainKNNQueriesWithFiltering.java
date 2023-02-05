@@ -14,7 +14,7 @@ import vm.metricspace.Dataset;
 import vm.metricspace.distance.DistanceFunctionInterface;
 import vm.metricspace.distance.PrecomputedDistancesLoader;
 import vm.metricspace.distance.bounding.twopivots.TwoPivotsFiltering;
-import vm.metricspace.distance.bounding.twopivots.impl.PtolemaiosFiltering;
+import vm.metricspace.distance.bounding.twopivots.impl.FourPointBasedFiltering;
 import vm.queryResults.recallEvaluation.RecallOfCandsSetsEvaluator;
 import vm.search.SearchingAlgorithm;
 import vm.search.impl.KNNSearchWithTwoPivotFiltering;
@@ -30,20 +30,20 @@ public class MainKNNQueriesWithFiltering {
     public static void main(String[] args) {
 
 //        String pathToHulls = "h:\\Skola\\2022\\Ptolemaions_limited\\EFgetBD\\Hulls\\" + dataset.getDatasetName() + "___tetrahedrons_100000__ratio_of_outliers_to_cut_0.01__pivot_pairs_128.csv";
-        run(new FSDatasetInstanceSingularizator.SIFTdataset());
-        System.gc();
-        run(new FSDatasetInstanceSingularizator.MPEG7dataset());
-        System.gc();
+//        run(new FSDatasetInstanceSingularizator.SIFTdataset());
+//        System.gc();
+//        run(new FSDatasetInstanceSingularizator.MPEG7dataset());
+//        System.gc();
         run(new FSDatasetInstanceSingularizator.RandomDataset20Uniform());
         System.gc();
-        run(new FSDatasetInstanceSingularizator.DeCAFDataset());
+//        run(new FSDatasetInstanceSingularizator.DeCAFDataset());
     }
 
     private static void run(Dataset dataset) {
         int k = 100;
         AbstractMetricSpace metricSpace = dataset.getMetricSpace();
         DistanceFunctionInterface df = dataset.getDistanceFunction();
-        int pivotCount = 512;
+        int pivotCount = 256;
         PrecomputedDistancesLoader pd = new PrecomputedDistancesLoaderImpl();
         float[][] poDists = pd.loadPrecomPivotsToObjectsDists(dataset.getDatasetName(), dataset.getDatasetName(), pivotCount);
         List queries = dataset.getMetricQueryObjectsForTheSameDataset();
@@ -51,7 +51,7 @@ public class MainKNNQueriesWithFiltering {
         float[][] pivotPivotDists = metricSpace.getDistanceMap(df, pivots, pivots);
 
 //        TwoPivotsFiltering filter = new PtolemaiosFilteringWithLimitedAngles(pivotCount + "_pivots", pathToHulls);
-        TwoPivotsFiltering filter = new PtolemaiosFiltering(pivotCount + "_pivots");
+        TwoPivotsFiltering filter = new FourPointBasedFiltering(pivotCount + "_pivots");
 //        TriangleInequality filter = new TriangleInequality(pivotCount + "_pivots");
         SearchingAlgorithm alg = new KNNSearchWithTwoPivotFiltering(metricSpace, filter, pivots, poDists, pd.getRowHeaders(), pd.getColumnHeaders(), pivotPivotDists, df);
 //        SearchingAlgorithm alg = new KNNSearchWithOnePivotFiltering(metricSpace, filter, pivots, poDists, pd.getRowHeaders(), pd.getColumnHeaders(), df);
