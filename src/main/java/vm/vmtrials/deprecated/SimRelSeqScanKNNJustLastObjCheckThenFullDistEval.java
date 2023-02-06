@@ -39,19 +39,19 @@ public class SimRelSeqScanKNNJustLastObjCheckThenFullDistEval<T> extends Searchi
     }
 
     @Override
-    public TreeSet<Map.Entry<Object, Float>> completeKnnSearch(AbstractMetricSpace<T> metricSpace, Object queryObject, int k, Iterator<Object> objects, Object... paramsToExtractDataFromMetricObject) {
+    public TreeSet<Map.Entry<Object, Float>> completeKnnSearch(AbstractMetricSpace<T> metricSpace, Object queryObject, int k, Iterator<Object> objects, Object ... additionalParams) {
         if (simRelFunc instanceof SimRelEuclideanPCAImpl) {
             SimRelEuclideanPCAImpl euclid = (SimRelEuclideanPCAImpl) simRelFunc;
             euclid.resetEarlyStopsOnCoordsCounts();
         }
-        T queryObjectData = metricSpace.getDataOfMetricObject(queryObject, paramsToExtractDataFromMetricObject);
+        T queryObjectData = metricSpace.getDataOfMetricObject(queryObject);
         TreeSet<Map.Entry<Object, Float>> ret = new TreeSet<>(new Tools.MapByValueComparator());
         Map<Object, T> retData = new HashMap<>();
         distCounter = 0;
         for (int i = 1; objects.hasNext(); i++) {
             Object metricObject = objects.next();
             Object idOfMetricObject = metricSpace.getIDOfMetricObject(metricObject);
-            T metricObjectData = metricSpace.getDataOfMetricObject(metricObject, paramsToExtractDataFromMetricObject);
+            T metricObjectData = metricSpace.getDataOfMetricObject(metricObject);
             if (ret.size() < k) {
                 float distance = fullDistanceFunction.getDistance(queryObjectData, metricObjectData);
                 distCounter++;
@@ -88,7 +88,7 @@ public class SimRelSeqScanKNNJustLastObjCheckThenFullDistEval<T> extends Searchi
     }
 
     @Override
-    public List<Object> candSetKnnSearch(AbstractMetricSpace<T> metricSpace, Object queryObject, int k, Iterator<Object> objects, Object... paramsToExtractDataFromMetricObject) {
+    public List<Object> candSetKnnSearch(AbstractMetricSpace<T> metricSpace, Object queryObject, int k, Iterator<Object> objects) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

@@ -30,13 +30,13 @@ public class MainKNNQueriesWithFiltering {
     public static void main(String[] args) {
 
 //        String pathToHulls = "h:\\Skola\\2022\\Ptolemaions_limited\\EFgetBD\\Hulls\\" + dataset.getDatasetName() + "___tetrahedrons_100000__ratio_of_outliers_to_cut_0.01__pivot_pairs_128.csv";
-//        run(new FSDatasetInstanceSingularizator.SIFTdataset());
-//        System.gc();
-//        run(new FSDatasetInstanceSingularizator.MPEG7dataset());
-//        System.gc();
+        run(new FSDatasetInstanceSingularizator.SIFTdataset());
+        System.gc();
+        run(new FSDatasetInstanceSingularizator.MPEG7dataset());
+        System.gc();
         run(new FSDatasetInstanceSingularizator.RandomDataset20Uniform());
         System.gc();
-//        run(new FSDatasetInstanceSingularizator.DeCAFDataset());
+        run(new FSDatasetInstanceSingularizator.DeCAFDataset());
     }
 
     private static void run(Dataset dataset) {
