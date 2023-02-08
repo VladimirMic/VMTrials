@@ -1,16 +1,17 @@
 package vm.vmtrials.ptolemaios;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.sql.SQLException;
 import java.util.List;
 import vm.datatools.Tools;
-import vm.db.metricSpaceImpl.DBMetricSpaceImpl;
-import vm.db.metricSpaceImpl.DBMetricSpacesStorage;
 import vm.distEstimation.limitedAngles.foursome.ToolsPtolemaionsLikeCoefs;
+import vm.fs.FSGlobal;
+import vm.fs.dataset.FSDatasetInstanceSingularizator;
+import vm.fs.metricSpaceImpl.FSMetricSpaceImpl;
 import vm.metricspace.AbstractMetricSpace;
-import vm.metricspace.MetricSpacesStorageInterface;
-import vm.metricspace.dataToStringConvertors.impl.FloatVectorConvertor;
+import vm.metricspace.Dataset;
 import vm.metricspace.distance.DistanceFunctionInterface;
 
 /**
@@ -21,20 +22,31 @@ public class PrintFirstStatsOfDataset {
 
     public static final Integer NUMBER_OF_TETRAHEDRONS = 10000;
     public static final Integer SAMPLE_SET_SIZE = 100000;
-    public static final Integer PIVOT_PAIRS = 4;
+    public static final Integer PIVOT_PAIRS = 1;
 
-    public static void main(String[] args) throws SQLException, IOException {
-        String datasetName = "decaf_1m";
+    public static void main(String[] args) throws IOException {
+        Dataset dataset;
+        dataset = new FSDatasetInstanceSingularizator.DeCAFDataset();
+        run(dataset);
+        dataset = new FSDatasetInstanceSingularizator.SIFTdataset();
+        run(dataset);
+        dataset = new FSDatasetInstanceSingularizator.RandomDataset20Uniform();
+        run(dataset);
+        dataset = new FSDatasetInstanceSingularizator.MPEG7dataset();
+        run(dataset);
+    }
 
-        AbstractMetricSpace metricSpace = new DBMetricSpaceImpl<>();
-        MetricSpacesStorageInterface metricSpacesStorage = new DBMetricSpacesStorage<>(metricSpace, new FloatVectorConvertor());
+    public static void run(Dataset dataset) throws FileNotFoundException {
+        AbstractMetricSpace metricSpace = new FSMetricSpaceImpl<>();
 
-        DistanceFunctionInterface df = metricSpace.getDistanceFunctionForDataset(datasetName);
+        DistanceFunctionInterface df = dataset.getDistanceFunction();
 
-        System.setErr(new PrintStream("h:\\Skola\\2022\\Ptolemaions_limited\\EFgetBD\\DeCAF_stats_per_pairs_oriented_" + NUMBER_OF_TETRAHEDRONS + ".csv"));
+        File folder = new File(FSGlobal.TRIALS_FOLDER + "Ptolemaions_limited\\EFgetBD\\" + dataset.getDatasetName());
+        folder.mkdirs();
+        System.setErr(new PrintStream(folder.getAbsolutePath() + "\\Stats_per_pairs_oriented_" + NUMBER_OF_TETRAHEDRONS + "_" + PIVOT_PAIRS + ".csv"));
 
-        List<Object> metricObjects = metricSpacesStorage.getSampleOfDataset(datasetName, SAMPLE_SET_SIZE);
-        List<Object> pivots = metricSpacesStorage.getPivots(datasetName);
+        List<Object> metricObjects = dataset.getSampleOfDataset(SAMPLE_SET_SIZE);
+        List<Object> pivots = dataset.getPivotsForTheSameDataset(-1);
         for (int p = 0; p < 2 * PIVOT_PAIRS; p += 2) {
             Object[] fourObjects = new Object[4];
             fourObjects[0] = pivots.get(p);

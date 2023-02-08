@@ -1,4 +1,4 @@
-package vm.vmtrials.checking;
+package vm.vmtrials.deprecated;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,6 +13,7 @@ import vm.metricspace.AbstractMetricSpace;
  *
  * @author Vlada
  */
+@Deprecated
 public class UpdateDatasetSizes {
 
     public static void main(String[] args) throws SQLException {
