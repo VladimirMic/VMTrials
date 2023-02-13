@@ -100,6 +100,7 @@ public class PrintFirstStatsOfDataset {
                     float check = (float) (bda * equalitiesCoefs[0] + efa * equalitiesCoefs[1]);
                     System.err.print(check + ";" + Math.abs(check - sixDists[2]) + ";");
                 }
+                Tools.printArray(trialGetKnownPartsOfF1F2ForEq1(sixDists, anglesRad), false);
                 System.err.println();
                 System.err.flush();
             }
@@ -113,6 +114,26 @@ public class PrintFirstStatsOfDataset {
             ret[i] = metricSpace.getDataOfMetricObject(fourObjects[i]);
         }
         return ret;
+    }
+
+    // 6 dists a, b, c, d, e, f
+    // 8 angles 0: beta1, 1: delta2, 2: gamma2, 3: alphao, 4: deltao, 5: betaq, 6: alphaq, 7: gamma1
+    private static double[] trialGetKnownPartsOfF1F2ForEq1(float[] sixDists, float[] anglesRad) {
+        float beta1 = anglesRad[0];
+        float alphao = anglesRad[3];
+        float delta2 = anglesRad[1];
+        float alphaq = anglesRad[6];
+        float a = sixDists[0];
+        float b = sixDists[1];
+        float d = sixDists[3];
+        float e = sixDists[4];
+        float f = sixDists[5];
+        double z1 = (1 - Math.cos(alphao)) / (Math.cos(beta1) - Math.cos(alphao + beta1));
+        double z2 = Math.sin(alphao + beta1) / Math.sin(beta1);
+        double z3 = Math.sin(delta2) / Math.sin(delta2 + alphaq);
+        double f1Known = z1 / (d + e) * (z2 * e / d + 1);
+        double f2Known = z1 / (d + e) * (b / f + z3);
+        return new double[]{f1Known, f2Known};
     }
 
 }
