@@ -6,8 +6,8 @@ import java.sql.Statement;
 import vm.db.DBGlobal;
 import vm.db.metricSpaceImpl.DBMetricSpaceImpl;
 import vm.db.metricSpaceImpl.DBMetricSpacesStorage;
-import vm.metricspace.dataToStringConvertors.SingularisedConvertors;
-import vm.metricspace.AbstractMetricSpace;
+import vm.metricSpace.dataToStringConvertors.SingularisedConvertors;
+import vm.metricSpace.AbstractMetricSpace;
 
 /**
  *

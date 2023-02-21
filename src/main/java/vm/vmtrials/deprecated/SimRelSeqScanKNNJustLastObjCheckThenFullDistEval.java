@@ -9,11 +9,11 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.datatools.Tools;
-import vm.metricspace.AbstractMetricSpace;
+import vm.metricSpace.AbstractMetricSpace;
 import vm.search.SearchingAlgorithm;
 import vm.simRel.SimRelInterface;
 import vm.simRel.impl.SimRelEuclideanPCAImpl;
-import vm.metricspace.distance.DistanceFunctionInterface;
+import vm.metricSpace.distance.DistanceFunctionInterface;
 
 /**
  * Simple filtering with the simRel function. If o cannot be filtered thanks to

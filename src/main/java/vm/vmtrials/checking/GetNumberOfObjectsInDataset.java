@@ -4,8 +4,8 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import vm.db.metricSpaceImpl.DBMetricSpaceImpl;
 import vm.db.metricSpaceImpl.DBMetricSpacesStorage;
-import vm.metricspace.MetricSpacesStorageInterface;
-import vm.metricspace.dataToStringConvertors.impl.FloatVectorConvertor;
+import vm.metricSpace.MetricSpacesStorageInterface;
+import vm.metricSpace.dataToStringConvertors.impl.FloatVectorConvertor;
 
 /**
  *

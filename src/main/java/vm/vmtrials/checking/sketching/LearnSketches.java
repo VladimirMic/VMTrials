@@ -2,7 +2,7 @@ package vm.vmtrials.checking.sketching;
 
 import java.sql.SQLException;
 import vm.db.dataset.DBDatasetInstanceSingularizator;
-import vm.metricspace.Dataset;
+import vm.metricSpace.Dataset;
 import vm.objTransforms.learning.LearningSketchingGHP;
 import vm.objTransforms.storeLearned.GHPSketchingPivotPairsStoreInterface;
 

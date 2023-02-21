@@ -9,9 +9,9 @@ import vm.datatools.DataTypeConvertor;
 import vm.db.metricSpaceImpl.DBMetricSpaceImpl;
 import vm.db.metricSpaceImpl.DBMetricSpacesStorage;
 import vm.math.Tools;
-import vm.metricspace.MetricDomainTools;
-import vm.metricspace.MetricSpacesStorageInterface;
-import vm.metricspace.dataToStringConvertors.impl.FloatVectorConvertor;
+import vm.metricSpace.MetricDomainTools;
+import vm.metricSpace.MetricSpacesStorageInterface;
+import vm.metricSpace.dataToStringConvertors.impl.FloatVectorConvertor;
 
 /**
  *

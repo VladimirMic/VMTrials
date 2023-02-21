@@ -10,9 +10,9 @@ import vm.distEstimation.limitedAngles.foursome.ToolsPtolemaionsLikeCoefs;
 import vm.fs.FSGlobal;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
 import vm.fs.metricSpaceImpl.FSMetricSpaceImpl;
-import vm.metricspace.AbstractMetricSpace;
-import vm.metricspace.Dataset;
-import vm.metricspace.distance.DistanceFunctionInterface;
+import vm.metricSpace.AbstractMetricSpace;
+import vm.metricSpace.Dataset;
+import vm.metricSpace.distance.DistanceFunctionInterface;
 
 /**
  *

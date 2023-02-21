@@ -9,10 +9,10 @@ import java.util.logging.Logger;
 import vm.datatools.Tools;
 import vm.distEstimation.limitedAngles.foursome.ToolsPtolemaionsLikeCoefs;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
-import vm.fs.store.auxiliaryForDistBounding.FSPtolemyInequalityWithLimitedAnglesCoefsStorageImpl;
-import vm.metricspace.AbstractMetricSpace;
-import vm.metricspace.Dataset;
-import vm.metricspace.distance.DistanceFunctionInterface;
+import vm.fs.store.auxiliaryForDistBounding.FSPtolemyInequalityWithLimitedAnglesHullsStorageImpl;
+import vm.metricSpace.AbstractMetricSpace;
+import vm.metricSpace.Dataset;
+import vm.metricSpace.distance.DistanceFunctionInterface;
 import vm.structures.ConvexHull2DEuclid;
 import static vm.vmtrials.ptolemaios.PrintFirstStatsOfDataset.getData;
 
@@ -88,7 +88,7 @@ public class LearnConvexHullsForPivotPairs_SimpleProposal {
                 }
                 hullsForPivotPair.evaluateHull();
                 Logger.getLogger(LearnConvexHullsForPivotPairs_OrigProposal.class.getName()).log(Level.INFO, "Evaluated hull for pivot pair {0}", p / 2);
-                FSPtolemyInequalityWithLimitedAnglesCoefsStorageImpl storage = new FSPtolemyInequalityWithLimitedAnglesCoefsStorageImpl();
+                FSPtolemyInequalityWithLimitedAnglesHullsStorageImpl storage = new FSPtolemyInequalityWithLimitedAnglesHullsStorageImpl();
                 String hullID = metricSpace.getIDOfMetricObject(fourObjects[0]) + "-" + metricSpace.getIDOfMetricObject(fourObjects[1]) + ": Eq.:" + (i + 1);
                 storage.storeHull(dataset.getDatasetName(), hullID, hullsForPivotPair);
             }
