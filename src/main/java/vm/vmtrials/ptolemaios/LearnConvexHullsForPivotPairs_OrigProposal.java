@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import vm.datatools.Tools;
 import vm.db.dataset.DBDatasetInstanceSingularizator;
 import vm.distEstimation.limitedAngles.foursome.ToolsPtolemaionsLikeCoefs;
+import vm.fs.store.auxiliaryForDistBounding.FSPtolemyInequalityWithLimitedAnglesCoefsStorageImpl;
 import vm.metricspace.AbstractMetricSpace;
 import vm.metricspace.Dataset;
 import vm.structures.ConvexHull2DEuclid;
@@ -22,7 +23,7 @@ import vm.metricspace.distance.DistanceFunctionInterface;
  *
  * @author Vlada
  */
-public class LearnConvexHullsForPivotPairs {
+public class LearnConvexHullsForPivotPairs_OrigProposal {
 
     public static final Float RATIO_OF_OUTLIERS_TO_CUT = 0.01f; // in total, i.e., half if this number is cut from each side on the x axis
     public static final Integer NUMBER_OF_TETRAHEDRONS = 500000;
@@ -103,14 +104,13 @@ public class LearnConvexHullsForPivotPairs {
                     hullsForPivotPair.addPoint(point[0], point[1], false);
                 }
                 hullsForPivotPair.evaluateHull();
-                Logger.getLogger(LearnConvexHullsForPivotPairs.class.getName()).log(Level.INFO, "Evaluated hull for pivot pair " + (p / 2));
-                System.out.print(metricSpace.getIDOfMetricObject(fourObjects[0]) + "-" + metricSpace.getIDOfMetricObject(fourObjects[1]) + ": Eq.:" + (i + 1) + ";");
+                Logger.getLogger(LearnConvexHullsForPivotPairs_OrigProposal.class.getName()).log(Level.INFO, "Evaluated hull for pivot pair {0}", p / 2);
+                FSPtolemyInequalityWithLimitedAnglesCoefsStorageImpl storage = new FSPtolemyInequalityWithLimitedAnglesCoefsStorageImpl();
+                String hullID = metricSpace.getIDOfMetricObject(fourObjects[0]) + "-" + metricSpace.getIDOfMetricObject(fourObjects[1]) + ": Eq.:" + (i + 1);
+                storage.storeHull(output, hullID, hullsForPivotPair);
+                System.out.print(hullID);
                 System.out.println("");
                 hullsForPivotPair.printAsCoordinatesInColumns();
-                System.setErr(new PrintStream(new FileOutputStream(output, true)));
-                System.err.print(metricSpace.getIDOfMetricObject(fourObjects[0]) + "-" + metricSpace.getIDOfMetricObject(fourObjects[1]) + ": Eq.:" + (i + 1) + ";");
-                System.err.println(hullsForPivotPair.toString());
-                System.setErr(err);
             }
         }
         System.out.close();
