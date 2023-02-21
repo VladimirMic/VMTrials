@@ -1,8 +1,6 @@
 package vm.vmtrials.ptolemaios;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -10,7 +8,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.datatools.Tools;
 import vm.distEstimation.limitedAngles.foursome.ToolsPtolemaionsLikeCoefs;
-import vm.fs.FSGlobal;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
 import vm.fs.store.auxiliaryForDistBounding.FSPtolemyInequalityWithLimitedAnglesCoefsStorageImpl;
 import vm.metricspace.AbstractMetricSpace;
@@ -46,10 +43,6 @@ public class LearnConvexHullsForPivotPairs_SimpleProposal {
         AbstractMetricSpace metricSpace = dataset.getMetricSpace();
 
         DistanceFunctionInterface df = dataset.getDistanceFunction();
-        String output = FSGlobal.TRIALS_FOLDER + "Ptolemaions_limited\\EFgetBD\\Hulls_simple\\" + dataset.getDatasetName() + "__tetrahedrons_" + NUMBER_OF_TETRAHEDRONS + "__ratio_of_outliers_to_cut_" + RATIO_OF_OUTLIERS_TO_CUT + "__pivot_pairs_" + PIVOT_PAIRS + ".csv";
-        new File(output).getParentFile().mkdirs();
-        PrintStream err = System.err;
-        System.setOut(new PrintStream(output + "_redable.csv"));
 
         List<Object> metricObjects = dataset.getSampleOfDataset(SAMPLE_SET_SIZE);
         List<Object> pivots = dataset.getPivotsForTheSameDataset(2 * PIVOT_PAIRS);
@@ -97,10 +90,7 @@ public class LearnConvexHullsForPivotPairs_SimpleProposal {
                 Logger.getLogger(LearnConvexHullsForPivotPairs_OrigProposal.class.getName()).log(Level.INFO, "Evaluated hull for pivot pair {0}", p / 2);
                 FSPtolemyInequalityWithLimitedAnglesCoefsStorageImpl storage = new FSPtolemyInequalityWithLimitedAnglesCoefsStorageImpl();
                 String hullID = metricSpace.getIDOfMetricObject(fourObjects[0]) + "-" + metricSpace.getIDOfMetricObject(fourObjects[1]) + ": Eq.:" + (i + 1);
-                storage.storeHull(output, hullID, hullsForPivotPair);
-                System.out.print(hullID);
-                System.out.println("");
-                hullsForPivotPair.printAsCoordinatesInColumns();
+                storage.storeHull(dataset.getDatasetName(), hullID, hullsForPivotPair);
             }
         }
         System.out.close();

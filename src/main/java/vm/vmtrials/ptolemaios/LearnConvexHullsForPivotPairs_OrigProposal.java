@@ -1,8 +1,7 @@
 package vm.vmtrials.ptolemaios;
 
-import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -10,8 +9,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.datatools.Tools;
-import vm.db.dataset.DBDatasetInstanceSingularizator;
 import vm.distEstimation.limitedAngles.foursome.ToolsPtolemaionsLikeCoefs;
+import vm.fs.dataset.FSDatasetInstanceSingularizator;
 import vm.fs.store.auxiliaryForDistBounding.FSPtolemyInequalityWithLimitedAnglesCoefsStorageImpl;
 import vm.metricspace.AbstractMetricSpace;
 import vm.metricspace.Dataset;
@@ -26,18 +25,26 @@ import vm.metricspace.distance.DistanceFunctionInterface;
 public class LearnConvexHullsForPivotPairs_OrigProposal {
 
     public static final Float RATIO_OF_OUTLIERS_TO_CUT = 0.01f; // in total, i.e., half if this number is cut from each side on the x axis
-    public static final Integer NUMBER_OF_TETRAHEDRONS = 500000;
+    public static final Integer NUMBER_OF_TETRAHEDRONS = 100000;
     public static final Integer SAMPLE_SET_SIZE = 100000;
     public static final Integer PIVOT_PAIRS = 128;
 
     public static void main(String[] args) throws SQLException, IOException {
-        Dataset dataset = new DBDatasetInstanceSingularizator.SIFTdataset();
+        Dataset dataset;
+//        dataset = new FSDatasetInstanceSingularizator.DeCAFDataset();
+//        run(dataset);
+//        dataset = new FSDatasetInstanceSingularizator.SIFTdataset();
+//        run(dataset);
+        dataset = new FSDatasetInstanceSingularizator.MPEG7dataset();
+        run(dataset);
+        dataset = new FSDatasetInstanceSingularizator.RandomDataset20Uniform();
+        run(dataset);
+    }
+
+    private static void run(Dataset dataset) throws FileNotFoundException {
         AbstractMetricSpace metricSpace = dataset.getMetricSpace();
 
         DistanceFunctionInterface df = dataset.getDistanceFunction();
-        String output = "h:\\Skola\\2022\\Ptolemaions_limited\\EFgetBD\\Hulls\\" + dataset.getDatasetName() + "__tetrahedrons_" + NUMBER_OF_TETRAHEDRONS + "__ratio_of_outliers_to_cut_" + RATIO_OF_OUTLIERS_TO_CUT + "__pivot_pairs_" + PIVOT_PAIRS + ".csv";
-        PrintStream err = System.err;
-        System.setOut(new PrintStream(output + "_redable.csv"));
 
         List<Object> metricObjects = dataset.getSampleOfDataset(SAMPLE_SET_SIZE);
         List<Object> pivots = dataset.getPivotsForTheSameDataset(2 * PIVOT_PAIRS);
@@ -107,10 +114,8 @@ public class LearnConvexHullsForPivotPairs_OrigProposal {
                 Logger.getLogger(LearnConvexHullsForPivotPairs_OrigProposal.class.getName()).log(Level.INFO, "Evaluated hull for pivot pair {0}", p / 2);
                 FSPtolemyInequalityWithLimitedAnglesCoefsStorageImpl storage = new FSPtolemyInequalityWithLimitedAnglesCoefsStorageImpl();
                 String hullID = metricSpace.getIDOfMetricObject(fourObjects[0]) + "-" + metricSpace.getIDOfMetricObject(fourObjects[1]) + ": Eq.:" + (i + 1);
-                storage.storeHull(output, hullID, hullsForPivotPair);
-                System.out.print(hullID);
-                System.out.println("");
-                hullsForPivotPair.printAsCoordinatesInColumns();
+                String resultDescription = storage.getResultDescription(dataset.getDatasetName(), NUMBER_OF_TETRAHEDRONS, PIVOT_PAIRS, RATIO_OF_OUTLIERS_TO_CUT);
+                storage.storeHull(resultDescription, hullID, hullsForPivotPair);
             }
         }
         System.out.close();
