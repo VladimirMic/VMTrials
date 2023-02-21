@@ -5,6 +5,7 @@ vm\vmtrials\ptolemaios\LearnConvexHullsForPivotPairs_SimpleProposal.class
 vm\vmtrials\simRelEuclidSpace\EvaluateSimRelKNNWithPrinting.class
 vm\vmtrials\ptolemaios\LearnConvexHullsForPivotPairs_SimpleProposal$PointComparatorY.class
 vm\vmtrials\ptolemaios\LearnConvexHullsForPivotPairs_OrigProposal.class
+vm\vmtrials\ptolemaios\LearnCAOverBDPlusEF.class
 vm\vmtrials\deprecated\PureSimRelSequentialScanKNN.class
 vm\vmtrials\ptolemaios\LearnConvexHullsForPivotPairs_SimpleProposal$PointComparatorX.class
 vm\vmtrials\deprecated\SimRelSeqScanKNNJustLastObjCheckThenFullDistEval.class
