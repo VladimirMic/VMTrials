@@ -24,7 +24,6 @@ import static vm.vmtrials.ptolemaios.PrintFirstStatsOfDataset.getData;
  */
 public class LearnCAOverBDPlusEF {
 
-    public static final Float RATIO_OF_OUTLIERS_TO_CUT = 0.10f / 100f; // percentile defining the minimum and the maximum. I.e., 2 times this is ignored.
     public static final Integer NUMBER_OF_TETRAHEDRONS = 100000;
     public static final Integer SAMPLE_SET_SIZE = 100000;
     public static final Integer PIVOT_PAIRS = 128;
