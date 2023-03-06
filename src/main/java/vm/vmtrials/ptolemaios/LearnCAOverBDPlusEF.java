@@ -6,11 +6,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.distEstimation.limitedAngles.foursome.ToolsPtolemaionsLikeCoefs;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
 import vm.fs.store.auxiliaryForDistBounding.FSPtolemyInequalityWithLimitedAnglesCoefsStorageImpl;
+import vm.fs.store.precomputedDists.FSPrecomputedDistPairsStorageImpl;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.Dataset;
 import vm.metricSpace.ToolsMetricDomain;
@@ -49,6 +51,9 @@ public class LearnCAOverBDPlusEF {
         List<Object> sampleObjects = metricObjects.subList(0, SAMPLE_SET_SIZE);
         List<Object> queriesSamples = metricObjects.subList(SAMPLE_SET_SIZE, SAMPLE_SET_SIZE + SAMPLE_QUERY_SET_SIZE);
         List<Object> pivots = dataset.getPivotsForTheSameDataset(PIVOTS);
+        
+        FSPrecomputedDistPairsStorageImpl smallDistStorage = new FSPrecomputedDistPairsStorageImpl(dataset.getDatasetName(), SAMPLE_SET_SIZE, SAMPLE_QUERY_SET_SIZE);
+        TreeSet<Map.Entry<String, Float>> smallDists = smallDistStorage.loadPrecomputedDistances();
         Map<String, float[]> results = new HashMap<>();
         for (int p = 0; p < pivots.size(); p++) {
             float[] fractionSums = new float[SAMPLE_SET_SIZE * SAMPLE_QUERY_SET_SIZE];
