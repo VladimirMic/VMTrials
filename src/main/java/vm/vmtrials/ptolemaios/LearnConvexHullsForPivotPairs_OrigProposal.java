@@ -14,8 +14,8 @@ import vm.fs.dataset.FSDatasetInstanceSingularizator;
 import vm.fs.store.auxiliaryForDistBounding.FSPtolemyInequalityWithLimitedAnglesHullsStorageImpl;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.Dataset;
+import vm.metricSpace.ToolsMetricDomain;
 import vm.structures.ConvexHull2DEuclid;
-import static vm.vmtrials.ptolemaios.PrintFirstStatsOfDataset.getData;
 import vm.metricSpace.distance.DistanceFunctionInterface;
 
 /**
@@ -24,7 +24,7 @@ import vm.metricSpace.distance.DistanceFunctionInterface;
  */
 public class LearnConvexHullsForPivotPairs_OrigProposal {
 
-    public static final Float RATIO_OF_OUTLIERS_TO_CUT = 0.01f; // in total, i.e., half if this number is cut from each side on the x axis
+    public static final Float RATIO_OF_OUTLIERS_TO_CUT = 0.0f; // in total, i.e., half if this number is cut from each side on the x axis
     public static final Integer NUMBER_OF_TETRAHEDRONS = 100000;
     public static final Integer SAMPLE_SET_SIZE = 100000;
     public static final Integer PIVOT_PAIRS = 128;
@@ -60,7 +60,7 @@ public class LearnConvexHullsForPivotPairs_OrigProposal {
                 Object[] twoObjects = Tools.randomUniqueObjects(metricObjects, 2);
                 fourObjects[2] = twoObjects[0];
                 fourObjects[3] = twoObjects[1];
-                Object[] fourObjectsData = getData(fourObjects, metricSpace);
+                Object[] fourObjectsData = ToolsMetricDomain.getData(fourObjects, metricSpace);
                 float[] sixDists = ToolsPtolemaionsLikeCoefs.getPairwiseDistsOfFourObjects(df, true, fourObjectsData);
                 if (sixDists == null) {
                     i--;

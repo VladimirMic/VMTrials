@@ -14,7 +14,7 @@ import vm.db.metricSpaceImpl.DBMetricSpacesStorage;
 import vm.db.store.queryResults.DBNearestNeighboursStorageImpl;
 import vm.fs.store.queryResults.FSQueryExecutionStatsStoreImpl;
 import vm.metricSpace.AbstractMetricSpace;
-import vm.metricSpace.MetricDomainTools;
+import vm.metricSpace.ToolsMetricDomain;
 import vm.metricSpace.MetricSpacesStorageInterface;
 import vm.metricSpace.dataToStringConvertors.impl.FloatVectorConvertor;
 import vm.queryResults.QueryExecutionStatsStoreInterface;
@@ -114,7 +114,7 @@ public class EvaluateSimRelKNNWithPrinting {
             fullData = Tools.getObjectsFromIterator(metricSpacesStorage.getObjectsFromDataset(fullDatasetName));
         }
         List<Object> fullQueries = metricSpacesStorage.getQueryObjects(fullQuerySetName);
-        Map<Object, Object> pcaQueries = MetricDomainTools.getMetricObjectsAsIdObjectMap(metricSpace, metricSpacesStorage.getQueryObjects(pcaQuerySetName));
+        Map<Object, Object> pcaQueries = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(metricSpace, metricSpacesStorage.getQueryObjects(pcaQuerySetName));
         SimRelSeqScanKNNCandSetThenFullDistEval alg = new SimRelSeqScanKNNCandSetThenFullDistEval<>(simRel, kPCA, metricSpace.getDistanceFunctionForDataset(fullDatasetName), involveObjWithUnknownRelation);
         for (int i = 0; i < fullQueries.size(); i++) {
             Object fullQueryObj = fullQueries.get(i);

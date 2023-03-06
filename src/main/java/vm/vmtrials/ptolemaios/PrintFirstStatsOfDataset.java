@@ -12,6 +12,7 @@ import vm.fs.dataset.FSDatasetInstanceSingularizator;
 import vm.fs.metricSpaceImpl.FSMetricSpaceImpl;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.Dataset;
+import vm.metricSpace.ToolsMetricDomain;
 import vm.metricSpace.distance.DistanceFunctionInterface;
 
 /**
@@ -55,7 +56,7 @@ public class PrintFirstStatsOfDataset {
                 Object[] twoObjects = Tools.randomUniqueObjects(metricObjects, 2);
                 fourObjects[2] = twoObjects[0];
                 fourObjects[3] = twoObjects[1];
-                Object[] fourObjectsData = getData(fourObjects, metricSpace);
+                Object[] fourObjectsData = ToolsMetricDomain.getData(fourObjects, metricSpace);
                 float[] sixDists = ToolsPtolemaionsLikeCoefs.getPairwiseDistsOfFourObjects(df, true, fourObjectsData);
                 if (sixDists == null) {
                     i--;
@@ -108,13 +109,6 @@ public class PrintFirstStatsOfDataset {
         System.err.close();
     }
 
-    public static Object[] getData(Object[] fourObjects, AbstractMetricSpace metricSpace) {
-        Object[] ret = new Object[fourObjects.length];
-        for (int i = 0; i < ret.length; i++) {
-            ret[i] = metricSpace.getDataOfMetricObject(fourObjects[i]);
-        }
-        return ret;
-    }
 
     // 6 dists a, b, c, d, e, f
     // 8 angles 0: beta1, 1: delta2, 2: gamma2, 3: alphao, 4: deltao, 5: betaq, 6: alphaq, 7: gamma1

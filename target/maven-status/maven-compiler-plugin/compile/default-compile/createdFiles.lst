@@ -1,5 +1,6 @@
 vm\vmtrials\checking\GetNumberOfObjectsInDataset.class
 vm\vmtrials\ptolemaios\PrintFirstStatsOfDataset.class
+vm\trials\smallestDistsSampling\SampleSmallestDists.class
 vm\vmtrials\ptolemaios\LearnConvexHullsForPivotPairs_OrigProposal$PointComparatorX.class
 vm\vmtrials\ptolemaios\LearnConvexHullsForPivotPairs_SimpleProposal.class
 vm\vmtrials\simRelEuclidSpace\EvaluateSimRelKNNWithPrinting.class

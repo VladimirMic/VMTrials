@@ -12,9 +12,9 @@ import vm.fs.dataset.FSDatasetInstanceSingularizator;
 import vm.fs.store.auxiliaryForDistBounding.FSPtolemyInequalityWithLimitedAnglesHullsStorageImpl;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.Dataset;
+import vm.metricSpace.ToolsMetricDomain;
 import vm.metricSpace.distance.DistanceFunctionInterface;
 import vm.structures.ConvexHull2DEuclid;
-import static vm.vmtrials.ptolemaios.PrintFirstStatsOfDataset.getData;
 
 /**
  *
@@ -58,7 +58,7 @@ public class LearnConvexHullsForPivotPairs_SimpleProposal {
                 Object[] twoObjects = Tools.randomUniqueObjects(metricObjects, 2);
                 fourObjects[2] = twoObjects[0];
                 fourObjects[3] = twoObjects[1];
-                Object[] fourObjectsData = getData(fourObjects, metricSpace);
+                Object[] fourObjectsData = ToolsMetricDomain.getData(fourObjects, metricSpace);
                 float[] sixDists = ToolsPtolemaionsLikeCoefs.getPairwiseDistsOfFourObjects(df, true, fourObjectsData);
                 if (sixDists == null) {
                     i--;

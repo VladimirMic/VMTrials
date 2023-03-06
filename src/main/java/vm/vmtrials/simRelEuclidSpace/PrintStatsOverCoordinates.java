@@ -9,7 +9,7 @@ import vm.datatools.DataTypeConvertor;
 import vm.db.metricSpaceImpl.DBMetricSpaceImpl;
 import vm.db.metricSpaceImpl.DBMetricSpacesStorage;
 import vm.math.Tools;
-import vm.metricSpace.MetricDomainTools;
+import vm.metricSpace.ToolsMetricDomain;
 import vm.metricSpace.MetricSpacesStorageInterface;
 import vm.metricSpace.dataToStringConvertors.impl.FloatVectorConvertor;
 
@@ -28,7 +28,7 @@ public class PrintStatsOverCoordinates {
         MetricSpacesStorageInterface metricSpacesStorage = new DBMetricSpacesStorage<>(metricSpace, new FloatVectorConvertor());
 
         List<Object> metricObjects = metricSpacesStorage.getSampleOfDataset(datasetName, -1);
-        float[][] matrix = MetricDomainTools.transformMetricObjectsToTransposedVectorMatrix(metricSpace, metricObjects);
+        float[][] matrix = ToolsMetricDomain.transformMetricObjectsToTransposedVectorMatrix(metricSpace, metricObjects);
         // rows are coordinates, columns are samples
         printStatsForCoordinates(matrix);
     }
