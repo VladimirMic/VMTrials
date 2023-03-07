@@ -39,8 +39,8 @@ public class LearnCAOverBDPlusEF {
         run(dataset);
         dataset = new FSDatasetInstanceSingularizator.SIFTdataset();
         run(dataset);
-//        dataset = new FSDatasetInstanceSingularizator.MPEG7dataset();
-//        run(dataset);
+        dataset = new FSDatasetInstanceSingularizator.MPEG7dataset();
+        run(dataset);
         dataset = new FSDatasetInstanceSingularizator.RandomDataset20Uniform();
         run(dataset);
     }
