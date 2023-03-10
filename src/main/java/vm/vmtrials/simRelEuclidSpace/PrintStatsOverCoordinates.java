@@ -6,9 +6,10 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 import vm.datatools.DataTypeConvertor;
-import vm.db.metricSpaceImpl.DBMetricSpaceImpl;
-import vm.db.metricSpaceImpl.DBMetricSpacesStorage;
+import vm.fs.metricSpaceImpl.FSMetricSpaceImpl;
+import vm.fs.metricSpaceImpl.FSMetricSpacesStorage;
 import vm.math.Tools;
+import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.ToolsMetricDomain;
 import vm.metricSpace.MetricSpacesStorageInterface;
 import vm.metricSpace.dataToStringConvertors.impl.FloatVectorConvertor;
@@ -24,8 +25,8 @@ public class PrintStatsOverCoordinates {
         String output = "h:\\Skola\\2022\\PCA\\simRel\\Coorinates_states__dataset_" + datasetName + ".csv";
         System.setOut(new PrintStream(output));
 
-        DBMetricSpaceImpl<float[]> metricSpace = new DBMetricSpaceImpl<>();
-        MetricSpacesStorageInterface metricSpacesStorage = new DBMetricSpacesStorage<>(metricSpace, new FloatVectorConvertor());
+        AbstractMetricSpace<float[]> metricSpace = new FSMetricSpaceImpl<>();
+        MetricSpacesStorageInterface metricSpacesStorage = new FSMetricSpacesStorage<>(metricSpace, new FloatVectorConvertor());
 
         List<Object> metricObjects = metricSpacesStorage.getSampleOfDataset(datasetName, -1);
         float[][] matrix = ToolsMetricDomain.transformMetricObjectsToTransposedVectorMatrix(metricSpace, metricObjects);

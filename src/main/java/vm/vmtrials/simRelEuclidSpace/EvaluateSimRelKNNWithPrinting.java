@@ -9,9 +9,9 @@ import java.util.Map;
 import java.util.TreeSet;
 import vm.datatools.DataTypeConvertor;
 import vm.datatools.Tools;
-import vm.db.metricSpaceImpl.DBMetricSpaceImpl;
-import vm.db.metricSpaceImpl.DBMetricSpacesStorage;
-import vm.db.store.queryResults.DBNearestNeighboursStorageImpl;
+import vm.fs.metricSpaceImpl.FSMetricSpaceImpl;
+import vm.fs.metricSpaceImpl.FSMetricSpacesStorage;
+import vm.fs.store.queryResults.FSNearestNeighboursStorageImpl;
 import vm.fs.store.queryResults.FSQueryExecutionStatsStoreImpl;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.ToolsMetricDomain;
@@ -59,9 +59,9 @@ public class EvaluateSimRelKNNWithPrinting {
 //        System.setOut(new PrintStream(output));
 
         /* definition of the processed metric space */
-        AbstractMetricSpace metricSpace = new DBMetricSpaceImpl<>();
+        AbstractMetricSpace metricSpace = new FSMetricSpaceImpl<>();
         /* storage definition */
-        MetricSpacesStorageInterface metricSpacesStorage = new DBMetricSpacesStorage<>(metricSpace, new FloatVectorConvertor());
+        MetricSpacesStorageInterface metricSpacesStorage = new FSMetricSpacesStorage<>(metricSpace, new FloatVectorConvertor());
         /* learn thresholds t(\Omega) */
         float[] learnedErrors = learnSimRelUncertainThresholdsEuclid(metricSpace, metricSpacesStorage, pcaDatasetName, querySampleCount, dataSampleCount, pcaLength, kPCA, percentile);
 
@@ -71,7 +71,7 @@ public class EvaluateSimRelKNNWithPrinting {
         String resultName = "simRel__PAPER6_kPCA" + kPCA + "_involveUnknownRelation_" + INVOLVE_OBJS_UNKNOWN_RELATION + "__rerank_" + RERANK + "__PCA" + pcaLength + "_decideUsingFirst" + prefixLength + "_learnToleranceOn__queries" + querySampleCount + "_dataSamples" + dataSampleCount + "_kSearching" + k + "_percentile" + percentile;
 //        String resultName = "pure_checkSingleX_deleteMany_simRel_PCA" + pcaLength + "_decideUsingFirst" + prefixLength + "_learnErrorsOn__queries" + querySampleCount + "_dataSamples" + dataSampleCount + "_kSearching" + k + "_percentile" + percentile;
         /* Storage to store the results of the kNN queries */
-        QueryNearestNeighboursStoreInterface resultsStorage = new DBNearestNeighboursStorageImpl();
+        QueryNearestNeighboursStoreInterface resultsStorage = new FSNearestNeighboursStorageImpl();
         /* Storage to store the stats about the kNN queries */
 
         Map<FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME, String> fileNameData = new HashMap<>();

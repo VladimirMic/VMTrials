@@ -1,4 +1,3 @@
-vm\vmtrials\checking\GetNumberOfObjectsInDataset.class
 vm\vmtrials\ptolemaios\PrintFirstStatsOfDataset.class
 vm\vmtrials\ptolemaios\LearnConvexHullsForPivotPairs_OrigProposal$PointComparatorX.class
 vm\vmtrials\ptolemaios\LearnConvexHullsForPivotPairs_SimpleProposal.class
@@ -13,4 +12,3 @@ vm\vmtrials\checking\sketching\LearnSketches.class
 vm\vmtrials\ptolemaios\LearnConvexHullsForPivotPairs_OrigProposal$1.class
 vm\vmtrials\ptolemaios\LearnConvexHullsForPivotPairs_OrigProposal$PointComparatorY.class
 vm\vmtrials\simRelEuclidSpace\PrintStatsOverCoordinates.class
-vm\vmtrials\deprecated\UpdateDatasetSizes.class
