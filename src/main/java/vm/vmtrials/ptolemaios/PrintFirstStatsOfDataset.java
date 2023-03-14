@@ -33,7 +33,7 @@ public class PrintFirstStatsOfDataset {
         run(dataset);
         dataset = new FSDatasetInstanceSingularizator.RandomDataset20Uniform();
         run(dataset);
-        dataset = new FSDatasetInstanceSingularizator.FSMPEG7dataset();
+        dataset = new FSDatasetInstanceSingularizator.MPEG7dataset();
         run(dataset);
     }
 
