@@ -8,7 +8,6 @@ vm\vmtrials\ptolemaios\LearnCAOverBDPlusEF.class
 vm\vmtrials\deprecated\PureSimRelSequentialScanKNN.class
 vm\vmtrials\ptolemaios\LearnConvexHullsForPivotPairs_SimpleProposal$PointComparatorX.class
 vm\vmtrials\deprecated\SimRelSeqScanKNNJustLastObjCheckThenFullDistEval.class
-vm\vmtrials\checking\sketching\LearnSketches.class
 vm\vmtrials\ptolemaios\LearnConvexHullsForPivotPairs_OrigProposal$1.class
 vm\vmtrials\ptolemaios\LearnConvexHullsForPivotPairs_OrigProposal$PointComparatorY.class
 vm\vmtrials\simRelEuclidSpace\PrintStatsOverCoordinates.class
