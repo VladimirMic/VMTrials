@@ -1,4 +1,4 @@
-package vm.vmtrials.checking;
+package vm.vmtrials.simRelEuclidSpace;
 
 import java.io.IOException;
 import java.io.PrintStream;

@@ -14,7 +14,7 @@ import vm.datatools.Tools;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.search.SearchingAlgorithm;
 import vm.simRel.SimRelInterface;
-import vm.simRel.impl.SimRelEuclideanPCAImpl;
+import vm.simRel.impl.SimRelEuclideanPCAImplForTesting;
 
 /**
  *
@@ -35,8 +35,8 @@ public class PureSimRelSequentialScanKNN<T> extends SearchingAlgorithm<T> {
 
     @Override
     public TreeSet<Map.Entry<Object, Float>> completeKnnSearch(AbstractMetricSpace<T> metricSpace, Object queryObject, int k, Iterator<Object> objects, Object... paramsToExtractDataFromMetricObject) {
-        if (simRelFunc instanceof SimRelEuclideanPCAImpl) {
-            SimRelEuclideanPCAImpl euclid = (SimRelEuclideanPCAImpl) simRelFunc;
+        if (simRelFunc instanceof SimRelEuclideanPCAImplForTesting) {
+            SimRelEuclideanPCAImplForTesting euclid = (SimRelEuclideanPCAImplForTesting) simRelFunc;
             euclid.resetEarlyStopsOnCoordsCounts();
         }
         T queryObjectData = metricSpace.getDataOfMetricObject(queryObject);
@@ -57,8 +57,8 @@ public class PureSimRelSequentialScanKNN<T> extends SearchingAlgorithm<T> {
     }
 
     public Object getSimRelStatsOfLastExecutedQuery() {
-        if (simRelFunc instanceof SimRelEuclideanPCAImpl) {
-            SimRelEuclideanPCAImpl euclid = (SimRelEuclideanPCAImpl) simRelFunc;
+        if (simRelFunc instanceof SimRelEuclideanPCAImplForTesting) {
+            SimRelEuclideanPCAImplForTesting euclid = (SimRelEuclideanPCAImplForTesting) simRelFunc;
             return euclid.getEarlyStopsOnCoordsCounts();
         }
         return null;

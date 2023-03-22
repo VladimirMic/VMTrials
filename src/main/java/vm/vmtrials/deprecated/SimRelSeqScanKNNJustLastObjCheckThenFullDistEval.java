@@ -12,7 +12,7 @@ import vm.datatools.Tools;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.search.SearchingAlgorithm;
 import vm.simRel.SimRelInterface;
-import vm.simRel.impl.SimRelEuclideanPCAImpl;
+import vm.simRel.impl.SimRelEuclideanPCAImplForTesting;
 import vm.metricSpace.distance.DistanceFunctionInterface;
 
 /**
@@ -40,8 +40,8 @@ public class SimRelSeqScanKNNJustLastObjCheckThenFullDistEval<T> extends Searchi
 
     @Override
     public TreeSet<Map.Entry<Object, Float>> completeKnnSearch(AbstractMetricSpace<T> metricSpace, Object queryObject, int k, Iterator<Object> objects, Object ... additionalParams) {
-        if (simRelFunc instanceof SimRelEuclideanPCAImpl) {
-            SimRelEuclideanPCAImpl euclid = (SimRelEuclideanPCAImpl) simRelFunc;
+        if (simRelFunc instanceof SimRelEuclideanPCAImplForTesting) {
+            SimRelEuclideanPCAImplForTesting euclid = (SimRelEuclideanPCAImplForTesting) simRelFunc;
             euclid.resetEarlyStopsOnCoordsCounts();
         }
         T queryObjectData = metricSpace.getDataOfMetricObject(queryObject);
@@ -80,8 +80,8 @@ public class SimRelSeqScanKNNJustLastObjCheckThenFullDistEval<T> extends Searchi
     }
 
     public Object getSimRelStatsOfLastExecutedQuery() {
-        if (simRelFunc instanceof SimRelEuclideanPCAImpl) {
-            SimRelEuclideanPCAImpl euclid = (SimRelEuclideanPCAImpl) simRelFunc;
+        if (simRelFunc instanceof SimRelEuclideanPCAImplForTesting) {
+            SimRelEuclideanPCAImplForTesting euclid = (SimRelEuclideanPCAImplForTesting) simRelFunc;
             return euclid.getEarlyStopsOnCoordsCounts();
         }
         return null;
