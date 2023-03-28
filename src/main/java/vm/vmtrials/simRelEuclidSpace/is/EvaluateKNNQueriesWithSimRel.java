@@ -82,7 +82,7 @@ public class EvaluateKNNQueriesWithSimRel {
     }
 
     private static float[] learnTOmegaThresholds(Dataset fullDataset, Dataset pcaDataset, int querySampleCount, int dataSampleCount, int pcaLength, int kPCA, float percentileWrong) {
-        List<Object> sampleOfDataset = fullDataset.getSampleOfDataset(querySampleCount + dataSampleCount);
+        List<Object> sampleOfDataset = pcaDataset.getSampleOfDataset(querySampleCount + dataSampleCount);
         List<Object> querySamples = Tools.getAndRemoveFirst(sampleOfDataset, querySampleCount);
         SimRelEuclideanPCALearn simRelLearn = new SimRelEuclideanPCALearn();
         SearchingAlgorithm alg = new SimRelSeqScanKNNCandSetThenFullDistEval(simRelLearn, kPCA, pcaDataset.getDistanceFunction());
