@@ -90,7 +90,7 @@ public class EvaluateSimRelKNNWithPrinting {
         List<Object> querySamples = metricSpacesStorage.getPivots(pcaDatasetName, querySampleCount);
         List<Object> sampleOfDataset = metricSpacesStorage.getSampleOfDataset(pcaDatasetName, dataSampleCount);
 
-        SimRelEuclideanPCALearn simRelLearn = new SimRelEuclideanPCALearn();
+        SimRelEuclideanPCALearn simRelLearn = new SimRelEuclideanPCALearn(pcaLength);
         SearchingAlgorithm alg = new SimRelSeqScanKNNCandSetThenFullDistEval(simRelLearn, kPCA, metricSpace.getDistanceFunctionForDataset(pcaDatasetName));
 
         simRelLearn.resetLearning(pcaLength);
@@ -115,7 +115,7 @@ public class EvaluateSimRelKNNWithPrinting {
             fullData = Tools.getObjectsFromIterator(metricSpacesStorage.getObjectsFromDataset(fullDatasetName));
         }
         List<Object> fullQueries = metricSpacesStorage.getQueryObjects(fullQuerySetName);
-        Map<Object, Object> pcaQueries = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(metricSpace, metricSpacesStorage.getQueryObjects(pcaQuerySetName));
+        Map<Object, Object> pcaQueries = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(metricSpace, metricSpacesStorage.getQueryObjects(pcaQuerySetName), false);
         SimRelSeqScanKNNCandSetThenFullDistEval alg = new SimRelSeqScanKNNCandSetThenFullDistEval<>(simRel, kPCA, metricSpace.getDistanceFunctionForDataset(fullDatasetName), involveObjWithUnknownRelation);
         for (int i = 0; i < fullQueries.size(); i++) {
             Object fullQueryObj = fullQueries.get(i);

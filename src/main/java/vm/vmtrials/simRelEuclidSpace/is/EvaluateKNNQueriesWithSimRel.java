@@ -1,6 +1,7 @@
 package vm.vmtrials.simRelEuclidSpace.is;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
@@ -12,13 +13,14 @@ import vm.fs.store.queryResults.FSNearestNeighboursStorageImpl;
 import vm.fs.store.queryResults.FSQueryExecutionStatsStoreImpl;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.Dataset;
+import vm.metricSpace.ToolsMetricDomain;
 import vm.objTransforms.storeLearned.SVDStoreInterface;
-import vm.queryResults.QueryExecutionStatsStoreInterface;
 import vm.queryResults.QueryNearestNeighboursStoreInterface;
 import vm.search.SearchingAlgorithm;
 import vm.search.impl.RefineCandidateSetWithPCASimRel;
 import vm.search.impl.SimRelSeqScanKNNCandSetThenFullDistEval;
 import vm.simRel.SimRelInterface;
+import vm.simRel.impl.SimRelEuclideanPCAImpl;
 import vm.simRel.impl.SimRelEuclideanPCAImplForTesting;
 import vm.simRel.impl.learn.SimRelEuclideanPCALearn;
 
@@ -29,7 +31,9 @@ import vm.simRel.impl.learn.SimRelEuclideanPCALearn;
 public class EvaluateKNNQueriesWithSimRel {
 
     public static final Boolean STORE_RESULTS = true;
-    public static final Boolean INVOLVE_OBJS_UNKNOWN_RELATION = false;
+    public static final Boolean INVOLVE_OBJS_UNKNOWN_RELATION = true;
+
+    public static final Integer TESTED_DATASET_SIZE = 10000;
 
     public static void main(String[] args) {
         FSDatasetInstanceSingularizator.DeCAFDataset fullDataset = new FSDatasetInstanceSingularizator.DeCAFDataset();
@@ -57,14 +61,14 @@ public class EvaluateKNNQueriesWithSimRel {
 //        System.setOut(new PrintStream(output));
 
         /* learn thresholds t(\Omega) */
-        float[] learnedErrors = learnTOmegaThresholds(fullDataset, pcaDataset, querySampleCount, dataSampleCount, pcaLength, kPCA, percentile);
+        float[] learnedErrors = learnTOmegaThresholds(fullDataset, pcaDataset, querySampleCount, dataSampleCount, prefixLength, kPCA, percentile);
 
         SVDStoreInterface svdStorage = new FSSVDStorageImpl(fullDataset.getDatasetName(), 100000, false);
 
         // TEST QUERIES
-        SimRelInterface<float[]> simRel = new SimRelEuclideanPCAImplForTesting(learnedErrors, prefixLength);
+        SimRelEuclideanPCAImpl simRel = new SimRelEuclideanPCAImplForTesting(learnedErrors, prefixLength);
 
-        String resultName = "simRel__kPCA" + kPCA + "_involveUnknownRelation_" + INVOLVE_OBJS_UNKNOWN_RELATION + "__PCA" + pcaLength + "_decideUsingFirst" + prefixLength + "_learnToleranceOn__queries" + querySampleCount + "_dataSamples" + dataSampleCount + "_kSearching" + k + "_percentile" + percentile;
+        String resultName = "simRel_IS__kPCA" + kPCA + "_involveUnknownRelation_" + INVOLVE_OBJS_UNKNOWN_RELATION + "__PCA" + pcaLength + "_decideUsingFirst" + prefixLength + "_learnToleranceOn__queries" + querySampleCount + "_dataSamples" + dataSampleCount + "_kSearching" + k + "_percentile" + percentile;
         /* Storage to store the results of the kNN queries */
         QueryNearestNeighboursStoreInterface resultsStorage = new FSNearestNeighboursStorageImpl();
         /* Storage to store the stats about the kNN queries */
@@ -75,21 +79,21 @@ public class EvaluateKNNQueriesWithSimRel {
         fileNameData.put(FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME.ground_truth_nn_count, Integer.toString(k));
         fileNameData.put(FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME.cand_set_name, pcaDataset.getDatasetName());
         fileNameData.put(FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME.storing_result_name, resultName);
-        QueryExecutionStatsStoreInterface statsStorage = new FSQueryExecutionStatsStoreImpl(fileNameData);
+        FSQueryExecutionStatsStoreImpl statsStorage = new FSQueryExecutionStatsStoreImpl(fileNameData);
 
-        RefineCandidateSetWithPCASimRel alg = new RefineCandidateSetWithPCASimRel(fullDataset.getMetricSpace(), svdStorage, pcaDataset.getMetricObjectsFromDataset(), prefixLength, pcaLength);
+        RefineCandidateSetWithPCASimRel alg = new RefineCandidateSetWithPCASimRel(fullDataset.getMetricSpace(), fullDataset.getDistanceFunction(), simRel, svdStorage, pcaDataset.getMetricObjectsFromDataset(TESTED_DATASET_SIZE), prefixLength, pcaLength);
+
         testQueries(alg, fullDataset, simRel, INVOLVE_OBJS_UNKNOWN_RELATION, kPCA, k, resultsStorage, resultName, statsStorage);
     }
 
-    private static float[] learnTOmegaThresholds(Dataset fullDataset, Dataset pcaDataset, int querySampleCount, int dataSampleCount, int pcaLength, int kPCA, float percentileWrong) {
+    private static float[] learnTOmegaThresholds(Dataset fullDataset, Dataset pcaDataset, int querySampleCount, int dataSampleCount, int prefixLength, int kPCA, float percentileWrong) {
         List<Object> sampleOfDataset = pcaDataset.getSampleOfDataset(querySampleCount + dataSampleCount);
         List<Object> querySamples = Tools.getAndRemoveFirst(sampleOfDataset, querySampleCount);
-        SimRelEuclideanPCALearn simRelLearn = new SimRelEuclideanPCALearn();
+        SimRelEuclideanPCALearn simRelLearn = new SimRelEuclideanPCALearn(prefixLength);
         SearchingAlgorithm alg = new SimRelSeqScanKNNCandSetThenFullDistEval(simRelLearn, kPCA, pcaDataset.getDistanceFunction());
 
-        simRelLearn.resetLearning(pcaLength);
         for (Object queryObj : querySamples) {
-            simRelLearn.resetCounters(pcaLength);
+            simRelLearn.resetCounters(prefixLength);
             alg.candSetKnnSearch(fullDataset.getMetricSpace(), queryObj, kPCA, sampleOfDataset.iterator());
 //            int[] errorsPerCoord = simRelLearn.getErrorsPerCoord();
 //            int comparisonCounter = simRelLearn.getSimRelCounter();
@@ -102,24 +106,28 @@ public class EvaluateKNNQueriesWithSimRel {
         return ret;
     }
 
-    private static void testQueries(RefineCandidateSetWithPCASimRel alg, Dataset fullDataset, SimRelInterface simRel, boolean involveObjWithUnknownRelation, int kPCA, int k, QueryNearestNeighboursStoreInterface resultsStorage, String resultName, QueryExecutionStatsStoreInterface statsStorage) {
+    private static void testQueries(RefineCandidateSetWithPCASimRel alg, Dataset fullDataset, SimRelInterface simRel, boolean involveObjWithUnknownRelation, int kPCA, int k, QueryNearestNeighboursStoreInterface resultsStorage, String resultName, FSQueryExecutionStatsStoreImpl statsStorage) {
         List<Object> fullQueries = fullDataset.getMetricQueryObjectsForTheSameDataset();
         AbstractMetricSpace metricSpace = fullDataset.getMetricSpace();
+        Iterator fullDatasetIterator = fullDataset.getMetricObjectsFromDataset(TESTED_DATASET_SIZE);
+        Map<Object, Object> mapOfAllFullObjects = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(fullDataset.getMetricSpace(), fullDatasetIterator, true);
         for (int i = 0; i < fullQueries.size(); i++) {
             Object fullQueryObj = fullQueries.get(i);
             Object queryObjId = metricSpace.getIDOfMetricObject(fullQueryObj);
-            TreeSet<Map.Entry<Object, Float>> completeKnnSearch = alg.completeKnnSearch(metricSpace, fullQueryObj, k, null);
+            TreeSet<Map.Entry<Object, Float>> completeKnnSearch = alg.completeKnnSearch(metricSpace, fullQueryObj, k, mapOfAllFullObjects, kPCA, involveObjWithUnknownRelation);
             if (STORE_RESULTS) {
                 resultsStorage.storeQueryResult(queryObjId, completeKnnSearch, fullDataset.getDatasetName(), fullDataset.getDatasetName(), resultName);
             }
             int[] earlyStopsPerCoords = (int[]) getSimRelStatsOfLastExecutedQuery(simRel);
             String earlyStopsPerCoordsString = DataTypeConvertor.intsToString(earlyStopsPerCoords, ";");
+            int objCheckedCount = alg.getAndResetObjCheckedCount();
             if (STORE_RESULTS) {
-                statsStorage.storeStatsForQuery(queryObjId, alg.getDistCompsForQuery(queryObjId), alg.getTimeOfQuery(queryObjId), earlyStopsPerCoordsString);
+                statsStorage.storeStatsForQuery(queryObjId, alg.getDistCompsForQuery(queryObjId), alg.getTimeOfQuery(queryObjId), earlyStopsPerCoordsString, objCheckedCount);
             } else {
                 System.out.println(earlyStopsPerCoordsString);
             }
         }
+        statsStorage.saveFile();
     }
 
     public static Object getSimRelStatsOfLastExecutedQuery(SimRelInterface simRelFunc) {
