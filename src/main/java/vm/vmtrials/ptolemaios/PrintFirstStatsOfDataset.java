@@ -42,7 +42,7 @@ public class PrintFirstStatsOfDataset {
 
         DistanceFunctionInterface df = dataset.getDistanceFunction();
 
-        File folder = new File(FSGlobal.TRIALS_FOLDER + "Ptolemaions_limited\\EFgetBD\\" + dataset.getDatasetName());
+        File folder = new File(FSGlobal.checkUnixPath(FSGlobal.TRIALS_FOLDER + "Ptolemaions_limited\\EFgetBD\\" + dataset.getDatasetName()));
         folder.mkdirs();
         System.setErr(new PrintStream(folder.getAbsolutePath() + "\\Stats_per_pairs_oriented_" + NUMBER_OF_TETRAHEDRONS + "_" + PIVOT_PAIRS + ".csv"));
 
@@ -108,7 +108,6 @@ public class PrintFirstStatsOfDataset {
         }
         System.err.close();
     }
-
 
     // 6 dists a, b, c, d, e, f
     // 8 angles 0: beta1, 1: delta2, 2: gamma2, 3: alphao, 4: deltao, 5: betaq, 6: alphaq, 7: gamma1

@@ -3,13 +3,11 @@ package vm.vmtrials.simRelEuclidSpace.is;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import static java.util.Locale.filter;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.datatools.DataTypeConvertor;
-import vm.datatools.Tools;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
 import vm.fs.store.dataTransforms.FSSVDStorageImpl;
 import vm.fs.store.queryResults.FSNearestNeighboursStorageImpl;
@@ -33,9 +31,9 @@ import vm.simRel.impl.learn.SimRelEuclideanPCALearn;
  *
  * @author Vlada
  */
-public class EvaluateKNNQueriesWithSimRel {
+public class EvaluateSimRelInfSysKNN {
 
-    private static final Logger LOG = Logger.getLogger(EvaluateKNNQueriesWithSimRel.class.getName());
+    private static final Logger LOG = Logger.getLogger(EvaluateSimRelInfSysKNN.class.getName());
 
     public static final Boolean STORE_RESULTS = true;
     public static final Boolean INVOLVE_OBJS_UNKNOWN_RELATION = true;
@@ -59,7 +57,7 @@ public class EvaluateKNNQueriesWithSimRel {
         /* super set size selected using the PCA vectors. Since PCA is approximation itself, we propose to select more than 5 objects using the PCA-shortened vectors, and then refine them */
         int kPCA = 100;
         /* number of query objects to learn t(\Omega) thresholds. We use different objects than the pivots tested. */
-        int querySampleCount = 500;
+        int querySampleCount = 100;
         /* size of the data sample to learn t(\Omega) thresholds */
         int dataSampleCount = 100000;
         /* percentile - defined in the paper. Defines the precision of the simRel */
@@ -72,7 +70,7 @@ public class EvaluateKNNQueriesWithSimRel {
         // TEST QUERIES
         SimRelEuclideanPCAImpl simRel = new SimRelEuclideanPCAImplForTesting(learnedErrors, prefixLength);
 
-        String resultName = "simRel_IS__kPCA" + kPCA + "_involveUnknownRelation_" + INVOLVE_OBJS_UNKNOWN_RELATION + "__PCA" + pcaLength + "_decideUsingFirst" + prefixLength + "_learnToleranceOn__queries" + querySampleCount + "_dataSamples" + dataSampleCount + "_kSearching" + k + "_percentile" + percentile;
+        String resultName = "simRel___check0First_upto0.5T0_IS2__kPCA" + kPCA + "_invUnknownRel_" + INVOLVE_OBJS_UNKNOWN_RELATION + "__PCA" + pcaLength + "_decideUsingFirst" + prefixLength + "_learnToleranceOn__q" + querySampleCount + "_dataSamples" + dataSampleCount + "_kSearching" + k + "_perc" + percentile;
         /* Storage to store the results of the kNN queries */
         QueryNearestNeighboursStoreInterface resultsStorage = new FSNearestNeighboursStorageImpl();
         /* Storage to store the stats about the kNN queries */
