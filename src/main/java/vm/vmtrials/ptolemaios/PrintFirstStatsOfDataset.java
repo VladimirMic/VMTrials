@@ -42,9 +42,10 @@ public class PrintFirstStatsOfDataset {
 
         DistanceFunctionInterface df = dataset.getDistanceFunction();
 
-        File folder = new File(FSGlobal.checkUnixPath(FSGlobal.TRIALS_FOLDER + "Ptolemaions_limited\\EFgetBD\\" + dataset.getDatasetName()));
-        folder.mkdirs();
-        System.setErr(new PrintStream(folder.getAbsolutePath() + "\\Stats_per_pairs_oriented_" + NUMBER_OF_TETRAHEDRONS + "_" + PIVOT_PAIRS + ".csv"));
+        File folder = new File(FSGlobal.TRIALS_FOLDER + "Ptolemaions_limited\\EFgetBD\\" + dataset.getDatasetName());
+        File file = new File(folder.getAbsolutePath() + "\\Stats_per_pairs_oriented_" + NUMBER_OF_TETRAHEDRONS + "_" + PIVOT_PAIRS + ".csv");
+        file = FSGlobal.checkFileExistence(file, true);
+        System.setErr(new PrintStream(file));
 
         List<Object> metricObjects = dataset.getSampleOfDataset(SAMPLE_SET_SIZE);
         List<Object> pivots = dataset.getPivotsForTheSameDataset(-1);
