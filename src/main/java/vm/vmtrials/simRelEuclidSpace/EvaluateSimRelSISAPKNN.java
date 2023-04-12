@@ -1,6 +1,5 @@
 package vm.vmtrials.simRelEuclidSpace;
 
-import java.io.FileNotFoundException;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -11,19 +10,20 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.datatools.DataTypeConvertor;
 import vm.datatools.Tools;
+import vm.fs.dataset.FSDatasetInstanceSingularizator;
 import vm.fs.metricSpaceImpl.FSMetricSpaceImpl;
-import vm.fs.metricSpaceImpl.FSMetricSpacesStorage;
 import vm.fs.store.dataTransforms.FSSVDStorageImpl;
 import vm.fs.store.queryResults.FSNearestNeighboursStorageImpl;
 import vm.fs.store.queryResults.FSQueryExecutionStatsStoreImpl;
 import vm.fs.store.queryResults.recallEvaluation.FSRecallOfCandidateSetsStorageImpl;
 import vm.metricSpace.AbstractMetricSpace;
-import vm.metricSpace.ToolsMetricDomain;
+import vm.metricSpace.Dataset;
 import vm.metricSpace.MetricSpacesStorageInterface;
-import vm.metricSpace.dataToStringConvertors.impl.FloatVectorConvertor;
+import vm.metricSpace.ToolsMetricDomain;
 import vm.objTransforms.perform.PCAMetricObjectTransformer;
 import vm.objTransforms.storeLearned.SVDStoreInterface;
 import vm.queryResults.QueryNearestNeighboursStoreInterface;
+import vm.queryResults.errorOnDistEvaluation.ErrorOnDistEvaluator;
 import vm.queryResults.recallEvaluation.RecallOfCandsSetsEvaluator;
 import vm.search.SearchingAlgorithm;
 import vm.search.impl.SimRelSeqScanKNNCandSetThenFullDistEval;
@@ -42,9 +42,13 @@ public class EvaluateSimRelSISAPKNN {
     public static final Boolean FULL_RERANK = true;
     public static final Boolean INVOLVE_OBJS_UNKNOWN_RELATION = false;
 
-    public static void main(String[] args) throws FileNotFoundException {
-        String fullDatasetName = "decaf_1m";
-        String fullQuerySetName = fullDatasetName;
+    public static void main(String[] args) {
+        Dataset fullDataset = new FSDatasetInstanceSingularizator.DeCAFDataset();
+        Dataset pcaDataset = new FSDatasetInstanceSingularizator.DeCAF_PCA256Dataset();
+        run(fullDataset, pcaDataset);
+    }
+
+    private static void run(Dataset fullDataset, Dataset pcaDataset) {
         /* kNN queries - the result set size */
         int k = 30;
         /* the length of the shortened vectors */
@@ -62,72 +66,71 @@ public class EvaluateSimRelSISAPKNN {
         /* percentile - defined in the paper. Defines the precision of the simRel */
         float percentile = 0.85f;
 
-        /* definition of the processed metric space */
-        AbstractMetricSpace metricSpace = new FSMetricSpaceImpl<>();
-        /* storage definition */
-        MetricSpacesStorageInterface metricSpacesStorage = new FSMetricSpacesStorage<>(metricSpace, new FloatVectorConvertor());
-        /* learn thresholds t(\Omega) */
-        float[] learnedErrors = learnSimRelUncertainThresholdsEuclid(metricSpace, metricSpacesStorage, pcaDatasetName, querySampleCount, dataSampleCount, pcaLength, prefixLength, kPCA, percentile);
-        SVDStoreInterface svdStorage = new FSSVDStorageImpl(fullDatasetName, 100000, false);
-        PCAMetricObjectTransformer pcaTransformer = initPCA(metricSpace, svdStorage, pcaLength, prefixLength);
+//        /* learn thresholds t(\Omega) */
+        float[] learnedErrors = learnTOmegaThresholds(fullDataset, pcaDataset, querySampleCount, dataSampleCount, pcaLength, prefixLength, kPCA, percentile);
+        SVDStoreInterface svdStorage = new FSSVDStorageImpl(fullDataset.getDatasetName(), 100000, false);
+        PCAMetricObjectTransformer pcaTransformer = initPCA(pcaDataset.getMetricSpace(), svdStorage, pcaLength, prefixLength);
         // TEST QUERIES
         SimRelEuclideanPCAImplForTesting simRel = new SimRelEuclideanPCAImplForTesting(learnedErrors, prefixLength);
 //        String resultName = "pure_simRel_PCA" + pcaLength + "_decideUsingFirst" + prefixLength + "_learnErrorsOn__queries" + querySampleCount + "_dataSamples" + dataSampleCount + "_kSearching" + k + "_percentile" + percentile;
-        String resultName = "simRel___check5First_SISAP_verification_PAPER6_kPCA" + kPCA + "_involveUnknownRelation_" + INVOLVE_OBJS_UNKNOWN_RELATION + "__rerank_" + FULL_RERANK + "__PCA" + pcaLength + "_decideUsingFirst" + prefixLength + "_learnToleranceOn__queries" + querySampleCount + "_dataSamples" + dataSampleCount + "_kSearching" + k + "_percentile" + percentile;
+        String resultName = "simRel_SISAP_for_IS_kPCA" + kPCA + "_involveUnknownRelation_" + INVOLVE_OBJS_UNKNOWN_RELATION + "__rerank_" + FULL_RERANK + "__PCA" + pcaLength + "_decideUsingFirst" + prefixLength + "_learnToleranceOn__queries" + querySampleCount + "_dataSamples" + dataSampleCount + "_kSearching" + k + "_percentile" + percentile;
 //        String resultName = "pure_checkSingleX_deleteMany_simRel_PCA" + pcaLength + "_decideUsingFirst" + prefixLength + "_learnErrorsOn__queries" + querySampleCount + "_dataSamples" + dataSampleCount + "_kSearching" + k + "_percentile" + percentile;
         /* Storage to store the results of the kNN queries */
         QueryNearestNeighboursStoreInterface resultsStorage = new FSNearestNeighboursStorageImpl();
         /* Storage to store the stats about the kNN queries */
 
         Map<FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME, String> fileNameData = new HashMap<>();
-        fileNameData.put(FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME.ground_truth_name, fullDatasetName);
-        fileNameData.put(FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME.ground_truth_query_set_name, fullQuerySetName);
+        fileNameData.put(FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME.ground_truth_name, fullDataset.getDatasetName());
+        fileNameData.put(FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME.ground_truth_query_set_name, fullDataset.getDatasetName());
         fileNameData.put(FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME.ground_truth_nn_count, Integer.toString(k));
         fileNameData.put(FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME.cand_set_name, pcaDatasetName);
         fileNameData.put(FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME.cand_set_query_set_name, pcaDatasetName);
         fileNameData.put(FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME.storing_result_name, resultName);
         FSQueryExecutionStatsStoreImpl statsStorage = new FSQueryExecutionStatsStoreImpl(fileNameData);
 
-        testQueries(metricSpace, metricSpacesStorage, simRel, INVOLVE_OBJS_UNKNOWN_RELATION, fullQuerySetName, pcaTransformer, prefixLength, fullDatasetName, pcaDatasetName, kPCA, k, resultsStorage, resultName, statsStorage, fileNameData);
+        testQueries(fullDataset, pcaDataset, simRel, pcaTransformer, prefixLength, kPCA, k, resultsStorage, resultName, statsStorage, fileNameData);
     }
 
-    private static float[] learnSimRelUncertainThresholdsEuclid(AbstractMetricSpace metricSpace, MetricSpacesStorageInterface metricSpacesStorage, String pcaDatasetName, int querySampleCount, int dataSampleCount, int pcaLength, int prefixLength, int kPCA, float percentileWrong) {
-        List<Object> querySamples = metricSpacesStorage.getPivots(pcaDatasetName, querySampleCount);
-        List<Object> sampleOfDataset = metricSpacesStorage.getSampleOfDataset(pcaDatasetName, dataSampleCount);
+    private static float[] learnTOmegaThresholds(Dataset fullDataset, Dataset pcaDataset, int querySampleCount, int dataSampleCount, int pcaLength, int prefixLength, int kPCA, float percentileWrong) {
+        List<Object> querySamples = pcaDataset.getPivotsForTheSameDataset(querySampleCount);
+        List<Object> sampleOfDataset = pcaDataset.getSampleOfDataset(dataSampleCount);
 
         SimRelEuclideanPCALearn simRelLearn = new SimRelEuclideanPCALearn(pcaLength);
-        SearchingAlgorithm alg = new SimRelSeqScanKNNCandSetThenFullDistEval(simRelLearn, kPCA, metricSpace.getDistanceFunctionForDataset(pcaDatasetName));
+        SearchingAlgorithm alg = new SimRelSeqScanKNNCandSetThenFullDistEval(simRelLearn, kPCA, pcaDataset.getDistanceFunction());
 
         simRelLearn.resetLearning(pcaLength);
         for (Object queryObj : querySamples) {
             simRelLearn.resetCounters(pcaLength);
-            alg.candSetKnnSearch(metricSpace, queryObj, kPCA, sampleOfDataset.iterator());
+            alg.candSetKnnSearch(fullDataset.getMetricSpace(), queryObj, kPCA, sampleOfDataset.iterator());
         }
         float[] ret = simRelLearn.getDiffWhenWrong(percentileWrong, prefixLength);
         return ret;
     }
 
-    private static void testQueries(AbstractMetricSpace metricSpace, MetricSpacesStorageInterface metricSpacesStorage, SimRelEuclideanPCAImplForTesting simRel, boolean involveObjWithUnknownRelation, String fullQuerySetName, PCAMetricObjectTransformer pcaTransformer, int prefixLength, String fullDatasetName, String pcaDatasetName, int kPCA, int k, QueryNearestNeighboursStoreInterface resultsStorage, String resultName, FSQueryExecutionStatsStoreImpl statsStorage, Map<FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME, String> fileNameDataForRecallStorage) {
-        List<Object> pcaData = Tools.getObjectsFromIterator(metricSpacesStorage.getObjectsFromDataset(pcaDatasetName));
-        Iterator<Object> fullDatasetIterator = metricSpacesStorage.getObjectsFromDataset(fullDatasetName);
+    private static void testQueries(Dataset fullDataset, Dataset pcaDataset, SimRelEuclideanPCAImplForTesting simRel, PCAMetricObjectTransformer pcaTransformer, int prefixLength, int kPCA, int k, QueryNearestNeighboursStoreInterface resultsStorage, String resultName, FSQueryExecutionStatsStoreImpl statsStorage, Map<FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME, String> fileNameDataForRecallStorage) {
+        List<Object> pcaData = Tools.getObjectsFromIterator(pcaDataset.getMetricObjectsFromDataset());
         Map<Object, Object> mapOfAllFullObjects = null;
         if (FULL_RERANK) {
-            mapOfAllFullObjects = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(metricSpace, fullDatasetIterator, true);
+            Iterator<Object> fullDatasetIterator = fullDataset.getMetricObjectsFromDataset();
+            mapOfAllFullObjects = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(fullDataset.getMetricSpace(), fullDatasetIterator, true);
+//            MapDBFile mapDB = new MapDBFile(fullDataset.getMetricSpace(), fullDataset.getDatasetName());
+//            mapOfAllFullObjects = mapDB.getStorage();
         }
-        List<Object> fullQueries = metricSpacesStorage.getQueryObjects(fullQuerySetName);
-        SimRelSeqScanKNNCandSetThenFullDistEval alg = new SimRelSeqScanKNNCandSetThenFullDistEval(simRel, kPCA, metricSpace.getDistanceFunctionForDataset(fullDatasetName), involveObjWithUnknownRelation);
+        List<Object> fullQueries = fullDataset.getMetricQueryObjectsForTheSameDataset();
+        SimRelSeqScanKNNCandSetThenFullDistEval alg = new SimRelSeqScanKNNCandSetThenFullDistEval(simRel, kPCA, fullDataset.getDistanceFunction(), INVOLVE_OBJS_UNKNOWN_RELATION);
+        AbstractMetricSpace metricSpaceOfFullDataset = fullDataset.getMetricSpace();
         for (int i = 0; i < fullQueries.size(); i++) {
             long time = -System.currentTimeMillis();
             Object fullQueryObj = fullQueries.get(i);
-            Object queryObjId = metricSpace.getIDOfMetricObject(fullQueryObj);
+            Object queryObjId = metricSpaceOfFullDataset.getIDOfMetricObject(fullQueryObj);
             AbstractMap.SimpleEntry<Object, float[]> pcaQueryObj = (AbstractMap.SimpleEntry<Object, float[]>) pcaTransformer.transformMetricObject(fullQueryObj, prefixLength);
 
-            List<Object> candSetObjIDs = alg.candSetKnnSearch(metricSpace, pcaQueryObj, kPCA, pcaData.iterator());
-            TreeSet<Map.Entry<Object, Float>> rerankCandidateSet = alg.rerankCandidateSet(metricSpace, fullQueryObj, k, fullDatasetName, mapOfAllFullObjects, candSetObjIDs);
+            List<Object> candSetObjIDs = alg.candSetKnnSearch(metricSpaceOfFullDataset, pcaQueryObj, kPCA, pcaData.iterator());
+            TreeSet<Map.Entry<Object, Float>> rerankCandidateSet = alg.rerankCandidateSet(metricSpaceOfFullDataset, fullQueryObj, k, fullDataset.getDatasetName(), mapOfAllFullObjects, candSetObjIDs);
             time += System.currentTimeMillis();
             alg.incTime(queryObjId, time);
             if (STORE_RESULTS) {
-                resultsStorage.storeQueryResult(queryObjId, rerankCandidateSet, fullDatasetName, fullQuerySetName, resultName);
+                resultsStorage.storeQueryResult(queryObjId, rerankCandidateSet, fullDataset.getDatasetName(), fullDataset.getDatasetName(), resultName);
             }
             int[] earlyStopsPerCoords = (int[]) alg.getSimRelStatsOfLastExecutedQuery();
             String earlyStopsPerCoordsString = DataTypeConvertor.intsToString(earlyStopsPerCoords, ",");
@@ -137,13 +140,18 @@ public class EvaluateSimRelSISAPKNN {
                 System.out.println(earlyStopsPerCoordsString);
             }
         }
-        statsStorage.saveFile();
-
-        LOG.log(Level.INFO, "Evaluating accuracy of queries");
-        FSRecallOfCandidateSetsStorageImpl recallStorage = new FSRecallOfCandidateSetsStorageImpl(fileNameDataForRecallStorage);
-        RecallOfCandsSetsEvaluator evaluator = new RecallOfCandsSetsEvaluator(resultsStorage, recallStorage);
-        evaluator.evaluateAndStoreRecallsOfQueries(fullDatasetName, fullDatasetName, k, fullDatasetName, fullDatasetName, resultName, k);
-        recallStorage.saveFile();
+        if (STORE_RESULTS) {
+            statsStorage.saveFile();
+            LOG.log(Level.INFO, "Evaluating accuracy of queries");
+            FSRecallOfCandidateSetsStorageImpl recallStorage = new FSRecallOfCandidateSetsStorageImpl(fileNameDataForRecallStorage);
+            RecallOfCandsSetsEvaluator recallEvaluator = new RecallOfCandsSetsEvaluator(resultsStorage, recallStorage);
+            recallEvaluator.evaluateAndStoreRecallsOfQueries(fullDataset.getDatasetName(), fullDataset.getDatasetName(), k, fullDataset.getDatasetName(), fullDataset.getDatasetName(), resultName, k);
+            recallStorage.saveFile();
+            LOG.log(Level.INFO, "Evaluating error on distance");
+            ErrorOnDistEvaluator eodEvaluator = new ErrorOnDistEvaluator(resultsStorage, recallStorage);
+            eodEvaluator.evaluateAndStoreErrorsOnDist(fullDataset.getDatasetName(), fullDataset.getDatasetName(), k, fullDataset.getDatasetName(), fullDataset.getDatasetName(), resultName);
+            recallStorage.saveFile();
+        }
     }
 
     private static PCAMetricObjectTransformer initPCA(AbstractMetricSpace<float[]> metricSpace, SVDStoreInterface svdStorage, int pcaFullLength, int pcaPreffixLength) {
