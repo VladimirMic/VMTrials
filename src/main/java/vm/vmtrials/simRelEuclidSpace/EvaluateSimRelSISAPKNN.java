@@ -2,7 +2,6 @@ package vm.vmtrials.simRelEuclidSpace;
 
 import java.util.AbstractMap;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
@@ -11,15 +10,12 @@ import java.util.logging.Logger;
 import vm.datatools.DataTypeConvertor;
 import vm.datatools.Tools;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
-import vm.fs.metricSpaceImpl.FSMetricSpaceImpl;
 import vm.fs.store.dataTransforms.FSSVDStorageImpl;
 import vm.fs.store.queryResults.FSNearestNeighboursStorageImpl;
 import vm.fs.store.queryResults.FSQueryExecutionStatsStoreImpl;
 import vm.fs.store.queryResults.recallEvaluation.FSRecallOfCandidateSetsStorageImpl;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.Dataset;
-import vm.metricSpace.MetricSpacesStorageInterface;
-import vm.metricSpace.ToolsMetricDomain;
 import vm.objTransforms.perform.PCAMetricObjectTransformer;
 import vm.objTransforms.storeLearned.SVDStoreInterface;
 import vm.queryResults.QueryNearestNeighboursStoreInterface;
@@ -29,6 +25,7 @@ import vm.search.SearchingAlgorithm;
 import vm.search.impl.SimRelSeqScanKNNCandSetThenFullDistEval;
 import vm.simRel.impl.SimRelEuclideanPCAImplForTesting;
 import vm.simRel.impl.learn.SimRelEuclideanPCALearn;
+import vm.vmmapdb.MapDBFile;
 
 /**
  *
@@ -40,7 +37,7 @@ public class EvaluateSimRelSISAPKNN {
 
     public static final Boolean STORE_RESULTS = true;
     public static final Boolean FULL_RERANK = true;
-    public static final Boolean INVOLVE_OBJS_UNKNOWN_RELATION = false;
+    public static final Boolean INVOLVE_OBJS_UNKNOWN_RELATION = true;
 
     public static void main(String[] args) {
         Dataset fullDataset = new FSDatasetInstanceSingularizator.DeCAFDataset();
@@ -73,7 +70,7 @@ public class EvaluateSimRelSISAPKNN {
         // TEST QUERIES
         SimRelEuclideanPCAImplForTesting simRel = new SimRelEuclideanPCAImplForTesting(learnedErrors, prefixLength);
 //        String resultName = "pure_simRel_PCA" + pcaLength + "_decideUsingFirst" + prefixLength + "_learnErrorsOn__queries" + querySampleCount + "_dataSamples" + dataSampleCount + "_kSearching" + k + "_percentile" + percentile;
-        String resultName = "simRel_SISAP_for_IS_kPCA" + kPCA + "_involveUnknownRelation_" + INVOLVE_OBJS_UNKNOWN_RELATION + "__rerank_" + FULL_RERANK + "__PCA" + pcaLength + "_decideUsingFirst" + prefixLength + "_learnToleranceOn__queries" + querySampleCount + "_dataSamples" + dataSampleCount + "_kSearching" + k + "_percentile" + percentile;
+        String resultName = "simRel_SISAP_for_IS_SSD_kPCA" + kPCA + "_involveUnknownRelation_" + INVOLVE_OBJS_UNKNOWN_RELATION + "__rerank_" + FULL_RERANK + "__PCA" + pcaLength + "_decideUsingFirst" + prefixLength + "_learnToleranceOn__queries" + querySampleCount + "_dataSamples" + dataSampleCount + "_kSearching" + k + "_percentile" + percentile;
 //        String resultName = "pure_checkSingleX_deleteMany_simRel_PCA" + pcaLength + "_decideUsingFirst" + prefixLength + "_learnErrorsOn__queries" + querySampleCount + "_dataSamples" + dataSampleCount + "_kSearching" + k + "_percentile" + percentile;
         /* Storage to store the results of the kNN queries */
         QueryNearestNeighboursStoreInterface resultsStorage = new FSNearestNeighboursStorageImpl();
@@ -111,10 +108,10 @@ public class EvaluateSimRelSISAPKNN {
         List<Object> pcaData = Tools.getObjectsFromIterator(pcaDataset.getMetricObjectsFromDataset());
         Map<Object, Object> mapOfAllFullObjects = null;
         if (FULL_RERANK) {
-            Iterator<Object> fullDatasetIterator = fullDataset.getMetricObjectsFromDataset();
-            mapOfAllFullObjects = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(fullDataset.getMetricSpace(), fullDatasetIterator, true);
-//            MapDBFile mapDB = new MapDBFile(fullDataset.getMetricSpace(), fullDataset.getDatasetName());
-//            mapOfAllFullObjects = mapDB.getStorage();
+//            Iterator<Object> fullDatasetIterator = fullDataset.getMetricObjectsFromDataset();
+//            mapOfAllFullObjects = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(fullDataset.getMetricSpace(), fullDatasetIterator, true);
+            MapDBFile mapDB = new MapDBFile(fullDataset.getMetricSpace(), fullDataset.getDatasetName(), false);
+            mapOfAllFullObjects = mapDB.getStorage();
         }
         List<Object> fullQueries = fullDataset.getMetricQueryObjectsForTheSameDataset();
         SimRelSeqScanKNNCandSetThenFullDistEval alg = new SimRelSeqScanKNNCandSetThenFullDistEval(simRel, kPCA, fullDataset.getDistanceFunction(), INVOLVE_OBJS_UNKNOWN_RELATION);
