@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.mapdb.HTreeMap;
 import vm.datatools.DataTypeConvertor;
 import vm.datatools.Tools;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
@@ -46,6 +47,11 @@ public class EvaluateSimRelSISAPKNN {
     }
 
     private static void run(Dataset fullDataset, Dataset pcaDataset) {
+//        MapDBFile mapDB = new MapDBFile(fullDataset.getMetricSpace(), fullDataset.getDatasetName(), false);
+//        int storage = mapDB.getStorage().keySet().size();
+//        System.out.println(storage);
+//        System.exit(0);
+
         /* kNN queries - the result set size */
         int k = 30;
         /* the length of the shortened vectors */
