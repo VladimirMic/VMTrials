@@ -38,7 +38,7 @@ public class EvaluateSimRelSISAPKNN {
 
     public static final Boolean STORE_RESULTS = true;
     public static final Boolean FULL_RERANK = true;
-    public static final Boolean INVOLVE_OBJS_UNKNOWN_RELATION = true;
+    public static final Boolean INVOLVE_OBJS_UNKNOWN_RELATION = false;
 
     public static void main(String[] args) {
         Dataset fullDataset = new FSDatasetInstanceSingularizator.DeCAFDataset();
@@ -50,6 +50,7 @@ public class EvaluateSimRelSISAPKNN {
 //        MapDBFile mapDB = new MapDBFile(fullDataset.getMetricSpace(), fullDataset.getDatasetName(), false);
 //        int storage = mapDB.getStorage().keySet().size();
 //        System.out.println(storage);
+//        mapDB.closeStorage();
 //        System.exit(0);
 
         /* kNN queries - the result set size */
