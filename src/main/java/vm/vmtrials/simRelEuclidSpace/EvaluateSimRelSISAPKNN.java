@@ -4,10 +4,11 @@ import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.mapdb.HTreeMap;
+import org.h2.mvstore.MVStore;
 import vm.datatools.DataTypeConvertor;
 import vm.datatools.Tools;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
@@ -27,6 +28,7 @@ import vm.search.impl.SimRelSeqScanKNNCandSetThenFullDistEval;
 import vm.simRel.impl.SimRelEuclideanPCAImplForTesting;
 import vm.simRel.impl.learn.SimRelEuclideanPCALearn;
 import vm.vmmapdb.MapDBFile;
+import vm.vmmvstore.VMMVStorage;
 
 /**
  *
@@ -38,7 +40,7 @@ public class EvaluateSimRelSISAPKNN {
 
     public static final Boolean STORE_RESULTS = true;
     public static final Boolean FULL_RERANK = true;
-    public static final Boolean INVOLVE_OBJS_UNKNOWN_RELATION = false;
+    public static final Boolean INVOLVE_OBJS_UNKNOWN_RELATION = true;
 
     public static void main(String[] args) {
         Dataset fullDataset = new FSDatasetInstanceSingularizator.DeCAFDataset();
@@ -47,11 +49,6 @@ public class EvaluateSimRelSISAPKNN {
     }
 
     private static void run(Dataset fullDataset, Dataset pcaDataset) {
-//        MapDBFile mapDB = new MapDBFile(fullDataset.getMetricSpace(), fullDataset.getDatasetName(), false);
-//        int storage = mapDB.getStorage().keySet().size();
-//        System.out.println(storage);
-//        mapDB.closeStorage();
-//        System.exit(0);
 
         /* kNN queries - the result set size */
         int k = 30;
@@ -60,8 +57,6 @@ public class EvaluateSimRelSISAPKNN {
         /*  prefix of the shortened vectors used by the simRel */
         int prefixLength = 24;
         /* the name of the PCA-shortened dataset */
-        String pcaDatasetName = "decaf_1m_PCA" + pcaLength;
-        /* super set size selected using the PCA vectors. Since PCA is approximation itself, we propose to select more than 5 objects using the PCA-shortened vectors, and then refine them */
         int kPCA = 100;
         /* number of query objects to learn t(\Omega) thresholds. We use different objects than the pivots tested. */
         int querySampleCount = 100;
@@ -87,8 +82,8 @@ public class EvaluateSimRelSISAPKNN {
         fileNameData.put(FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME.ground_truth_name, fullDataset.getDatasetName());
         fileNameData.put(FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME.ground_truth_query_set_name, fullDataset.getDatasetName());
         fileNameData.put(FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME.ground_truth_nn_count, Integer.toString(k));
-        fileNameData.put(FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME.cand_set_name, pcaDatasetName);
-        fileNameData.put(FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME.cand_set_query_set_name, pcaDatasetName);
+        fileNameData.put(FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME.cand_set_name, pcaDataset.getDatasetName());
+        fileNameData.put(FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME.cand_set_query_set_name, pcaDataset.getDatasetName());
         fileNameData.put(FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME.storing_result_name, resultName);
         FSQueryExecutionStatsStoreImpl statsStorage = new FSQueryExecutionStatsStoreImpl(fileNameData);
 
@@ -117,8 +112,10 @@ public class EvaluateSimRelSISAPKNN {
         if (FULL_RERANK) {
 //            Iterator<Object> fullDatasetIterator = fullDataset.getMetricObjectsFromDataset();
 //            mapOfAllFullObjects = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(fullDataset.getMetricSpace(), fullDatasetIterator, true);
-            MapDBFile mapDB = new MapDBFile(fullDataset.getMetricSpace(), fullDataset.getDatasetName(), false);
-            mapOfAllFullObjects = mapDB.getStorage();
+//            MapDBFile mapDB = new MapDBFile(fullDataset.getMetricSpace(), fullDataset.getDatasetName(), false);
+//            mapOfAllFullObjects = mapDB.getStorage();
+            MVStore storage = VMMVStorage.openStorage(fullDataset.getDatasetName());
+            mapOfAllFullObjects = VMMVStorage.getStoredMap(storage);
         }
         List<Object> fullQueries = fullDataset.getMetricQueryObjectsForTheSameDataset();
         SimRelSeqScanKNNCandSetThenFullDistEval alg = new SimRelSeqScanKNNCandSetThenFullDistEval(simRel, kPCA, fullDataset.getDistanceFunction(), INVOLVE_OBJS_UNKNOWN_RELATION);
