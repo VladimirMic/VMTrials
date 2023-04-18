@@ -4,7 +4,6 @@ import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,7 +26,6 @@ import vm.search.SearchingAlgorithm;
 import vm.search.impl.SimRelSeqScanKNNCandSetThenFullDistEval;
 import vm.simRel.impl.SimRelEuclideanPCAImplForTesting;
 import vm.simRel.impl.learn.SimRelEuclideanPCALearn;
-import vm.vmmapdb.MapDBFile;
 import vm.vmmvstore.VMMVStorage;
 
 /**
