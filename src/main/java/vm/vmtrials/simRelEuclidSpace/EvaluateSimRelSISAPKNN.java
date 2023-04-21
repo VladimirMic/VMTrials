@@ -42,7 +42,7 @@ public class EvaluateSimRelSISAPKNN {
 
     public static void main(String[] args) {
         Dataset fullDataset = new FSDatasetInstanceSingularizator.DeCAFDataset();
-        Dataset pcaDataset = new FSDatasetInstanceSingularizator.DeCAF_PCA256Dataset();
+        Dataset pcaDataset = new FSDatasetInstanceSingularizator.DeCAF20M_PCA256Dataset();
         run(fullDataset, pcaDataset);
     }
 
@@ -55,7 +55,7 @@ public class EvaluateSimRelSISAPKNN {
         /*  prefix of the shortened vectors used by the simRel */
         int prefixLength = 24;
         /* the name of the PCA-shortened dataset */
-        int kPCA = 100;
+        int kPCA = 125;
         /* number of query objects to learn t(\Omega) thresholds. We use different objects than the pivots tested. */
         int querySampleCount = 100;
         /* size of the data sample to learn t(\Omega) thresholds */
@@ -70,7 +70,7 @@ public class EvaluateSimRelSISAPKNN {
         // TEST QUERIES
         SimRelEuclideanPCAImplForTesting simRel = new SimRelEuclideanPCAImplForTesting(learnedErrors, prefixLength);
 //        String resultName = "pure_simRel_PCA" + pcaLength + "_decideUsingFirst" + prefixLength + "_learnErrorsOn__queries" + querySampleCount + "_dataSamples" + dataSampleCount + "_kSearching" + k + "_percentile" + percentile;
-        String resultName = "simRel_SISAP_for_IS_SSD_kPCA" + kPCA + "_involveUnknownRelation_" + INVOLVE_OBJS_UNKNOWN_RELATION + "__rerank_" + FULL_RERANK + "__PCA" + pcaLength + "_decideUsingFirst" + prefixLength + "_learnToleranceOn__queries" + querySampleCount + "_dataSamples" + dataSampleCount + "_kSearching" + k + "_percentile" + percentile;
+        String resultName = "simRel_IS_20M_SSD_kPCA" + kPCA + "_involveUnknown_" + INVOLVE_OBJS_UNKNOWN_RELATION + "__rerank_" + FULL_RERANK + "__PCA" + pcaLength + "_decideUsingFirst" + prefixLength + "_learnToleranceOn__queries" + querySampleCount + "_dataSamples" + dataSampleCount + "_k" + k + "_percentile" + percentile;
 //        String resultName = "pure_checkSingleX_deleteMany_simRel_PCA" + pcaLength + "_decideUsingFirst" + prefixLength + "_learnErrorsOn__queries" + querySampleCount + "_dataSamples" + dataSampleCount + "_kSearching" + k + "_percentile" + percentile;
         /* Storage to store the results of the kNN queries */
         QueryNearestNeighboursStoreInterface resultsStorage = new FSNearestNeighboursStorageImpl();
@@ -112,7 +112,7 @@ public class EvaluateSimRelSISAPKNN {
 //            mapOfAllFullObjects = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(fullDataset.getMetricSpace(), fullDatasetIterator, true);
 //            MapDBFile mapDB = new MapDBFile(fullDataset.getMetricSpace(), fullDataset.getDatasetName(), false);
 //            mapOfAllFullObjects = mapDB.getStorage();
-            MVStore storage = VMMVStorage.openStorage(fullDataset.getDatasetName());
+            MVStore storage = VMMVStorage.openStorage("decaf_20m");
             mapOfAllFullObjects = VMMVStorage.getStoredMap(storage);
         }
         List<Object> fullQueries = fullDataset.getMetricQueryObjectsForTheSameDataset();
