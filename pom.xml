@@ -26,7 +26,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>vm.fs.main.queryResults.recallEvaluation.FSEvaluateRecallsOfApproximateDatasetMain</mainClass>
+                            <mainClass>vm.vmtrials.simRelEuclidSpace.EvaluateSimRelSISAPKNN</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
