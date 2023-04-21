@@ -96,9 +96,11 @@ public class EvaluateSimRelSISAPKNN {
         SearchingAlgorithm alg = new SimRelSeqScanKNNCandSetThenFullDistEval(simRelLearn, kPCA, pcaDataset.getDistanceFunction());
 
         simRelLearn.resetLearning(pcaLength);
-        for (Object queryObj : querySamples) {
+        for (int i = 0; i < querySamples.size(); i++) {
+            Object queryObj = querySamples.get(i);
             simRelLearn.resetCounters(pcaLength);
             alg.candSetKnnSearch(fullDataset.getMetricSpace(), queryObj, kPCA, sampleOfDataset.iterator());
+            LOG.log(Level.INFO, "Learning tresholds with the query obj {0}", new Object[]{i + 1});
         }
         float[] ret = simRelLearn.getDiffWhenWrong(percentileWrong, prefixLength);
         return ret;
@@ -138,7 +140,7 @@ public class EvaluateSimRelSISAPKNN {
             } else {
                 System.out.println(earlyStopsPerCoordsString);
             }
-            LOG.log(Level.INFO, "Processed query {0}{1}", new Object[]{i, 1});
+            LOG.log(Level.INFO, "Processed query {0}", new Object[]{i + 1});
         }
         if (STORE_RESULTS) {
             statsStorage.saveFile();
