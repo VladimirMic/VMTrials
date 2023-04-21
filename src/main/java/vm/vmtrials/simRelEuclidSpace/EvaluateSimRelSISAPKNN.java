@@ -57,9 +57,9 @@ public class EvaluateSimRelSISAPKNN {
         /* the name of the PCA-shortened dataset */
         int kPCA = 125;
         /* number of query objects to learn t(\Omega) thresholds. We use different objects than the pivots tested. */
-        int querySampleCount = 100;
-        /* size of the data sample to learn t(\Omega) thresholds */
-        int dataSampleCount = 100000;
+        int querySampleCount = 200;
+        /* size of the data sample to learn t(\Omega) thresholds, SISAP: 100K */
+        int dataSampleCount = 1000000;
         /* percentile - defined in the paper. Defines the precision of the simRel */
         float percentile = 0.85f;
 
