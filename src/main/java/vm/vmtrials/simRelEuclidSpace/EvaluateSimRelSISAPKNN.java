@@ -138,6 +138,7 @@ public class EvaluateSimRelSISAPKNN {
             } else {
                 System.out.println(earlyStopsPerCoordsString);
             }
+            LOG.log(Level.INFO, "Processed query {0}{1}", new Object[]{i, 1});
         }
         if (STORE_RESULTS) {
             statsStorage.saveFile();
