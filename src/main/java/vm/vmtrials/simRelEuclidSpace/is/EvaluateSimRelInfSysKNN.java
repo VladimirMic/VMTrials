@@ -81,7 +81,7 @@ public class EvaluateSimRelInfSysKNN {
         fileNameData.put(FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME.cand_set_name, pcaDataset.getDatasetName());
         fileNameData.put(FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME.storing_result_name, resultName);
         FSQueryExecutionStatsStoreImpl statsStorage = new FSQueryExecutionStatsStoreImpl(fileNameData);
-        RefineCandidateSetWithPCASimRel alg = new RefineCandidateSetWithPCASimRel(fullDataset.getMetricSpace(), fullDataset.getDistanceFunction(), simRel, svdStorage, pcaDataset.getMetricObjectsFromDataset(TESTED_DATASET_SIZE), prefixLength, pcaLength);
+        RefineCandidateSetWithPCASimRel alg = new RefineCandidateSetWithPCASimRel(fullDataset.getMetricSpace(), pcaDataset.getMetricSpace(), fullDataset.getDistanceFunction(), simRel, svdStorage, pcaDataset.getMetricObjectsFromDataset(TESTED_DATASET_SIZE), prefixLength, pcaLength);
 
         testQueries(alg, fullDataset, simRel, INVOLVE_OBJS_UNKNOWN_RELATION, kPCA, k, resultsStorage, resultName, statsStorage, fileNameData);
     }
