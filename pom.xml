@@ -63,14 +63,14 @@
         </dependency>
         <dependency>
             <groupId>vm</groupId>
-            <artifactId>VMMapDB</artifactId>
+            <artifactId>VMMVStore</artifactId>
             <version>1.0-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>vm</groupId>
-            <artifactId>VMMVStore</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <groupId>io.jhdf</groupId>
+            <artifactId>jhdf</artifactId>
+            <version>0.6.10</version>
             <type>jar</type>
         </dependency>
     </dependencies>
