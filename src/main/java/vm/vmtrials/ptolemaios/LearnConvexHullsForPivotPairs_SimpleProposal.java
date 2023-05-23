@@ -45,7 +45,7 @@ public class LearnConvexHullsForPivotPairs_SimpleProposal {
         DistanceFunctionInterface df = dataset.getDistanceFunction();
 
         List<Object> metricObjects = dataset.getSampleOfDataset(SAMPLE_SET_SIZE);
-        List<Object> pivots = dataset.getPivotsForTheSameDataset(2 * PIVOT_PAIRS);
+        List<Object> pivots = dataset.getPivots(2 * PIVOT_PAIRS);
         for (int p = 0; p < pivots.size(); p += 2) {
             Object[] fourObjects = new Object[4];
             fourObjects[0] = pivots.get(p);

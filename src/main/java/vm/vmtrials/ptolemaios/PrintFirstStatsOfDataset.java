@@ -48,7 +48,7 @@ public class PrintFirstStatsOfDataset {
         System.setErr(new PrintStream(file));
 
         List<Object> metricObjects = dataset.getSampleOfDataset(SAMPLE_SET_SIZE);
-        List<Object> pivots = dataset.getPivotsForTheSameDataset(-1);
+        List<Object> pivots = dataset.getPivots(-1);
         for (int p = 0; p < 2 * PIVOT_PAIRS; p += 2) {
             Object[] fourObjects = new Object[4];
             fourObjects[0] = pivots.get(p);

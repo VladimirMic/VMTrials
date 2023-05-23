@@ -91,7 +91,7 @@ public class EvaluateSimRelSISAPKNN {
     }
 
     private static float[] learnTOmegaThresholds(Dataset pcaDataset, int querySampleCount, int dataSampleCount, int pcaLength, int prefixLength, int kPCA, float percentileWrong) {
-        List<Object> querySamples = pcaDataset.getPivotsForTheSameDataset(querySampleCount);
+        List<Object> querySamples = pcaDataset.getPivots(querySampleCount);
         List<Object> sampleOfDataset = pcaDataset.getSampleOfDataset(dataSampleCount);
 
         SimRelEuclideanPCALearn simRelLearn = new SimRelEuclideanPCALearn(pcaLength);
@@ -119,7 +119,7 @@ public class EvaluateSimRelSISAPKNN {
             MVStore storage = VMMVStorage.openStorage(fullDataset.getDatasetName());
             mapOfAllFullObjects = VMMVStorage.getStoredMap(storage);
         }
-        List<Object> fullQueries = fullDataset.getMetricQueryObjectsForTheSameDataset();
+        List<Object> fullQueries = fullDataset.getMetricQueryObjects();
         SimRelSeqScanKNNCandSetThenFullDistEval alg = new SimRelSeqScanKNNCandSetThenFullDistEval(simRel, kPCA, fullDataset.getDistanceFunction(), INVOLVE_OBJS_UNKNOWN_RELATION);
         AbstractMetricSpace metricSpaceOfFullDataset = fullDataset.getMetricSpace();
         AbstractMetricSpace pcaDatasetMetricSpace = pcaDataset.getMetricSpace();

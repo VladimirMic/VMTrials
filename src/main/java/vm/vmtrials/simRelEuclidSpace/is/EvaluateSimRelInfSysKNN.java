@@ -87,7 +87,7 @@ public class EvaluateSimRelInfSysKNN {
     }
 
     private static float[] learnTOmegaThresholds(Dataset fullDataset, Dataset pcaDataset, int querySampleCount, int dataSampleCount, int pcaLength, int prefixLength, int kPCA, float percentileWrong) {
-        List<Object> querySamples = pcaDataset.getPivotsForTheSameDataset(querySampleCount);
+        List<Object> querySamples = pcaDataset.getPivots(querySampleCount);
         List<Object> sampleOfDataset = pcaDataset.getSampleOfDataset(dataSampleCount);
 
         SimRelEuclideanPCALearn simRelLearn = new SimRelEuclideanPCALearn(pcaLength);
@@ -108,7 +108,7 @@ public class EvaluateSimRelInfSysKNN {
     }
 
     private static void testQueries(RefineCandidateSetWithPCASimRel alg, Dataset fullDataset, SimRelInterface simRel, boolean involveObjWithUnknownRelation, int kPCA, int k, QueryNearestNeighboursStoreInterface resultsStorage, String resultName, FSQueryExecutionStatsStoreImpl statsStorage, Map<FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME, String> fileNameDataForRecallStorage) {
-        List<Object> fullQueries = fullDataset.getMetricQueryObjectsForTheSameDataset();
+        List<Object> fullQueries = fullDataset.getMetricQueryObjects();
         AbstractMetricSpace metricSpace = fullDataset.getMetricSpace();
         Iterator fullDatasetIterator = fullDataset.getMetricObjectsFromDataset(TESTED_DATASET_SIZE);
         Map<Object, Object> mapOfAllFullObjects = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(fullDataset.getMetricSpace(), fullDatasetIterator, true);
