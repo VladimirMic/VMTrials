@@ -16,7 +16,7 @@ public class SelectRandomUniform {
 
     public static void main(String[] args) {
         Dataset dataset = new FSDatasetInstanceSingularizator.LAION_100M_Dataset();
-        int count = 512;
+        int count = 2048;
         List list = Tools.randomUniform(dataset.getMetricObjectsFromDataset(), 102050000, count);
         DistanceFunctionInterface df = dataset.getDistanceFunction();
         AbstractMetricSpace metricSpace = dataset.getMetricSpace();
@@ -34,6 +34,7 @@ public class SelectRandomUniform {
         }
         MetricSpacesStorageInterface storage = dataset.getMetricSpacesStorage();
         storage.storePivots(list, dataset.getDatasetName() + "_" + count + "pivots.gz");
+        //storage.storeObjectsToDataset(list.iterator(), -1, dataset.getDatasetName() + "_random_sample_" + count + ".gz");
     }
 
 }

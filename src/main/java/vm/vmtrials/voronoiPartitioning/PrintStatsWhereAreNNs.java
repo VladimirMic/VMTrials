@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import vm.datatools.Tools;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
 import vm.fs.store.queryResults.FSNearestNeighboursStorageImpl;
 import vm.fs.store.voronoiPartitioning.FSVoronoiPartitioningStorage;
@@ -41,8 +40,8 @@ public class PrintStatsWhereAreNNs {
 
     private static void run(Dataset dataset) {
         int k = 10;
-        int limitToFind = 10;
-        int pivotCount = 256;
+        int limitToFind = 9;
+        int pivotCount = 512;
         FSVoronoiPartitioningStorage storage = new FSVoronoiPartitioningStorage();
         File file = storage.getFileForFSVoronoiStorage(dataset.getDatasetName(), pivotCount, false);
         String name = file.getName() + "whereAre" + limitToFind + "outOf" + k + "closest.csv";

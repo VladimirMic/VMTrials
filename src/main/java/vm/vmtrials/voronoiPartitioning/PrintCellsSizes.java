@@ -32,7 +32,7 @@ public class PrintCellsSizes {
     }
 
     private static void run(Dataset dataset) {
-        int pivotCount = 256;
+        int pivotCount = 512;
         FSVoronoiPartitioningStorage storage = new FSVoronoiPartitioningStorage();
         Map<Object, TreeSet<Object>> vp = storage.load(dataset.getDatasetName(), pivotCount);
         File file = storage.getFileForFSVoronoiStorage(dataset.getDatasetName(), pivotCount, false);
