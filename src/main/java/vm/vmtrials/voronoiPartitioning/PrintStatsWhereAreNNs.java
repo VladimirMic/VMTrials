@@ -41,7 +41,7 @@ public class PrintStatsWhereAreNNs {
     private static void run(Dataset dataset) {
         int k = 10;
         int limitToFind = 9;
-        int pivotCount = 512;
+        int pivotCount = 768;
         FSVoronoiPartitioningStorage storage = new FSVoronoiPartitioningStorage();
         File file = storage.getFileForFSVoronoiStorage(dataset.getDatasetName(), pivotCount, false);
         String name = file.getName() + "whereAre" + limitToFind + "outOf" + k + "closest.csv";
