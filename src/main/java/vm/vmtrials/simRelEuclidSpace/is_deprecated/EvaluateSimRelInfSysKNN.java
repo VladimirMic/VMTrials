@@ -1,4 +1,4 @@
-package vm.vmtrials.simRelEuclidSpace.is;
+package vm.vmtrials.simRelEuclidSpace.is_deprecated;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -31,6 +31,7 @@ import vm.simRel.impl.learn.SimRelEuclideanPCALearn;
  *
  * @author Vlada
  */
+@Deprecated
 public class EvaluateSimRelInfSysKNN {
 
     private static final Logger LOG = Logger.getLogger(EvaluateSimRelInfSysKNN.class.getName());
