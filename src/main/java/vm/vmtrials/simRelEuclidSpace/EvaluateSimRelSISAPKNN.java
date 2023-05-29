@@ -26,7 +26,7 @@ import vm.queryResults.recallEvaluation.RecallOfCandsSetsEvaluator;
 import vm.search.SearchingAlgorithm;
 import vm.search.impl.SimRelSeqScanKNNCandSetThenFullDistEval;
 import vm.simRel.impl.SimRelEuclideanPCAImplForTesting;
-import vm.simRel.impl.learn.SimRelEuclideanPCALearn;
+import vm.simRel.impl.learn.SimRelEuclideanPCAForLearning;
 import vm.vmmvstore.VMMVStorage;
 
 /**
@@ -93,8 +93,7 @@ public class EvaluateSimRelSISAPKNN {
     private static float[] learnTOmegaThresholds(Dataset pcaDataset, int querySampleCount, int dataSampleCount, int pcaLength, int prefixLength, int kPCA, float percentileWrong) {
         List<Object> querySamples = pcaDataset.getPivots(querySampleCount);
         List<Object> sampleOfDataset = pcaDataset.getSampleOfDataset(dataSampleCount);
-
-        SimRelEuclideanPCALearn simRelLearn = new SimRelEuclideanPCALearn(pcaLength);
+        SimRelEuclideanPCAForLearning simRelLearn = new SimRelEuclideanPCAForLearning(pcaLength);
         SearchingAlgorithm alg = new SimRelSeqScanKNNCandSetThenFullDistEval(simRelLearn, kPCA, pcaDataset.getDistanceFunction());
 
         simRelLearn.resetLearning(pcaLength);

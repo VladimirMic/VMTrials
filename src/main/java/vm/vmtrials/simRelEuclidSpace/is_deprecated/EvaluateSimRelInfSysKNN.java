@@ -25,7 +25,7 @@ import vm.search.impl.SimRelSeqScanKNNCandSetThenFullDistEval;
 import vm.simRel.SimRelInterface;
 import vm.simRel.impl.SimRelEuclideanPCAImpl;
 import vm.simRel.impl.SimRelEuclideanPCAImplForTesting;
-import vm.simRel.impl.learn.SimRelEuclideanPCALearn;
+import vm.simRel.impl.learn.SimRelEuclideanPCAForLearning;
 
 /**
  *
@@ -91,7 +91,7 @@ public class EvaluateSimRelInfSysKNN {
         List<Object> querySamples = pcaDataset.getPivots(querySampleCount);
         List<Object> sampleOfDataset = pcaDataset.getSampleOfDataset(dataSampleCount);
 
-        SimRelEuclideanPCALearn simRelLearn = new SimRelEuclideanPCALearn(pcaLength);
+        SimRelEuclideanPCAForLearning simRelLearn = new SimRelEuclideanPCAForLearning(pcaLength);
         SearchingAlgorithm alg = new SimRelSeqScanKNNCandSetThenFullDistEval(simRelLearn, kPCA, pcaDataset.getDistanceFunction());
 
         for (Object queryObj : querySamples) {

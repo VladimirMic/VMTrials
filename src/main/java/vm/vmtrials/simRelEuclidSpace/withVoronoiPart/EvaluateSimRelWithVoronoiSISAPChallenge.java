@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.h2.mvstore.MVStore;
 import vm.datatools.DataTypeConvertor;
 import vm.datatools.Tools;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
@@ -25,8 +24,7 @@ import vm.queryResults.recallEvaluation.RecallOfCandsSetsEvaluator;
 import vm.search.SearchingAlgorithm;
 import vm.search.impl.SimRelSeqScanKNNCandSetThenFullDistEval;
 import vm.simRel.impl.SimRelEuclideanPCAImplForTesting;
-import vm.simRel.impl.learn.SimRelEuclideanPCALearn;
-import vm.vmmvstore.VMMVStorage;
+import vm.simRel.impl.learn.SimRelEuclideanPCAForLearning;
 import vm.vmtrials.simRelEuclidSpace.EvaluateSimRelSISAPKNN;
 
 /**
@@ -101,7 +99,7 @@ public class EvaluateSimRelWithVoronoiSISAPChallenge {
         List<Object> querySamples = pcaDataset.getPivots(querySampleCount);
         List<Object> sampleOfDataset = pcaDataset.getSampleOfDataset(dataSampleCount);
 
-        SimRelEuclideanPCALearn simRelLearn = new SimRelEuclideanPCALearn(pcaLength);
+        SimRelEuclideanPCAForLearning simRelLearn = new SimRelEuclideanPCAForLearning(pcaLength);
         SearchingAlgorithm alg = new SimRelSeqScanKNNCandSetThenFullDistEval(simRelLearn, kPCA, pcaDataset.getDistanceFunction());
 
         simRelLearn.resetLearning(pcaLength);

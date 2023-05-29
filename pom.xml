@@ -50,6 +50,12 @@
             <type>jar</type>
         </dependency>
         <dependency>
+            <groupId>io.jhdf</groupId>
+            <artifactId>jhdf</artifactId>
+            <version>0.6.10</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
             <groupId>vm</groupId>
             <artifactId>VMMetricSpaceTechniquesImpl</artifactId>
             <version>1.0-SNAPSHOT</version>
@@ -63,14 +69,14 @@
         </dependency>
         <dependency>
             <groupId>vm</groupId>
-            <artifactId>VMMVStore</artifactId>
+            <artifactId>VMM2MetricSpace</artifactId>
             <version>1.0-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>io.jhdf</groupId>
-            <artifactId>jhdf</artifactId>
-            <version>0.6.10</version>
+            <groupId>vm</groupId>
+            <artifactId>VMMVStore</artifactId>
+            <version>1.0-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
     </dependencies>

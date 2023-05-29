@@ -1,4 +1,4 @@
-package vm.vmtrials.simRelEuclidSpace;
+package vm.vmtrials.tmp;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
@@ -18,7 +18,7 @@ import vm.metricSpace.dataToStringConvertors.impl.FloatVectorConvertor;
  *
  * @author Vlada
  */
-public class PrintStatsOverCoordinates {
+public class PrintVectorCoordinatesStats {
 
     public static void main(String[] args) throws SQLException, FileNotFoundException {
         String datasetName = "sift_1m_PCA8";
