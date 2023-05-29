@@ -71,7 +71,7 @@ public class EvaluateSimRelWithVoronoiSISAPChallenge {
         float percentile = 0.85f;
 
 //        /* learn thresholds t(\Omega) */
-        float[] learnedErrors = learnTOmegaThresholds(pcaDataset, querySampleCount, dataSampleCount, pcaLength, prefixLength, kPCA, percentile);
+        float[] learnedErrors = learnTOmegaThresholds(pcaDataset, querySampleCount, dataSampleCount, pcaLength, prefixLength, kPCA, percentile)[0];
         // TEST QUERIES
         SimRelEuclideanPCAImplForTesting simRel = new SimRelEuclideanPCAImplForTesting(learnedErrors, prefixLength);
         String resultName = "simRel_" + fullDataset.getDatasetName() + "_kPCA_" + kPCA + "__invUnk_" + INVOLVE_OBJS_UNKNOWN_RELATION + "__re_" + FULL_RERANK + "__PCA" + pcaLength + "_pref" + prefixLength + "_tOn__queries" + querySampleCount + "_sample" + dataSampleCount + "_k" + k + "_perc" + percentile;
@@ -95,7 +95,7 @@ public class EvaluateSimRelWithVoronoiSISAPChallenge {
 //        testQueries(fullDataset, pcaDataset, null, null, prefixLength, kPCA, k, resultsStorage, resultName, statsStorage, fileNameData);
     }
 
-    private static float[] learnTOmegaThresholds(Dataset pcaDataset, int querySampleCount, int dataSampleCount, int pcaLength, int prefixLength, int kPCA, float percentileWrong) {
+    private static float[][] learnTOmegaThresholds(Dataset pcaDataset, int querySampleCount, int dataSampleCount, int pcaLength, int prefixLength, int kPCA, float percentileWrong) {
         List<Object> querySamples = pcaDataset.getPivots(querySampleCount);
         List<Object> sampleOfDataset = pcaDataset.getSampleOfDataset(dataSampleCount);
 
@@ -109,7 +109,7 @@ public class EvaluateSimRelWithVoronoiSISAPChallenge {
             alg.candSetKnnSearch(pcaDataset.getMetricSpace(), queryObj, kPCA, sampleOfDataset.iterator());
             LOG.log(Level.INFO, "Learning tresholds with the query obj {0}", new Object[]{i + 1});
         }
-        float[] ret = simRelLearn.getDiffWhenWrong(percentileWrong, prefixLength);
+        float[][] ret = simRelLearn.getDiffWhenWrong(percentileWrong, prefixLength);
         return ret;
     }
 

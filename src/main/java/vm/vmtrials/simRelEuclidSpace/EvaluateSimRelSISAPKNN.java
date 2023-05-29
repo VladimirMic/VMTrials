@@ -27,7 +27,7 @@ import vm.search.SearchingAlgorithm;
 import vm.search.impl.SimRelSeqScanKNNCandSetThenFullDistEval;
 import vm.simRel.impl.SimRelEuclideanPCAImplForTesting;
 import vm.simRel.impl.learn.SimRelEuclideanPCAForLearning;
-import vm.vmmvstore.VMMVStorage;
+import vm.vmmvstore.VMMVStorageMain;
 
 /**
  *
@@ -103,8 +103,8 @@ public class EvaluateSimRelSISAPKNN {
             alg.candSetKnnSearch(pcaDataset.getMetricSpace(), queryObj, kPCA, sampleOfDataset.iterator());
             LOG.log(Level.INFO, "Learning tresholds with the query obj {0}", new Object[]{i + 1});
         }
-        float[] ret = simRelLearn.getDiffWhenWrong(percentileWrong, prefixLength);
-        return ret;
+        float[][] ret = simRelLearn.getDiffWhenWrong(percentileWrong, prefixLength);
+        return ret[0];
     }
 
     private static void testQueries(Dataset fullDataset, Dataset pcaDataset, SimRelEuclideanPCAImplForTesting simRel, PCAMetricObjectTransformer pcaTransformer, int prefixLength, int kPCA, int k, QueryNearestNeighboursStoreInterface resultsStorage, String resultName, FSQueryExecutionStatsStoreImpl statsStorage, Map<FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME, String> fileNameDataForRecallStorage) {
@@ -115,8 +115,8 @@ public class EvaluateSimRelSISAPKNN {
 //            mapOfAllFullObjects = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(fullDataset.getMetricSpace(), fullDatasetIterator, true);
 //            MapDBFile mapDB = new MapDBFile(fullDataset.getMetricSpace(), fullDataset.getDatasetName(), false);
 //            mapOfAllFullObjects = mapDB.getStorage();
-            MVStore storage = VMMVStorage.openStorage(fullDataset.getDatasetName());
-            mapOfAllFullObjects = VMMVStorage.getStoredMap(storage);
+//            MVStore storage = VMMVStorageMain.openStorage(fullDataset.getDatasetName());
+//            mapOfAllFullObjects = VMMVStorageMain.getStoredMap(storage);
         }
         List<Object> fullQueries = fullDataset.getMetricQueryObjects();
         SimRelSeqScanKNNCandSetThenFullDistEval alg = new SimRelSeqScanKNNCandSetThenFullDistEval(simRel, kPCA, fullDataset.getDistanceFunction(), INVOLVE_OBJS_UNKNOWN_RELATION);

@@ -104,7 +104,7 @@ public class EvaluateSimRelInfSysKNN {
 //            }
 //            System.out.println();
         }
-        float[] ret = simRelLearn.getDiffWhenWrong(percentileWrong, prefixLength);
+        float[] ret = simRelLearn.getDiffWhenWrong(percentileWrong, prefixLength)[0];
         return ret;
     }
 
