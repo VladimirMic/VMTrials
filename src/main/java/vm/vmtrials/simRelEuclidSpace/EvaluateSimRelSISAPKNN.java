@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.h2.mvstore.MVStore;
 import vm.datatools.DataTypeConvertor;
 import vm.datatools.Tools;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
@@ -24,10 +23,9 @@ import vm.queryResults.QueryNearestNeighboursStoreInterface;
 import vm.queryResults.errorOnDistEvaluation.ErrorOnDistEvaluator;
 import vm.queryResults.recallEvaluation.RecallOfCandsSetsEvaluator;
 import vm.search.SearchingAlgorithm;
-import vm.search.impl.SimRelSeqScanKNNCandSetThenFullDistEval;
+import vm.search.impl.SimRelSeqScanKNNCandSet;
 import vm.simRel.impl.SimRelEuclideanPCAImplForTesting;
 import vm.simRel.impl.learn.SimRelEuclideanPCAForLearning;
-import vm.vmmvstore.VMMVStorageMain;
 
 /**
  *
@@ -79,10 +77,10 @@ public class EvaluateSimRelSISAPKNN {
 
         Map<FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME, String> fileNameData = new HashMap<>();
         fileNameData.put(FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME.ground_truth_name, fullDataset.getDatasetName());
-        fileNameData.put(FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME.ground_truth_query_set_name, fullDataset.getDatasetName());
+        fileNameData.put(FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME.ground_truth_query_set_name, fullDataset.getQuerySetName());
         fileNameData.put(FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME.ground_truth_nn_count, Integer.toString(k));
         fileNameData.put(FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME.cand_set_name, pcaDataset.getDatasetName());
-        fileNameData.put(FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME.cand_set_query_set_name, pcaDataset.getDatasetName());
+        fileNameData.put(FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME.cand_set_query_set_name, pcaDataset.getQuerySetName());
         fileNameData.put(FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME.storing_result_name, resultName);
         FSQueryExecutionStatsStoreImpl statsStorage = new FSQueryExecutionStatsStoreImpl(fileNameData);
 
@@ -94,7 +92,7 @@ public class EvaluateSimRelSISAPKNN {
         List<Object> querySamples = pcaDataset.getPivots(querySampleCount);
         List<Object> sampleOfDataset = pcaDataset.getSampleOfDataset(dataSampleCount);
         SimRelEuclideanPCAForLearning simRelLearn = new SimRelEuclideanPCAForLearning(pcaLength);
-        SearchingAlgorithm alg = new SimRelSeqScanKNNCandSetThenFullDistEval(simRelLearn, kPCA, pcaDataset.getDistanceFunction());
+        SearchingAlgorithm alg = new SimRelSeqScanKNNCandSet(simRelLearn, kPCA);
 
         simRelLearn.resetLearning(pcaLength);
         for (int i = 0; i < querySamples.size(); i++) {
@@ -119,7 +117,7 @@ public class EvaluateSimRelSISAPKNN {
 //            mapOfAllFullObjects = VMMVStorageMain.getStoredMap(storage);
         }
         List<Object> fullQueries = fullDataset.getMetricQueryObjects();
-        SimRelSeqScanKNNCandSetThenFullDistEval alg = new SimRelSeqScanKNNCandSetThenFullDistEval(simRel, kPCA, fullDataset.getDistanceFunction(), INVOLVE_OBJS_UNKNOWN_RELATION);
+        SimRelSeqScanKNNCandSet alg = new SimRelSeqScanKNNCandSet(simRel, kPCA, INVOLVE_OBJS_UNKNOWN_RELATION);
         AbstractMetricSpace metricSpaceOfFullDataset = fullDataset.getMetricSpace();
         AbstractMetricSpace pcaDatasetMetricSpace = pcaDataset.getMetricSpace();
         for (int i = 0; i < fullQueries.size(); i++) {
@@ -149,11 +147,11 @@ public class EvaluateSimRelSISAPKNN {
             LOG.log(Level.INFO, "Evaluating accuracy of queries");
             FSRecallOfCandidateSetsStorageImpl recallStorage = new FSRecallOfCandidateSetsStorageImpl(fileNameDataForRecallStorage);
             RecallOfCandsSetsEvaluator recallEvaluator = new RecallOfCandsSetsEvaluator(resultsStorage, recallStorage);
-            recallEvaluator.evaluateAndStoreRecallsOfQueries(fullDataset.getDatasetName(), fullDataset.getDatasetName(), k, fullDataset.getDatasetName(), fullDataset.getDatasetName(), resultName, k);
+            recallEvaluator.evaluateAndStoreRecallsOfQueries(fullDataset.getDatasetName(), fullDataset.getQuerySetName(), k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), resultName, k);
             recallStorage.saveFile();
             LOG.log(Level.INFO, "Evaluating error on distance");
             ErrorOnDistEvaluator eodEvaluator = new ErrorOnDistEvaluator(resultsStorage, recallStorage);
-            eodEvaluator.evaluateAndStoreErrorsOnDist(fullDataset.getDatasetName(), fullDataset.getDatasetName(), k, fullDataset.getDatasetName(), fullDataset.getDatasetName(), resultName);
+            eodEvaluator.evaluateAndStoreErrorsOnDist(fullDataset.getDatasetName(), fullDataset.getQuerySetName(), k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), resultName);
             recallStorage.saveFile();
         }
     }

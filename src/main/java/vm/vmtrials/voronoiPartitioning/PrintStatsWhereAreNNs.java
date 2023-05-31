@@ -27,11 +27,10 @@ public class PrintStatsWhereAreNNs {
 
     public static void main(String[] args) {
         Dataset[] datasets = new Dataset[]{
-                        new FSDatasetInstanceSingularizator.LAION_100k_Dataset(),
+            //                        new FSDatasetInstanceSingularizator.LAION_100k_Dataset(),
             //            new FSDatasetInstanceSingularizator.LAION_300k_Dataset(),
-            //            new FSDatasetInstanceSingularizator.LAION_10M_Dataset(),
-            //            new FSDatasetInstanceSingularizator.LAION_30M_Dataset(),
-//            new FSDatasetInstanceSingularizator.LAION_100M_Dataset()
+            new FSDatasetInstanceSingularizator.LAION_10M_Dataset(), //            new FSDatasetInstanceSingularizator.LAION_30M_Dataset(),
+        //            new FSDatasetInstanceSingularizator.LAION_100M_Dataset()
         };
         for (Dataset dataset : datasets) {
             run(dataset);
@@ -40,7 +39,7 @@ public class PrintStatsWhereAreNNs {
 
     private static void run(Dataset dataset) {
         int k = 10;
-        int pivotCount = 1536;
+        int pivotCount = 2048;
         FSVoronoiPartitioningStorage storage = new FSVoronoiPartitioningStorage();
 
         AbstractMetricSpace metricSpace = dataset.getMetricSpace();
@@ -51,7 +50,7 @@ public class PrintStatsWhereAreNNs {
         Map<String, TreeSet<Map.Entry<Object, Float>>> gt = new FSNearestNeighboursStorageImpl().getGroundTruthForDataset(dataset.getDatasetName(), dataset.getQuerySetName());
         //
         Map<Object, TreeSet<Object>> voronoiPartitioning = storage.load(dataset.getDatasetName(), pivotCount);
-        for (int limitToFind = 9; limitToFind <= 9; limitToFind++) {
+        for (int limitToFind = 1; limitToFind <= 8; limitToFind++) {
             performForLimit(limitToFind, pivots, queries, gt, voronoiPartitioning, storage, dataset.getDatasetName(), pivotCount, df, k);
         }
     }
