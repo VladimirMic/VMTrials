@@ -1,7 +1,6 @@
 package vm.vmtrials.simRelEuclidSpace.withVoronoiPart;
 
 import java.util.AbstractMap;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -12,7 +11,6 @@ import java.util.logging.Logger;
 import vm.datatools.DataTypeConvertor;
 import vm.datatools.Tools;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
-import vm.fs.store.auxiliaryForDistBounding.FSTriangleInequalityWithLimitedAnglesCoefsStorageImpl;
 import vm.fs.store.filtering.FSSimRelThresholdsTOmegaStorage;
 import vm.fs.store.queryResults.FSNearestNeighboursStorageImpl;
 import vm.fs.store.queryResults.FSQueryExecutionStatsStoreImpl;
@@ -21,8 +19,6 @@ import vm.fs.store.voronoiPartitioning.FSVoronoiPartitioningStorage;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.Dataset;
 import vm.metricSpace.ToolsMetricDomain;
-import vm.metricSpace.distance.bounding.onepivot.OnePivotFiltering;
-import vm.metricSpace.distance.bounding.onepivot.impl.TriangleInequalityWithLimitedAngles;
 import vm.queryResults.QueryNearestNeighboursStoreInterface;
 import vm.queryResults.errorOnDistEvaluation.ErrorOnDistEvaluator;
 import vm.queryResults.recallEvaluation.RecallOfCandsSetsEvaluator;
@@ -63,27 +59,30 @@ public class EvaluateSimRelWithVoronoiSISAPChallenge {
         /* kNN queries - the result set size */
         int k = 10;
         /* the maximum number of candidates identified by the Voronoi partitioning*/
-        Integer kVoronoi = 400000;
+        int kVoronoi = 400000;
         /* the minimum size of the simRel result */
         int kPCA = 300;
         /*  prefix of the shortened vectors used by the simRel */
         int prefixLength = 24;
+        /*  prefix of the shortened vectors used by the simRel */
+        int pcaLength = 96;
         /* number of query objects to learn t(\Omega) thresholds. We use different objects than the pivots tested. */
-        int querySampleCount = 200;
+        int querySampleCount = 100;
         /* size of the data sample to learn t(\Omega) thresholds, SISAP: 100K */
-        int dataSampleCount = 1000000;
+        int dataSampleCount = 100000;
         /* percentile - defined in the paper. Defines the precision of the simRel */
-        float percentile = 0.95f;
-        Integer voronoiPivots = 2050;
+        float percentile = 0.90f;
+//        Integer voronoiPivots = 2048;
 
-        FSSimRelThresholdsTOmegaStorage simRelStorage = new FSSimRelThresholdsTOmegaStorage(querySampleCount, dataSampleCount, 96, kPCA, percentile, voronoiPivots, kVoronoi);
-//        FSSimRelThresholdsTOmegaStorage simRelStorage = new FSSimRelThresholdsTOmegaStorage(querySampleCount, dataSampleCount, 96, kPCA, percentile);
+//        FSSimRelThresholdsTOmegaStorage simRelStorage = new FSSimRelThresholdsTOmegaStorage(querySampleCount, pcaLength, kPCA, voronoiPivots, kVoronoi); // On Cells
+        FSSimRelThresholdsTOmegaStorage simRelStorage = new FSSimRelThresholdsTOmegaStorage(querySampleCount, pcaLength, kPCA, dataSampleCount); // Global
         float[][] simRelThresholds = simRelStorage.load(pcaDataset.getDatasetName());
-        float[] learnedErrors = simRelThresholds[0];
+        int idx = simRelStorage.percentileToArrayIdx(percentile);
+        float[] learnedErrors = simRelThresholds[idx];
         // TEST QUERIES
         SimRelEuclideanPCAImpl simRel = new SimRelEuclideanPCAImplForTesting(learnedErrors, prefixLength);
-        String resultName = "Voronoi_simRelOnCells_" + fullDataset.getDatasetName() + "_kVoronoi" + kVoronoi + "_kPCA" + kPCA + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__" + dataSampleCount + "o__k" + k + "_perc" + percentile;
-//        String resultName = "Voronoi_simRelGlobal_" + fullDataset.getDatasetName() + "_kVoronoi" + kVoronoi + "_kPCA" + kPCA + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__" + dataSampleCount + "o__k" + k + "_perc" + percentile;
+//        String resultName = "Voronoi_simRelOnCells_" + fullDataset.getDatasetName() + "_kVoronoi" + kVoronoi + "_kPCA" + kPCA + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__" + dataSampleCount + "o__k" + k + "_perc" + percentile;
+        String resultName = "Voronoi_simRel_" + fullDataset.getDatasetName() + "_kVoronoi" + kVoronoi + "_kPCA" + kPCA + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__" + dataSampleCount + "o__k" + k + "_perc" + percentile;
         /* Storage to store the results of the kNN queries */
         QueryNearestNeighboursStoreInterface resultsStorage = new FSNearestNeighboursStorageImpl();
         /* Storage to store the stats about the kNN queries */

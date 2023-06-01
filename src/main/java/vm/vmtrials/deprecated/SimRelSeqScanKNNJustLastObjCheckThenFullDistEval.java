@@ -27,7 +27,7 @@ import vm.metricSpace.distance.DistanceFunctionInterface;
 @Deprecated
 public class SimRelSeqScanKNNJustLastObjCheckThenFullDistEval<T> extends SearchingAlgorithm<T> {
 
-    private static final Logger LOG = Logger.getLogger(SimRelSeqScanKNNJustLastObjCheckThenFullDistEval.class.getName());
+    private final Logger LOG = Logger.getLogger(SimRelSeqScanKNNJustLastObjCheckThenFullDistEval.class.getName());
     private final SimRelInterface<T> simRelFunc;
     private final DistanceFunctionInterface<T> fullDistanceFunction;
 

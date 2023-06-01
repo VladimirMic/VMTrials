@@ -24,7 +24,7 @@ import vm.simRel.impl.SimRelEuclideanPCAImplForTesting;
 @Deprecated
 public class PureSimRelSequentialScanKNN<T> extends SearchingAlgorithm<T> {
 
-    private static final Logger LOG = Logger.getLogger(PureSimRelSequentialScanKNN.class.getName());
+    private final Logger LOG = Logger.getLogger(PureSimRelSequentialScanKNN.class.getName());
     private final SimRelInterface<T> simRelFunc;
 
     private int simRelEvalCounter;
