@@ -63,7 +63,7 @@ public class EvaluateSimRelWithVoronoiSISAPChallenge {
         /* the minimum size of the simRel result */
         int kPCA = 300;
         /*  prefix of the shortened vectors used by the simRel */
-        int prefixLength = 32;
+        int prefixLength = 16;
         /*  prefix of the shortened vectors used by the simRel */
         int pcaLength = 96;
         /* number of query objects to learn t(\Omega) thresholds. We use different objects than the pivots tested. */
@@ -71,7 +71,7 @@ public class EvaluateSimRelWithVoronoiSISAPChallenge {
         /* size of the data sample to learn t(\Omega) thresholds, SISAP: 100K */
         int dataSampleCount = 100000;
         /* percentile - defined in the paper. Defines the precision of the simRel */
-        float percentile = 0.90f;
+        float percentile = 0.85f;
 //        Integer voronoiPivots = 2048;
 
 //        FSSimRelThresholdsTOmegaStorage simRelStorage = new FSSimRelThresholdsTOmegaStorage(querySampleCount, pcaLength, kPCA, voronoiPivots, kVoronoi); // On Cells
