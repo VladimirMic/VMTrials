@@ -59,11 +59,11 @@ public class EvaluateSimRelWithVoronoiSISAPChallenge {
         /* kNN queries - the result set size */
         int k = 10;
         /* the maximum number of candidates identified by the Voronoi partitioning*/
-        int kVoronoi = 400000;
+        int kVoronoi = 300000;
         /* the minimum size of the simRel result */
         int kPCA = 300;
         /*  prefix of the shortened vectors used by the simRel */
-        int prefixLength = 24;
+        int prefixLength = 32;
         /*  prefix of the shortened vectors used by the simRel */
         int pcaLength = 96;
         /* number of query objects to learn t(\Omega) thresholds. We use different objects than the pivots tested. */
