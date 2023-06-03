@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package vm.vmtrials.simRelEuclidSpace.challengeInstantVoronoi;
+package vm.vmtrials.hdf5;
 
 import java.util.AbstractMap;
 import java.util.HashMap;
@@ -26,10 +26,11 @@ import vm.metricSpace.ToolsMetricDomain;
 import vm.queryResults.QueryNearestNeighboursStoreInterface;
 import vm.queryResults.errorOnDistEvaluation.ErrorOnDistEvaluator;
 import vm.queryResults.recallEvaluation.RecallOfCandsSetsEvaluator;
-import vm.search.impl.SimRelInstantRefinement;
+import vm.vmtrials.deprecated.SimRelInstantRefinement;
 import vm.search.impl.VoronoiPartitionsCandSetIdentifier;
 import vm.simRel.impl.SimRelEuclideanPCAImpl;
 import vm.simRel.impl.SimRelEuclideanPCAImplForTesting;
+import vm.vmtrials.deprecated.SimRelInstantRefinement;
 
 /**
  *
@@ -44,16 +45,19 @@ public class EvaluateSimRelInstantWithVoronoi {
 
     public static void main(String[] args) {
         Dataset[] fullDatasets = new Dataset[]{
-            new FSDatasetInstanceSingularizator.LAION_10M_Dataset()
-//            new FSDatasetInstanceSingularizator.LAION_100M_Dataset(),
+            new FSDatasetInstanceSingularizator.LAION_10M_Dataset(),
+            new FSDatasetInstanceSingularizator.LAION_30M_Dataset(),
+            new FSDatasetInstanceSingularizator.LAION_100M_Dataset()
         };
         Dataset[] pcaDatasets = new Dataset[]{
-            new FSDatasetInstanceSingularizator.LAION_10M_PCA96Dataset()
-//            new FSDatasetInstanceSingularizator.LAION_100M_PCA96Dataset()
+            new FSDatasetInstanceSingularizator.LAION_10M_PCA96Dataset(),
+            new FSDatasetInstanceSingularizator.LAION_30M_PCA96Dataset(),
+            new FSDatasetInstanceSingularizator.LAION_100M_PCA96Dataset()
         };
 
         for (int i = 0; i < fullDatasets.length; i++) {
             run(fullDatasets[i], pcaDatasets[i]);
+            System.exit(0);
         }
     }
 
@@ -61,11 +65,11 @@ public class EvaluateSimRelInstantWithVoronoi {
         /* kNN queries - the result set size */
         int k = 10;
         /* the maximum number of candidates identified by the Voronoi partitioning*/
-        int kVoronoi = 300000;
+        int kVoronoi = 400000;
         /* the minimum size of the simRel result */
         int kPCA = 300;
         /*  prefix of the shortened vectors used by the simRel */
-        int prefixLength = 16;
+        int prefixLength = 32;
         /*  prefix of the shortened vectors used by the simRel */
         int pcaLength = 96;
         /* number of query objects to learn t(\Omega) thresholds. We use different objects than the pivots tested. */
@@ -73,7 +77,7 @@ public class EvaluateSimRelInstantWithVoronoi {
         /* size of the data sample to learn t(\Omega) thresholds, SISAP: 100K */
         int dataSampleCount = 100000;
         /* percentile - defined in the paper. Defines the precision of the simRel */
-        float percentile = 0.85f;
+        float percentile = 0.9f;
 //        Integer voronoiPivots = 2048;
 
 //        FSSimRelThresholdsTOmegaStorage simRelStorage = new FSSimRelThresholdsTOmegaStorage(querySampleCount, pcaLength, kPCA, voronoiPivots, kVoronoi); // On Cells

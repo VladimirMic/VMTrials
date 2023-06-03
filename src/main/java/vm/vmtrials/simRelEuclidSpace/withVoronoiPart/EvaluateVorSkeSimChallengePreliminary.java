@@ -32,7 +32,7 @@ import vm.vmtrials.simRelEuclidSpace.EvaluateSimRelSISAPKNN;
  *
  * @author Vlada
  */
-public class EvaluateSimRelWithVoronoiSISAPChallenge {
+public class EvaluateVorSkeSimChallengePreliminary {
 
     private static final Logger LOG = Logger.getLogger(EvaluateSimRelSISAPKNN.class.getName());
 

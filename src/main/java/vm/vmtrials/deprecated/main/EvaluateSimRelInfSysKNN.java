@@ -1,4 +1,4 @@
-package vm.vmtrials.simRelEuclidSpace.is_deprecated;
+package vm.vmtrials.deprecated.main;
 
 import java.util.HashMap;
 import java.util.Iterator;

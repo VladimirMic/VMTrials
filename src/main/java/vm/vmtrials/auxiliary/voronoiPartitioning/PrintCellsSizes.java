@@ -1,4 +1,4 @@
-package vm.vmtrials.voronoiPartitioning;
+package vm.vmtrials.auxiliary.voronoiPartitioning;
 
 import java.io.File;
 import java.io.FileNotFoundException;

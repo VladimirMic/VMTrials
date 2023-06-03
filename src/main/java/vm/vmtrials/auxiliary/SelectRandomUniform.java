@@ -1,4 +1,4 @@
-package vm.vmtrials.selectRandom;
+package vm.vmtrials.auxiliary;
 
 import java.util.List;
 import vm.datatools.Tools;

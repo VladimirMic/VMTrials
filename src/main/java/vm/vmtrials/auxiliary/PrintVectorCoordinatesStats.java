@@ -1,4 +1,4 @@
-package vm.vmtrials.tmp;
+package vm.vmtrials.auxiliary;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
