@@ -84,7 +84,7 @@ public class EvaluateSimRelInstantWithVoronoi {
         // TEST QUERIES
         SimRelEuclideanPCAImpl simRel = new SimRelEuclideanPCAImplForTesting(learnedErrors, prefixLength);
 //        String resultName = "Voronoi_simRelOnCells_" + fullDataset.getDatasetName() + "_kVoronoi" + kVoronoi + "_kPCA" + kPCA + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__" + dataSampleCount + "o__k" + k + "_perc" + percentile;
-        String resultName = "Voronoi_simRel_" + fullDataset.getDatasetName() + "_kVoronoi" + kVoronoi + "_kPCA" + kPCA + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__" + dataSampleCount + "o__k" + k + "_perc" + percentile;
+        String resultName = "Voronoi_simRelInstant_" + fullDataset.getDatasetName() + "_kVoronoi" + kVoronoi + "_kPCA" + kPCA + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__" + dataSampleCount + "o__k" + k + "_perc" + percentile;
         /* Storage to store the results of the kNN queries */
         QueryNearestNeighboursStoreInterface resultsStorage = new FSNearestNeighboursStorageImpl();
         /* Storage to store the stats about the kNN queries */
@@ -102,10 +102,7 @@ public class EvaluateSimRelInstantWithVoronoi {
     }
 
     private static void testQueries(Dataset fullDataset, Dataset pcaDataset, SimRelEuclideanPCAImpl simRel, Integer kVoronoi, int kPCA, int k, int prefixLength, QueryNearestNeighboursStoreInterface resultsStorage, String resultName, FSQueryExecutionStatsStoreImpl statsStorage, Map<FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME, String> fileNameDataForRecallStorage) {
-        Map<Object, Object> mapOfAllFullObjects = null;
-        if (FULL_RERANK) {
-            mapOfAllFullObjects = fullDataset.getKeyValueStorage();
-        }
+        Map<Object, Object> mapOfAllFullObjects = fullDataset.getKeyValueStorage();
         List<Object> fullQueries = fullDataset.getMetricQueryObjects();
 
         VoronoiPartitionsCandSetIdentifier algVoronoi = new VoronoiPartitionsCandSetIdentifier(fullDataset, new FSVoronoiPartitioningStorage(), 2048);
@@ -127,12 +124,21 @@ public class EvaluateSimRelInstantWithVoronoi {
             List<Object> pcaOfCandidates = Tools.filterMap(pcaOMap, candidatesIDs);
             AbstractMap.SimpleEntry<Object, float[]> pcaQueryObj = (AbstractMap.SimpleEntry<Object, float[]>) pcaQueriesMap.get(queryObjId);
 
-            List<Object> candSetObjIDs = algSimRel.candSetKnnSearch(pcaDatasetMetricSpace, pcaQueryObj, kPCA, pcaOfCandidates.iterator());
-            TreeSet<Map.Entry<Object, Float>> rerankCandidateSet = algSimRel.rerankCandidateSet(metricSpaceOfFullDataset, fullQueryObj, k, fullDataset.getDatasetName(), mapOfAllFullObjects, candSetObjIDs);
+//            List<Object> candSetObjIDs = algSimRel.candSetKnnSearch(pcaDatasetMetricSpace, pcaQueryObj, kPCA, pcaOfCandidates.iterator());
+//            TreeSet<Map.Entry<Object, Float>> rerankCandidateSet = algSimRel.rerankCandidateSet(metricSpaceOfFullDataset, fullQueryObj, k, fullDataset.getDatasetName(), mapOfAllFullObjects, candSetObjIDs);
+            TreeSet<Map.Entry<Object, Float>> result = algSimRel.completeKnnSearch(
+                    metricSpaceOfFullDataset,
+                    fullQueryObj,
+                    k,
+                    pcaOfCandidates.iterator(),
+                    mapOfAllFullObjects,
+                    pcaDatasetMetricSpace,
+                    pcaQueryObj
+            );
             time += System.currentTimeMillis();
             algSimRel.incTime(queryObjId, time);
             if (STORE_RESULTS) {
-                resultsStorage.storeQueryResult(queryObjId, rerankCandidateSet, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), resultName);
+                resultsStorage.storeQueryResult(queryObjId, result, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), resultName);
             }
             long[] earlyStopsPerCoords = (long[]) algSimRel.getSimRelStatsOfLastExecutedQuery();
             String earlyStopsPerCoordsString = DataTypeConvertor.longToString(earlyStopsPerCoords, ",");
