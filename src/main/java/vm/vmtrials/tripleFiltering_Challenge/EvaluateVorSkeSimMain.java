@@ -4,7 +4,6 @@
  */
 package vm.vmtrials.tripleFiltering_Challenge;
 
-import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -45,8 +44,8 @@ public class EvaluateVorSkeSimMain {
     public static final Boolean STORE_RESULTS = true;
 
     public static void main(String[] args) {
-        int sketchLength = 256;
-        float pCum = 0.5f;
+        int sketchLength = 512;
+        float pCum = 0.7f;
         Dataset[] fullDatasets = new Dataset[]{
             new FSDatasetInstanceSingularizator.LAION_10M_Dataset(),
             new FSDatasetInstanceSingularizator.LAION_30M_Dataset(),
@@ -59,9 +58,9 @@ public class EvaluateVorSkeSimMain {
         };
 
         Dataset[] sketchesDatasets = new Dataset[]{
-            new FSDatasetInstanceSingularizator.LAION_10M_GHP_50_256Dataset(),
-            new FSDatasetInstanceSingularizator.LAION_30M_GHP_50_256Dataset(),
-            new FSDatasetInstanceSingularizator.LAION_100M_GHP_50_256Dataset()
+            new FSDatasetInstanceSingularizator.LAION_10M_GHP_50_512Dataset(),
+            new FSDatasetInstanceSingularizator.LAION_30M_GHP_50_512Dataset(),
+            new FSDatasetInstanceSingularizator.LAION_100M_GHP_50_512Dataset()
         };
 
         int[] voronoiK = new int[]{
@@ -93,15 +92,15 @@ public class EvaluateVorSkeSimMain {
         int prefixLength = 24;
         /*  prefix of the shortened vectors used by the simRel */
         int pcaLength = 96;
-        /* number of query objects to learn t(\Omega) thresholds. We use different objects than the pivots tested. */
+        /* number of query objects to learn t(\Omega) thresholds. We use different objects than the queries tested. */
         int querySampleCount = 100;
         /* size of the data sample to learn t(\Omega) thresholds, SISAP: 100K */
         int dataSampleCount = 100000;
         /* percentile - defined in the paper. Defines the precision of the simRel */
-        float percentile = 0.85f;
+        float percentile = 0.9f;
 
         SimRelEuclideanPCAImpl simRel = initSimRel(querySampleCount, pcaLength, kPCA, dataSampleCount, pcaDataset.getDatasetName(), percentile, prefixLength);
-        String resultName = "Vorskesim_" + fullDataset.getDatasetName() + "_kVoronoi" + kVoronoi + "_kPCA" + kPCA + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__" + dataSampleCount + "o__k" + k + "_perc" + percentile;
+        String resultName = "Vorskesim_" + fullDataset.getDatasetName() + "_kVoronoi" + kVoronoi + "_kPCA" + kPCA + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__" + dataSampleCount + "o__k" + k + "_perc" + percentile + "_pCum" + pCum + "_sketchLength" + sketchLength;
 
         testQueries(fullDataset, pcaDataset, sketchesDataset, simRel, kVoronoi, kPCA, k, prefixLength, resultName, sketchLength, pCum, distIntervalsForPX);
     }
@@ -176,7 +175,7 @@ public class EvaluateVorSkeSimMain {
 
     }
 
-    private static Map<Object, Object> getMapOfPrefixes(AbstractMetricSpace<float[]> metricSpace, Iterator metricObjectsFromDataset, int prefixLength) {
+    public static Map<Object, Object> getMapOfPrefixes(AbstractMetricSpace<float[]> metricSpace, Iterator metricObjectsFromDataset, int prefixLength) {
         Map<Object, Object> ret = new HashMap<>();
         for (int i = 1; metricObjectsFromDataset.hasNext(); i++) {
             Object next = metricObjectsFromDataset.next();
@@ -194,7 +193,7 @@ public class EvaluateVorSkeSimMain {
         return ret;
     }
 
-    private static SimRelEuclideanPCAImpl initSimRel(int querySampleCount, int pcaLength, int kPCA, int dataSampleCount, String pcaDatasetName, float percentile, int prefixLength) {
+    public static SimRelEuclideanPCAImpl initSimRel(int querySampleCount, int pcaLength, int kPCA, int dataSampleCount, String pcaDatasetName, float percentile, int prefixLength) {
         FSSimRelThresholdsTOmegaStorage simRelStorage = new FSSimRelThresholdsTOmegaStorage(querySampleCount, pcaLength, kPCA, dataSampleCount);
         float[][] simRelThresholds = simRelStorage.load(pcaDatasetName);
         int idx = FSSimRelThresholdsTOmegaStorage.percentileToArrayIdx(percentile);
@@ -203,7 +202,7 @@ public class EvaluateVorSkeSimMain {
         return new SimRelEuclideanPCAImplForTesting(learnedErrors, prefixLength);
     }
 
-    private static SecondaryFilteringWithSketches initSecondaryFilteringWithSketches(Dataset fullDataset, Dataset sketchesDataset, String filterNamePrefix, float pCum, float distIntervalForPX) {
+    public static SecondaryFilteringWithSketches initSecondaryFilteringWithSketches(Dataset fullDataset, Dataset sketchesDataset, String filterNamePrefix, float pCum, float distIntervalForPX) {
         SecondaryFilteringWithSketchesStoreInterface secondaryFilteringStorage = new FSSecondaryFilteringWithSketchesStorage();
         return new SecondaryFilteringWithSketches(
                 filterNamePrefix,
