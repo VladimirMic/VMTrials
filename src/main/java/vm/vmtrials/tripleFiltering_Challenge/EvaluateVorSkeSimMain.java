@@ -44,8 +44,8 @@ public class EvaluateVorSkeSimMain {
     public static final Boolean STORE_RESULTS = true;
 
     public static void main(String[] args) {
-        int sketchLength = 512;
-        float pCum = 0.7f;
+        int sketchLength = 256;
+        float pCum = 0.9f;
         Dataset[] fullDatasets = new Dataset[]{
             new FSDatasetInstanceSingularizator.LAION_10M_Dataset(),
             new FSDatasetInstanceSingularizator.LAION_30M_Dataset(),
@@ -58,9 +58,9 @@ public class EvaluateVorSkeSimMain {
         };
 
         Dataset[] sketchesDatasets = new Dataset[]{
-            new FSDatasetInstanceSingularizator.LAION_10M_GHP_50_512Dataset(),
-            new FSDatasetInstanceSingularizator.LAION_30M_GHP_50_512Dataset(),
-            new FSDatasetInstanceSingularizator.LAION_100M_GHP_50_512Dataset()
+            new FSDatasetInstanceSingularizator.LAION_10M_GHP_50_256Dataset(),
+            new FSDatasetInstanceSingularizator.LAION_30M_GHP_50_256Dataset(),
+            new FSDatasetInstanceSingularizator.LAION_100M_GHP_50_256Dataset()
         };
 
         int[] voronoiK = new int[]{
@@ -80,8 +80,9 @@ public class EvaluateVorSkeSimMain {
             0.004f
         };
 
-        for (int i = 0; i < fullDatasets.length; i++) {
+        for (int i = 2; i < fullDatasets.length; i++) {
             run(fullDatasets[i], pcaDatasets[i], sketchesDatasets[i], voronoiK[i], minKSimRel[i], distIntervalsForPX[i], sketchLength, pCum);
+            System.exit(0);
         }
     }
 
