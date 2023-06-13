@@ -39,7 +39,7 @@ public class Main {
     private static SISAPChallengeEvaluator algorithm = null;
 
     public static void main(String[] args) {
-        System.err.print("Args: ");
+        System.err.println("Args: ");
         for (int i = 0; i < args.length; i++) {
             System.err.println(i + ": " + args[i] + " ");
         }
