@@ -216,8 +216,7 @@ public class Main {
 
     private static Dataset createImplicitSketchesDataset(AbstractObjectToSketchTransformator sketchingTechnique, String fullDatasetName, int sketchLength, float balance) {
         String name = sketchingTechnique.getNameOfTransformedSetOfObjects(fullDatasetName, false, sketchLength, balance);
-        FSDatasetInstanceSingularizator.FSFloatVectorDataset dataset = new FSDatasetInstanceSingularizator.FSFloatVectorDataset(name);
-        String s = "";
+        FSDatasetInstanceSingularizator.FSHammingSpaceDataset dataset = new FSDatasetInstanceSingularizator.FSHammingSpaceDataset(name);
         return dataset;
     }
 
