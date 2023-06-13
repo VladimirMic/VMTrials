@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.datatools.Tools;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
+import vm.fs.main.search.filtering.learning.LearnSecondaryFilteringWithGHPSketchesMain;
 import vm.fs.metricSpaceImpl.FSMetricSpaceImpl;
 import vm.fs.metricSpaceImpl.FSMetricSpacesStorage;
 import vm.fs.store.dataTransforms.FSGHPSketchesPivotPairsStorageImpl;
@@ -23,6 +24,7 @@ import vm.metricSpace.Dataset;
 import vm.metricSpace.MetricSpacesStorageInterface;
 import vm.metricSpace.dataToStringConvertors.SingularisedConvertors;
 import vm.metricSpace.voronoiPartitioning.VoronoiPartitioning;
+import vm.objTransforms.objectToSketchTransformators.AbstractObjectToSketchTransformator;
 import vm.objTransforms.perform.TransformDataToGHPSketches;
 import vm.objTransforms.storeLearned.GHPSketchingPivotPairsStoreInterface;
 import vm.simRel.impl.learn.ThresholdsTOmegaEvaluator;
@@ -35,6 +37,7 @@ import vm.simRel.impl.learn.storeLearnt.SimRelEuclidThresholdsTOmegaStorage;
 public class Main {
 
     public static final Logger LOG = Logger.getLogger(Main.class.getName());
+    public static final Integer SKETCH_LENGTH = 256;
 
     private static SISAPChallengeEvaluator algorithm = null;
 
@@ -163,7 +166,9 @@ public class Main {
         LOG.log(Level.INFO, "Build start");
         storeVoronoiPartitioning(fullDataset);
         storeTOmegaThresholdsForSimRel(pcaDataset, datasetSizeInMillions);
-        createSketches(fullDataset);
+        AbstractObjectToSketchTransformator sketchingTechnique = createSketches(fullDataset);
+        Dataset sketchesDataset = createImplicitSketchesDataset(sketchingTechnique, fullDataset.getDatasetName(), SKETCH_LENGTH, 0.5f);
+        learnSketchMapping(fullDataset, sketchesDataset, 0.004f, SKETCH_LENGTH, 2f);
         LOG.log(Level.INFO, "Build finished");
     }
 
@@ -187,12 +192,13 @@ public class Main {
         evaluator.learnTOmegaThresholds(pcaDataset, simRelStorage, dataSampleCount, pcaLength, FSSimRelThresholdsTOmegaStorage.PERCENTILES);
     }
 
-    private static void createSketches(Dataset fullDataset) {
+    private static AbstractObjectToSketchTransformator createSketches(Dataset fullDataset) {
         MetricSpacesStorageInterface storageForSketches = new FSMetricSpacesStorage(new FSMetricSpaceImpl<>(), SingularisedConvertors.LONG_VECTOR_SPACE);
         GHPSketchingPivotPairsStoreInterface storageOfPivotPairs = new FSGHPSketchesPivotPairsStorageImpl();
         TransformDataToGHPSketches evaluator = new TransformDataToGHPSketches(fullDataset, storageOfPivotPairs, storageForSketches, 0.5f, -1);
-        int[] sketchesLengths = new int[]{256};
-        evaluator.createSketchesForDatasetPivotsAndQueries(sketchesLengths);
+        int[] sketchesLengths = new int[]{SKETCH_LENGTH};
+        AbstractObjectToSketchTransformator ret = evaluator.createSketchesForDatasetPivotsAndQueries(sketchesLengths);
+        return ret;
     }
 
     /**
@@ -204,6 +210,17 @@ public class Main {
         return new Main.ImplicitH5Dataset(datasetPath, querySetPath, isPCA);
     }
 
+    private static void learnSketchMapping(Dataset fullDataset, Dataset sketchesDataset, float distIntervalForpx, int sketchLength, float maxDist) {
+        LearnSecondaryFilteringWithGHPSketchesMain.run(fullDataset, sketchesDataset, distIntervalForpx, sketchLength, maxDist);
+    }
+
+    private static Dataset createImplicitSketchesDataset(AbstractObjectToSketchTransformator sketchingTechnique, String fullDatasetName, int sketchLength, float balance) {
+        String name = sketchingTechnique.getNameOfTransformedSetOfObjects(fullDatasetName, false, sketchLength, balance);
+        FSDatasetInstanceSingularizator.FSFloatVectorDataset dataset = new FSDatasetInstanceSingularizator.FSFloatVectorDataset(name);
+        String s = "";
+        return dataset;
+    }
+
     private static class ImplicitH5Dataset extends FSDatasetInstanceSingularizator.H5FloatVectorDataset {
 
         private final File datasetFile;
@@ -211,7 +228,7 @@ public class Main {
         private final boolean isPCA;
 
         public ImplicitH5Dataset(String datasetPath, String querySetPath, boolean isPCA) {
-            super("Implicit_dataset_" + new File(datasetPath).getName());
+            super(new File(datasetPath).getName());
             this.datasetFile = new File(datasetPath);
             this.querySetFile = new File(querySetPath);
             this.isPCA = isPCA;
