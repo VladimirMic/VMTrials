@@ -156,11 +156,12 @@ public class EvaluateVorSkeSimMain {
 
 //        TreeSet[] results = alg.completeKnnSearchOfQuerySet(fullMetricSpace, fullQueries, k, fullDataset.getMetricObjectsFromDataset(), pcaDatasetMetricSpace, pcaQMap);
         TreeSet[] results = new TreeSet[fullQueries.size()];
-        for (int i = 0; i < fullQueries.size(); i++) {
+        for (int i = 5; i < fullQueries.size(); i++) {
             Object query = fullQueries.get(i);
             Object qId = fullMetricSpace.getIDOfMetricObject(query);
             Object pcaQData = pcaQMap.get(qId);
             results[i] = alg.completeKnnSearch(fullMetricSpace, query, k, null, pcaDatasetMetricSpace, pcaQData);
+            System.exit(0);
         }
         LOG.log(Level.INFO, "Storing statistics of queries");
         FSQueryExecutionStatsStoreImpl statsStorage = new FSQueryExecutionStatsStoreImpl(fullDataset.getDatasetName(), fullDataset.getQuerySetName(), k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), resultName, null);
@@ -190,7 +191,7 @@ public class EvaluateVorSkeSimMain {
 //            AbstractMap.SimpleEntry obj = new AbstractMap.SimpleEntry(id, shortVec);
 //            ret.put(id, obj);
             ret.put(id, shortVec);
-            if (i % 500000 == 0) {
+            if (i % 1000000 == 0) {
                 LOG.log(Level.INFO, "Loaded {0} prefixes", i);
             }
         }
