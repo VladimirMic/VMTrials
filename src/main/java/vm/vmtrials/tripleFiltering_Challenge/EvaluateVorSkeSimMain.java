@@ -156,6 +156,7 @@ public class EvaluateVorSkeSimMain {
 
 //        TreeSet[] results = alg.completeKnnSearchOfQuerySet(fullMetricSpace, fullQueries, k, fullDataset.getMetricObjectsFromDataset(), pcaDatasetMetricSpace, pcaQMap);
         TreeSet[] results = new TreeSet[fullQueries.size()];
+        
         for (int i = 5; i < fullQueries.size(); i++) {
             Object query = fullQueries.get(i);
             Object qId = fullMetricSpace.getIDOfMetricObject(query);
@@ -191,7 +192,7 @@ public class EvaluateVorSkeSimMain {
 //            AbstractMap.SimpleEntry obj = new AbstractMap.SimpleEntry(id, shortVec);
 //            ret.put(id, obj);
             ret.put(id, shortVec);
-            if (i % 1000000 == 0) {
+            if (i % 500000 == 0) {
                 LOG.log(Level.INFO, "Loaded {0} prefixes", i);
             }
         }
