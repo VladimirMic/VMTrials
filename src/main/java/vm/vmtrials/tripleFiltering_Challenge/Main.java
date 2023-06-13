@@ -103,51 +103,51 @@ public class Main {
      * Init params for datasets given by their size ****
      * *************************************************
      */
-    public static Dataset getTestedSketchDataset(int sizeInMilions) {
-        switch (sizeInMilions) {
-            case 1:
+    public static Dataset getTestedSketchDataset(int size) {
+        switch (size) {
+            case 100000:
                 return new FSDatasetInstanceSingularizator.LAION_100k_GHP_50_256Dataset();
-            case 3:
+            case 300000:
                 return new FSDatasetInstanceSingularizator.LAION_300k_GHP_50_256Dataset();
-            case 10:
+            case 10000000:
                 return new FSDatasetInstanceSingularizator.LAION_10M_GHP_50_256Dataset();
-            case 30:
+            case 30000000:
                 return new FSDatasetInstanceSingularizator.LAION_30M_GHP_50_256Dataset();
-            case 100:
+            case 100000000:
                 return new FSDatasetInstanceSingularizator.LAION_100M_GHP_50_256Dataset();
             default:
                 throw new AssertionError();
         }
     }
 
-    public static int getVoronoiK(int sizeInMilions) {
-        switch (sizeInMilions) {
-            case 1:
+    public static int getVoronoiK(int size) {
+        switch (size) {
+            case 100000:
                 return 100000;
-            case 3:
+            case 300000:
                 return 300000;
-            case 10:
+            case 10000000:
                 return 400000;
-            case 30:
+            case 30000000:
                 return 1000000;
-            case 100:
+            case 100000000:
                 return 3000000;
             default:
                 throw new AssertionError();
         }
     }
 
-    private static int getPCAK(int sizeInMilions) {
-        switch (sizeInMilions) {
-            case 1:
+    private static int getPCAK(int size) {
+        switch (size) {
+            case 100000:
                 return 300;
-            case 3:
+            case 300000:
                 return 300;
-            case 10:
+            case 10000000:
                 return 300;
-            case 30:
+            case 30000000:
                 return 500;
-            case 100:
+            case 100000000:
                 return 500;
             default:
                 throw new AssertionError();
@@ -182,10 +182,9 @@ public class Main {
         /* size of the data sample to learn t(\Omega) thresholds, IS: 1M */
         int dataSampleCount = 100000; // 1000000 = 1M
         int pcaLength = 96;
-        int preffixLength = 8;
         SimRelEuclidThresholdsTOmegaStorage simRelStorage = new FSSimRelThresholdsTOmegaStorage(querySampleCount, pcaLength, kPCA, dataSampleCount);
         ThresholdsTOmegaEvaluator evaluator = new ThresholdsTOmegaEvaluator(querySampleCount, kPCA);
-        evaluator.learnTOmegaThresholds(pcaDataset, simRelStorage, dataSampleCount, preffixLength, FSSimRelThresholdsTOmegaStorage.PERCENTILES);
+        evaluator.learnTOmegaThresholds(pcaDataset, simRelStorage, dataSampleCount, pcaLength, FSSimRelThresholdsTOmegaStorage.PERCENTILES);
     }
 
     private static void createSketches(Dataset dataset) {
