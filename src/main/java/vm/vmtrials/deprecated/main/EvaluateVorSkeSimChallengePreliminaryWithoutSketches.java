@@ -1,4 +1,4 @@
-package vm.vmtrials.simRelEuclidSpace.withVoronoiPart;
+package vm.vmtrials.deprecated.main;
 
 import java.util.AbstractMap;
 import java.util.HashMap;
@@ -32,7 +32,8 @@ import vm.vmtrials.simRelEuclidSpace.EvaluateSimRelSISAPKNN;
  *
  * @author Vlada
  */
-public class EvaluateVorSkeSimChallengePreliminary {
+@Deprecated // does not use the Secondary filtering with sketches
+public class EvaluateVorSkeSimChallengePreliminaryWithoutSketches {
 
     private static final Logger LOG = Logger.getLogger(EvaluateSimRelSISAPKNN.class.getName());
 

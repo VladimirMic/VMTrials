@@ -134,7 +134,7 @@ public class EvaluateVorSkeSimMain {
 
         // sketching technique to transform query object to sketch
         GHPSketchingPivotPairsStoreInterface storageOfPivotPairs = new FSGHPSketchesPivotPairsStorageImpl();
-        AbstractObjectToSketchTransformator sketchingTechnique = new SketchingGHP(fullDataset.getDistanceFunction(), fullDataset.getMetricSpace(), pivots, false, fullDataset.getDatasetName(), 0.5f, sketchLength, storageOfPivotPairs);
+        AbstractObjectToSketchTransformator sketchingTechnique = new SketchingGHP(fullDataset.getDistanceFunction(), fullDataset.getMetricSpace(), pivots, true, fullDataset.getDatasetName(), 0.5f, sketchLength, storageOfPivotPairs);
 
         // filtering algorithms and filters
         VoronoiPartitionsCandSetIdentifier algVoronoi = new VoronoiPartitionsCandSetIdentifier(fullDataset, new FSVoronoiPartitioningStorage(), 2048);
