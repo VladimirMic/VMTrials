@@ -51,8 +51,8 @@ public class Main {
 
         int k = 10;
 
-        Dataset fullDataset = createH5Dataset(dataset768DimPath, querySet768DimPath);
-        Dataset pcaDataset = createH5Dataset(datasetPCA96DimPath, querySetPCA96DimPath);
+        Dataset fullDataset = createH5Dataset(dataset768DimPath, querySet768DimPath, false);
+        Dataset pcaDataset = createH5Dataset(datasetPCA96DimPath, querySetPCA96DimPath, true);
 
         buildAndStoreAlgorithm(fullDataset, pcaDataset, datasetSizeInMillions);
 
@@ -187,10 +187,10 @@ public class Main {
         evaluator.learnTOmegaThresholds(pcaDataset, simRelStorage, dataSampleCount, pcaLength, FSSimRelThresholdsTOmegaStorage.PERCENTILES);
     }
 
-    private static void createSketches(Dataset dataset) {
+    private static void createSketches(Dataset fullDataset) {
         MetricSpacesStorageInterface storageForSketches = new FSMetricSpacesStorage(new FSMetricSpaceImpl<>(), SingularisedConvertors.LONG_VECTOR_SPACE);
         GHPSketchingPivotPairsStoreInterface storageOfPivotPairs = new FSGHPSketchesPivotPairsStorageImpl();
-        TransformDataToGHPSketches evaluator = new TransformDataToGHPSketches(dataset, storageOfPivotPairs, storageForSketches, 0.5f, -1);
+        TransformDataToGHPSketches evaluator = new TransformDataToGHPSketches(fullDataset, storageOfPivotPairs, storageForSketches, 0.5f, -1);
         int[] sketchesLengths = new int[]{256};
         evaluator.createSketchesForDatasetPivotsAndQueries(sketchesLengths);
     }
@@ -200,19 +200,21 @@ public class Main {
      * Create implicit datasets - full and PCA dataset *
      * *************************************************
      */
-    private static Dataset createH5Dataset(String datasetPath, String querySetPath) {
-        return new Main.ImplicitH5Dataset(datasetPath, querySetPath);
+    private static Dataset createH5Dataset(String datasetPath, String querySetPath, boolean isPCA) {
+        return new Main.ImplicitH5Dataset(datasetPath, querySetPath, isPCA);
     }
 
     private static class ImplicitH5Dataset extends FSDatasetInstanceSingularizator.H5FloatVectorDataset {
 
         private final File datasetFile;
         private final File querySetFile;
+        private final boolean isPCA;
 
-        public ImplicitH5Dataset(String datasetPath, String querySetPath) {
+        public ImplicitH5Dataset(String datasetPath, String querySetPath, boolean isPCA) {
             super("Implicit_dataset_" + new File(datasetPath).getName());
             this.datasetFile = new File(datasetPath);
             this.querySetFile = new File(querySetPath);
+            this.isPCA = isPCA;
         }
 
         @Override
@@ -232,6 +234,9 @@ public class Main {
 
         @Override
         public List<Object> getPivots(int objCount) {
+            if (isPCA) {
+                return metricSpacesStorage.getPivots("laion2B-en-pca96v2-n=100M.h5", objCount);
+            }
             return metricSpacesStorage.getPivots("laion2B-en-clip768v2-n=100M.h5_2048pivots", objCount);
         }
 
