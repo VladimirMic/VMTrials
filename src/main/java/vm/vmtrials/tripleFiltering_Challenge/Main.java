@@ -233,7 +233,7 @@ public class Main {
 
         @Override
         public List<Object> getPivots(int objCount) {
-            return metricSpacesStorage.getPivots("laion2B-en-clip768v2-n=100M.h5_2048pivots.gz", objCount);
+            return metricSpacesStorage.getPivots("laion2B-en-clip768v2-n=100M.h5_2048pivots", objCount);
         }
 
         @Override
