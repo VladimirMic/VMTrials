@@ -39,9 +39,9 @@ public class Main {
     private static SISAPChallengeEvaluator algorithm = null;
 
     public static void main(String[] args) {
-        System.out.print("Args: ");
+        System.err.print("Args: ");
         for (int i = 0; i < args.length; i++) {
-            System.out.print(args[i] + " ");
+            System.err.println(i + ": " + args[i] + " ");
         }
         String dataset768DimPath = args[0];
         String datasetPCA96DimPath = args[1];
