@@ -29,8 +29,9 @@ import vm.objTransforms.objectToSketchTransformators.AbstractObjectToSketchTrans
 import vm.objTransforms.objectToSketchTransformators.SketchingGHP;
 import vm.objTransforms.storeLearned.GHPSketchingPivotPairsStoreInterface;
 import vm.queryResults.recallEvaluation.RecallOfCandsSetsEvaluator;
+import vm.search.SearchingAlgorithm;
 import vm.search.impl.VoronoiPartitionsCandSetIdentifier;
-import vm.search.impl.multiFiltering.VorSkeSim;
+import vm.search.impl.multiFiltering.VorSkeSimSorting;
 import vm.simRel.impl.SimRelEuclideanPCAImpl;
 import vm.simRel.impl.SimRelEuclideanPCAImplForTesting;
 
@@ -45,7 +46,8 @@ public class EvaluateVorSkeSimMain {
 
     public static void main(String[] args) {
         int sketchLength = 256;
-        float pCum = 0.9f;
+        // parameter for the Secondary filtering with the sketches
+        float pCum = 0.5f;
         Dataset[] fullDatasets = new Dataset[]{
             new FSDatasetInstanceSingularizator.LAION_10M_Dataset(),
             new FSDatasetInstanceSingularizator.LAION_30M_Dataset(),
@@ -90,7 +92,7 @@ public class EvaluateVorSkeSimMain {
         /* kNN queries - the result set size */
         int k = 10;
         /*  prefix of the shortened vectors used by the simRel */
-        int prefixLength = 24;
+        int prefixLength = 8;
         /*  prefix of the shortened vectors used by the simRel */
         int pcaLength = 96;
         /* number of query objects to learn t(\Omega) thresholds. We use different objects than the queries tested. */
@@ -101,7 +103,7 @@ public class EvaluateVorSkeSimMain {
         float percentile = 0.9f;
 
         SimRelEuclideanPCAImpl simRel = initSimRel(querySampleCount, pcaLength, kPCA, dataSampleCount, pcaDataset.getDatasetName(), percentile, prefixLength);
-        String resultName = "Vorskesim_" + fullDataset.getDatasetName() + "_kVoronoi" + kVoronoi + "_kPCA" + kPCA + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__" + dataSampleCount + "o__k" + k + "_perc" + percentile + "_pCum" + pCum + "_sketchLength" + sketchLength;
+        String resultName = "VorskesimSorting_" + fullDataset.getDatasetName() + "_kVoronoi" + kVoronoi + "_kPCA" + kPCA + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__" + dataSampleCount + "o__k" + k + "_perc" + percentile + "_pCum" + pCum + "_sketchLength" + sketchLength;
 
         testQueries(fullDataset, pcaDataset, sketchesDataset, simRel, kVoronoi, kPCA, k, prefixLength, resultName, sketchLength, pCum, distIntervalsForPX);
     }
@@ -144,7 +146,7 @@ public class EvaluateVorSkeSimMain {
         // key value map to PCA of the query objects
         Map pcaQMap = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(pcaDatasetMetricSpace, pcaDataset.getMetricQueryObjects(), false);
 
-        VorSkeSim alg = new VorSkeSim(
+        SearchingAlgorithm alg = new VorSkeSimSorting(
                 algVoronoi,
                 voronoiK,
                 sketchFiltering,
@@ -152,6 +154,7 @@ public class EvaluateVorSkeSimMain {
                 sketchesDataset.getMetricSpace(),
                 simRel, kPCA, pcaOMap, fullDataset.getKeyValueStorage(), fullDataset.getDistanceFunction());
 
+//        TreeSet[] results = alg.completeKnnSearchOfQuerySet(fullMetricSpace, fullQueries, k, fullDataset.getMetricObjectsFromDataset(), pcaDatasetMetricSpace, pcaQMap);
         TreeSet[] results = new TreeSet[fullQueries.size()];
         
         for (int i = 5; i < fullQueries.size(); i++) {
