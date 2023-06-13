@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.datatools.Tools;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
+import vm.fs.dataset.FSDatasetInstanceSingularizator.FSFloatVectorDataset;
 import vm.fs.main.search.filtering.learning.LearnSecondaryFilteringWithGHPSketchesMain;
 import vm.fs.metricSpaceImpl.FSMetricSpaceImpl;
 import vm.fs.metricSpaceImpl.FSMetricSpacesStorage;
@@ -50,17 +51,19 @@ public class Main {
         String datasetPCA96DimPath = args[1];
         String querySet768DimPath = args[2];
         String querySetPCA96DimPath = args[3];
-        int datasetSizeInMillions = Integer.parseInt(args[4]);
+        int datasetSize = Integer.parseInt(args[4]);
 
         int k = 10;
 
         Dataset fullDataset = createH5Dataset(dataset768DimPath, querySet768DimPath, false);
         Dataset pcaDataset = createH5Dataset(datasetPCA96DimPath, querySetPCA96DimPath, true);
 
-        buildAndStoreAlgorithm(fullDataset, pcaDataset, datasetSizeInMillions);
+        String nameOfSketchDataset = buildAndStoreAlgorithm(fullDataset, pcaDataset, datasetSize);
+        
+        
 
         if (algorithm == null) {
-            algorithm = initAlgorithm(fullDataset, pcaDataset, datasetSizeInMillions, k);
+            algorithm = initAlgorithm(fullDataset, pcaDataset, nameOfSketchDataset, datasetSize, k);
         }
 
         List fullQueries = fullDataset.getMetricQueryObjects();
@@ -90,12 +93,12 @@ public class Main {
 
     }
 
-    private static SISAPChallengeEvaluator initAlgorithm(Dataset fullDataset, Dataset pcaDataset, int datasetSizeInMillions, int k) {
+    private static SISAPChallengeEvaluator initAlgorithm(Dataset fullDataset, Dataset pcaDataset, String nameOfSketchDataset, int datasetSize, int k) {
         LOG.log(Level.INFO, "Initializing algorithm");
-        Dataset sketchesDataset = getTestedSketchDataset(datasetSizeInMillions);
+        Dataset sketchesDataset = new FSFloatVectorDataset(nameOfSketchDataset);
 
-        int voronoiK = getVoronoiK(datasetSizeInMillions);
-        int kPCA = getPCAK(datasetSizeInMillions);
+        int voronoiK = getVoronoiK(datasetSize);
+        int kPCA = getPCAK(datasetSize);
         SISAPChallengeEvaluator ret = new SISAPChallengeEvaluator(fullDataset, pcaDataset, sketchesDataset, voronoiK, kPCA, k);
         Logger.getLogger(Main.class.getName()).log(Level.INFO, "Algorithm initialised");
         return ret;
@@ -106,23 +109,6 @@ public class Main {
      * Init params for datasets given by their size ****
      * *************************************************
      */
-    public static Dataset getTestedSketchDataset(int size) {
-        switch (size) {
-            case 100000:
-                return new FSDatasetInstanceSingularizator.LAION_100k_GHP_50_256Dataset();
-            case 300000:
-                return new FSDatasetInstanceSingularizator.LAION_300k_GHP_50_256Dataset();
-            case 10000000:
-                return new FSDatasetInstanceSingularizator.LAION_10M_GHP_50_256Dataset();
-            case 30000000:
-                return new FSDatasetInstanceSingularizator.LAION_30M_GHP_50_256Dataset();
-            case 100000000:
-                return new FSDatasetInstanceSingularizator.LAION_100M_GHP_50_256Dataset();
-            default:
-                throw new AssertionError();
-        }
-    }
-
     public static int getVoronoiK(int size) {
         switch (size) {
             case 100000:
@@ -162,7 +148,7 @@ public class Main {
      * Build indexes and create auxiliary files ********
      * *************************************************
      */
-    private static void buildAndStoreAlgorithm(Dataset fullDataset, Dataset pcaDataset, int datasetSizeInMillions) {
+    private static String buildAndStoreAlgorithm(Dataset fullDataset, Dataset pcaDataset, int datasetSizeInMillions) {
         LOG.log(Level.INFO, "Build start");
         storeVoronoiPartitioning(fullDataset);
         storeTOmegaThresholdsForSimRel(pcaDataset, datasetSizeInMillions);
@@ -170,6 +156,8 @@ public class Main {
         Dataset sketchesDataset = createImplicitSketchesDataset(sketchingTechnique, fullDataset.getDatasetName(), SKETCH_LENGTH, 0.5f);
         learnSketchMapping(fullDataset, sketchesDataset, 0.004f, SKETCH_LENGTH, 2f);
         LOG.log(Level.INFO, "Build finished");
+        String ret = sketchingTechnique.getNameOfTransformedSetOfObjects(fullDataset.getDatasetName(), false, SKETCH_LENGTH, 0.5f);
+        return ret;
     }
 
     private static void storeVoronoiPartitioning(Dataset dataset) {
