@@ -12,9 +12,9 @@
             <properties>
                 <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
                 <exec.executable>java</exec.executable>
-                <exec.mainClass>vm.vmtrials.tripleFiltering_Challenge.EvaluateVorSkeSimMain</exec.mainClass>
+                <exec.mainClass>vm.vmtrials.tripleFiltering_Challenge.Main</exec.mainClass>
                 <exec.vmArgs>-Xmx64g</exec.vmArgs>
-                <exec.appArgs></exec.appArgs>
+                <exec.appArgs>c:\Data\Similarity_search\Dataset\Dataset\laion2B-en-clip768v2-n=10M.h5 c:\Data\Similarity_search\Dataset\Query\public-queries-10k-clip768v2.h5 c:\Data\Similarity_search\Dataset\Dataset\laion2B-en-pca96v2-n=10M.h5 c:\Data\Similarity_search\Dataset\Query\public-queries-10k-pca96v2.h5 10</exec.appArgs>
             </properties>
         </action>
         <action>
@@ -30,9 +30,9 @@
                 <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
                 <exec.executable>java</exec.executable>
                 <jpda.listen>true</jpda.listen>
-                <exec.mainClass>vm.vmtrials.tripleFiltering_Challenge.EvaluateVorSkeSimMain</exec.mainClass>
+                <exec.mainClass>vm.vmtrials.tripleFiltering_Challenge.Main</exec.mainClass>
                 <exec.vmArgs>-Xmx64g -agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address}</exec.vmArgs>
-                <exec.appArgs></exec.appArgs>
+                <exec.appArgs>c:\Data\Similarity_search\Dataset\Dataset\laion2B-en-clip768v2-n=10M.h5 c:\Data\Similarity_search\Dataset\Query\public-queries-10k-clip768v2.h5 c:\Data\Similarity_search\Dataset\Dataset\laion2B-en-pca96v2-n=10M.h5 c:\Data\Similarity_search\Dataset\Query\public-queries-10k-pca96v2.h5 10</exec.appArgs>
             </properties>
         </action>
         <action>
@@ -47,9 +47,9 @@
             <properties>
                 <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
                 <exec.executable>java</exec.executable>
-                <exec.mainClass>vm.vmtrials.tripleFiltering_Challenge.EvaluateVorSkeSimMain</exec.mainClass>
+                <exec.mainClass>vm.vmtrials.tripleFiltering_Challenge.Main</exec.mainClass>
                 <exec.vmArgs>-Xmx64g</exec.vmArgs>
-                <exec.appArgs></exec.appArgs>
+                <exec.appArgs>c:\Data\Similarity_search\Dataset\Dataset\laion2B-en-clip768v2-n=10M.h5 c:\Data\Similarity_search\Dataset\Query\public-queries-10k-clip768v2.h5 c:\Data\Similarity_search\Dataset\Dataset\laion2B-en-pca96v2-n=10M.h5 c:\Data\Similarity_search\Dataset\Query\public-queries-10k-pca96v2.h5 10</exec.appArgs>
             </properties>
         </action>
     </actions>

@@ -153,11 +153,13 @@ public class EvaluateVorSkeSimMain {
                 simRel, kPCA, pcaOMap, fullDataset.getKeyValueStorage(), fullDataset.getDistanceFunction());
 
         TreeSet[] results = new TreeSet[fullQueries.size()];
-        for (int i = 0; i < fullQueries.size(); i++) {
+        
+        for (int i = 5; i < fullQueries.size(); i++) {
             Object query = fullQueries.get(i);
             Object qId = fullMetricSpace.getIDOfMetricObject(query);
             Object pcaQData = pcaQMap.get(qId);
             results[i] = alg.completeKnnSearch(fullMetricSpace, query, k, null, pcaDatasetMetricSpace, pcaQData);
+            System.exit(0);
         }
         LOG.log(Level.INFO, "Storing statistics of queries");
         FSQueryExecutionStatsStoreImpl statsStorage = new FSQueryExecutionStatsStoreImpl(fullDataset.getDatasetName(), fullDataset.getQuerySetName(), k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), resultName, null);

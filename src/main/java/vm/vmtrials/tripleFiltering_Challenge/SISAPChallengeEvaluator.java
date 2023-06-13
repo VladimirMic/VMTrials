@@ -27,11 +27,11 @@ import static vm.vmtrials.tripleFiltering_Challenge.EvaluateVorSkeSimMain.initSi
  */
 public class SISAPChallengeEvaluator {
 
-    private final int sketchLength = 512;
-    private final float pCum = 0.7f;
+    private final int sketchLength = 256;
+    private final float pCum = 0.5f;
 
     /*  prefix of the shortened vectors used by the simRel */
-    private final int prefixLength = 24;
+    private final int prefixLength = 8;
     /*  prefix of the shortened vectors used by the simRel */
     private final int pcaLength = 96;
     /* number of query objects to learn t(\Omega) thresholds in the simRel. We use different objects than the queries tested. */

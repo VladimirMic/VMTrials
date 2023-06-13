@@ -4,12 +4,17 @@
  */
 package vm.vmtrials.tripleFiltering_Challenge;
 
-import java.util.Map;
+import java.io.File;
+import java.util.Iterator;
+import java.util.List;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.datatools.Tools;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
+import vm.fs.metricSpaceImpl.FSMetricSpacesStorage;
+import vm.fs.store.queryResults.FSNearestNeighboursStorageImpl;
+import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.Dataset;
 
 /**
@@ -18,76 +23,72 @@ import vm.metricSpace.Dataset;
  */
 public class Main {
 
+    public static final Logger LOG = Logger.getLogger(Main.class.getName());
+
     private static SISAPChallengeEvaluator algorithm = null;
 
     public static void main(String[] args) {
-        if (args.length == 0) {
-            args = initArgsSample();
-        }
-        String queryID = args[0];
-        float[] queryVectorData = Tools.splitStringFloatVector(args[1], ",");
-        float[] queryPCAVectorData = Tools.splitStringFloatVector(args[2], ",");
+        String dataset768DimPath = args[0];
+        String datasetPCA96DimPath = args[1];
+        String querySet768DimPath = args[2];
+        String querySetPCA96DimPath = args[3];
+        int datasetSizeInMillions = Integer.parseInt(args[4]);
+
+        int k = 10;
+
+        Dataset fullDataset = createH5Dataset(dataset768DimPath, querySet768DimPath);
+        Dataset pcaDataset = createH5Dataset(datasetPCA96DimPath, querySetPCA96DimPath);
 
         if (algorithm == null) {
-            final int sizeOfTheTestedDatasetInMillions = 10;
-            algorithm = initAlgorithm(sizeOfTheTestedDatasetInMillions);
+            algorithm = initAlgorithm(fullDataset, pcaDataset, datasetSizeInMillions, k);
         }
 
-        TreeSet<Map.Entry<Object, Float>> result = algorithm.evaluatekNNQuery(queryID, queryVectorData, queryPCAVectorData);
+        List fullQueries = fullDataset.getMetricQueryObjects();
+        List pcaQueries = pcaDataset.getMetricQueryObjects();
 
-        for (Map.Entry<Object, Float> nn : result) {
-            System.out.println(nn.getKey() + ":" + nn.getValue());
+        AbstractMetricSpace<float[]> metricSpace = fullDataset.getMetricSpace();
+
+        TreeSet[] results = new TreeSet[fullQueries.size()];
+
+        for (int i = 0; i < fullQueries.size(); i++) {
+            Object fullQObject = fullQueries.get(i);
+            Object pcaQObject = pcaQueries.get(i);
+            String fullQID = metricSpace.getIDOfMetricObject(fullQObject).toString();
+            Object pcaQID = metricSpace.getIDOfMetricObject(pcaQObject);
+            float[] fullQData = metricSpace.getDataOfMetricObject(fullQObject);
+            float[] pcaQData = metricSpace.getDataOfMetricObject(pcaQObject);
+            results[i] = algorithm.evaluatekNNQuery(fullQID, fullQData, pcaQData);
         }
+
+//        LOG.log(Level.INFO, "Storing statistics of queries");
+//        FSQueryExecutionStatsStoreImpl statsStorage = new FSQueryExecutionStatsStoreImpl(fullDataset.getDatasetName(), fullDataset.getQuerySetName(), k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), "SISAP_Challenge", null);
+//        statsStorage.storeStatsForQueries(secondaryWithSketches.getDistCompsPerQueries(), secondaryWithSketches.getTimesPerQueries());
+//        statsStorage.saveFile();
+        LOG.log(Level.INFO, "Storing results of queries");
+        FSNearestNeighboursStorageImpl resultsStorage = new FSNearestNeighboursStorageImpl();
+        resultsStorage.storeQueryResults(metricSpace, fullQueries, results, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), "Vorkesim_challenge");
+
     }
 
-    private static SISAPChallengeEvaluator initAlgorithm(int sizeOfTheTestedDatasetInMillions) {
-        Logger.getLogger(Main.class.getName()).log(Level.INFO, "Initializing algorithm");
-        Dataset fullDataset = getTestedFullDataset(sizeOfTheTestedDatasetInMillions);
-        Dataset pcaDataset = getTestedPCADataset(sizeOfTheTestedDatasetInMillions);
-        Dataset sketchesDataset = getTestedSketchDataset(sizeOfTheTestedDatasetInMillions);
+    private static SISAPChallengeEvaluator initAlgorithm(Dataset fullDataset, Dataset pcaDataset, int datasetSizeInMillions, int k) {
+        LOG.log(Level.INFO, "Initializing algorithm");
+        Dataset sketchesDataset = getTestedSketchDataset(datasetSizeInMillions);
 
-        int voronoiK = getVoronoiK(sizeOfTheTestedDatasetInMillions);
-        int kPCA = getPCAK(sizeOfTheTestedDatasetInMillions);
-        int k = 10;
+        int voronoiK = getVoronoiK(datasetSizeInMillions);
+        int kPCA = getPCAK(datasetSizeInMillions);
         SISAPChallengeEvaluator ret = new SISAPChallengeEvaluator(fullDataset, pcaDataset, sketchesDataset, voronoiK, kPCA, k);
         Logger.getLogger(Main.class.getName()).log(Level.INFO, "Algorithm initialised");
         return ret;
     }
 
-    public static Dataset getTestedFullDataset(int sizeInMilions) {
-        switch (sizeInMilions) {
-            case 10:
-                return new FSDatasetInstanceSingularizator.LAION_10M_Dataset();
-            case 30:
-                return new FSDatasetInstanceSingularizator.LAION_30M_Dataset();
-            case 100:
-                return new FSDatasetInstanceSingularizator.LAION_100M_Dataset();
-            default:
-                throw new AssertionError();
-        }
-    }
-
-    public static Dataset getTestedPCADataset(int sizeInMilions) {
-        switch (sizeInMilions) {
-            case 10:
-                return new FSDatasetInstanceSingularizator.LAION_10M_PCA96Dataset();
-            case 30:
-                return new FSDatasetInstanceSingularizator.LAION_30M_PCA96Dataset();
-            case 100:
-                return new FSDatasetInstanceSingularizator.LAION_100M_PCA96Dataset();
-            default:
-                throw new AssertionError();
-        }
-    }
-
     public static Dataset getTestedSketchDataset(int sizeInMilions) {
         switch (sizeInMilions) {
             case 10:
-                return new FSDatasetInstanceSingularizator.LAION_10M_GHP_50_512Dataset();
+                return new FSDatasetInstanceSingularizator.LAION_10M_GHP_50_256Dataset();
             case 30:
-                return new FSDatasetInstanceSingularizator.LAION_30M_GHP_50_512Dataset();
+                return new FSDatasetInstanceSingularizator.LAION_30M_GHP_50_256Dataset();
             case 100:
-                return new FSDatasetInstanceSingularizator.LAION_100M_GHP_50_512Dataset();
+                return new FSDatasetInstanceSingularizator.LAION_100M_GHP_50_256Dataset();
             default:
                 throw new AssertionError();
         }
@@ -111,9 +112,9 @@ public class Main {
             case 10:
                 return 300;
             case 30:
-                return 300;
+                return 500;
             case 100:
-                return 300;
+                return 500;
             default:
                 throw new AssertionError();
         }
@@ -125,6 +126,42 @@ public class Main {
             "0.0014249842,0.025775619,-0.023120226,-0.045599494,0.0064019375,0.0028118163,0.016146006,-0.039647754,-0.02893462,-0.02420375,-0.029514533,-0.031116925,-0.026279228,8.460248E-4,0.0123842005,8.636702E-4,-0.028751489,-0.06052463,0.021563618,0.002563827,-0.043554537,0.025394097,-0.04047184,0.012658896,0.0071916874,-0.03281088,-0.024524227,0.046789844,0.0077296332,-0.027042272,-0.04654567,0.0018379816,0.016497007,0.008996286,0.032688797,4.8000223E-4,0.013315114,0.025729837,0.03992245,-0.004753763,-0.017092181,7.101076E-4,0.007458753,-0.011201482,0.006333263,0.028797273,0.019793356,-0.03870158,0.0154592665,0.0048186216,-0.006276035,0.03622932,0.025653532,0.010949678,-0.004204371,0.015115897,0.057899762,-0.015367702,0.0453248,0.012521548,0.025210965,-0.07899029,0.0014326146,0.019289747,0.034794796,0.04999463,-0.017366877,0.040166624,0.005562589,-0.0120332,0.034062274,-0.03436749,-0.0034756644,-0.016695397,-0.005879252,0.0038495557,-0.036381926,0.013116722,0.0244174,-0.0040899147,-0.025561966,-0.0017588158,0.003906784,0.023593314,-0.0028881207,0.032871924,0.02144153,-0.023455966,-0.007535057,0.05423715,-0.040136103,0.010262939,-0.032994013,0.02247927,-0.0042959363,0.0018589654,0.020342747,0.005806763,-0.0073595573,1.7466549E-4,0.02630975,9.118373E-4,0.02421901,-0.0112320045,0.04059393,-0.026981227,0.028553098,4.7046418E-4,0.04129593,-0.0071916874,0.029239837,-0.021472052,-0.021197356,-0.017580528,-0.010385025,0.024173226,-0.0136584835,-0.04096019,-0.046911933,-0.036992364,0.0034413275,-0.011529591,0.015543202,-0.002338729,-0.017382137,-0.01812992,0.054817066,0.011941635,0.006028046,-0.04605732,0.05161228,-0.02612662,0.018068876,0.011193852,0.0041509583,-0.024905749,-0.034306448,0.014429158,0.007218394,2.2521714E-4,-0.04062445,-6.862625E-4,0.08601029,0.019228702,-0.020678487,-0.0038152188,-0.022723444,-0.06452298,-0.03989193,0.0060890894,0.009675395,0.027973184,-0.028965142,-0.012620744,0.01726005,0.0022586095,0.013139614,-0.04535532,0.0119034825,0.004704165,-0.0052230344,-0.032566708,0.02701175,0.051001847,-0.077097945,-0.021014225,0.0032543817,-3.512386E-4,-0.0018160442,0.015016701,-0.006226437,0.018450398,-0.025836661,-0.014635179,-0.003502371,0.014001853,0.018541964,0.09211464,-0.056037936,-0.041051757,0.14735901,-0.028171577,-0.015947616,-0.020068051,-0.009950091,-0.0032314903,0.0019514845,-0.036839753,0.040838104,0.049140017,-0.010362134,-0.009873786,-0.012422353,0.0223114,0.012124766,-0.006642296,0.009957721,0.0020716637,-0.0014745821,-0.05435924,-0.045050103,-0.018770877,0.0059517412,-0.01744318,-0.0015356255,-0.0068063503,-0.014207875,-0.019976486,-0.026523402,0.0026840065,-0.028675186,0.0020602182,0.07673168,-0.045050103,0.026279228,-0.018679311,-0.010560526,-0.017214267,0.0074511226,-0.01603918,-0.015688179,-0.016970094,0.010056917,-0.032047838,-0.008256134,-0.029697664,0.029346664,0.019488137,0.0028022781,-0.024325835,0.0089733945,-0.009736438,0.04215054,-0.11042769,0.043035667,-0.00959146,0.031315316,0.013666114,0.018252008,-0.031162707,0.022738704,0.016588572,-0.013147244,0.02109053,-0.035832535,0.057655588,-0.01307857,0.001582362,0.025317792,0.0013372342,0.0017111256,0.033757057,0.0022853161,-0.046423584,0.037053406,-0.0047156103,-0.0013811092,0.031116925,-0.017366877,0.0714209,0.020525878,0.02997236,-0.01445968,0.041051757,-0.011315939,0.04895689,0.011422765,0.036015667,-0.031254273,-0.01829779,-0.06604907,-0.026828619,-0.0047156103,-0.009431221,-0.014329962,-0.010163743,0.028965142,-0.0037618058,0.01359744,0.036534537,-0.019579703,-0.0050017517,0.0046660127,-0.012017939,-0.011438026,-0.03155949,-0.015657658,0.0394341,-0.029087229,-0.02197566,-0.035222102,-0.0034298818,-0.008401112,-0.01605444,0.032963492,-0.010430808,-0.028141053,-0.0045057735,-0.021990921,-0.019625485,0.011476179,-0.004860589,0.06046359,0.045782626,0.022647139,0.0018036447,-0.010331613,6.277227E-5,-0.057777673,0.008584242,-0.036168274,-0.012452874,0.046393063,0.0143070705,0.027805315,-0.02370014,-0.048621148,-0.011460917,-0.010995461,0.009736438,0.0067376764,-0.018572485,-0.013261701,-0.045050103,-0.031864706,0.0050856867,0.015795005,0.005108578,0.0061997306,-0.020892138,-0.0575335,0.033085577,0.02560775,-0.02823262,-0.0029071968,0.03958671,0.017092181,0.009217569,-0.0036835938,-0.022937097,0.046087842,0.023669617,-0.023654357,0.016146006,-0.028797273,0.023242313,-0.013795831,0.017550007,0.014337593,0.02267766,0.031315316,0.063241065,-0.005757165,-0.015085375,-0.016481746,-0.013666114,-0.0027068977,0.0036473493,-0.013811092,0.0053222305,-0.061776023,-0.056892544,-0.049628366,-0.0053107846,0.0216094,0.011323569,-0.02163992,-0.019243963,0.0075579486,-0.0033478546,-0.013353266,0.026355531,0.0223114,-0.01797731,-0.010423178,0.027347488,-0.04495854,0.0034718493,-0.026416576,0.02353227,0.045202713,0.007981438,-0.009354916,0.009202308,0.013811092,-0.0718482,0.02334914,0.024356358,-0.036168274,0.04395132,0.05616002,-0.018618269,-0.032902446,0.0040670233,0.022967618,-0.023486488,0.012346048,-0.036870275,0.028171577,-0.057564024,-0.0035405231,0.016023919,-0.020617442,-0.00479573,-0.049078975,-0.038274277,-0.017305832,-4.6796045E-5,-0.0013467723,0.03500845,-0.027927402,0.005593111,0.0017111256,-0.4087473,-0.023715401,-0.04395132,-0.012658896,0.0034680339,0.008065373,-0.032444622,0.016359659,-0.007741079,0.0067186006,-0.011079395,0.013719527,-0.0338181,-0.0115906345,0.018740356,0.027088054,-0.04169271,-0.038548972,0.0032734578,-0.0051696217,0.008919981,-0.0062416983,0.079722814,-0.021472052,0.059670024,0.013727157,0.0013353266,0.044866975,0.012849657,0.00942359,-0.022402965,0.034306448,9.1708323E-4,-0.012040831,-0.03821323,-0.072580725,-0.039281495,-0.02632501,-0.020205399,-5.0217815E-4,-0.03491688,-0.00749309,-0.0048224367,0.015917093,-0.028446272,0.007805938,0.039678276,0.014673332,-0.01498618,0.039342538,-0.07081046,0.074473076,-0.022784486,0.012300266,0.050269324,0.04935367,-0.021578878,-0.022692923,-0.034977928,-0.027896881,-0.02267766,-0.026920184,0.01149907,0.007737264,-0.0057266434,0.015932353,0.015283767,-0.057899762,0.0017139871,-0.03207836,-0.01220107,-0.038762625,-0.04495854,-0.01289544,-0.012246853,-0.014108679,0.004566817,-0.02579088,-0.04566054,-0.033909664,-0.0481328,-0.020174878,-0.031086404,0.0030502675,-0.026355531,0.034733754,-0.019060833,-0.057258803,0.0034565884,-0.006253144,0.03448958,0.007378633,-0.013849244,0.01796205,0.021319443,-0.05109341,0.027088054,0.03332975,-0.0079890685,-0.020953182,0.01936605,0.010758917,-0.01202557,-0.032353055,-0.057960805,-0.0040365015,5.5034534E-4,-0.011964526,0.007214579,0.010186634,0.044561755,0.0059364806,0.0041242517,-0.009499895,-0.024188487,0.08625447,-0.022433488,-0.023135487,-0.046484627,0.005245926,-0.022616617,0.011270156,-0.0209074,-0.03714497,0.07770838,0.04773602,0.031116925,-0.01811466,-0.03622932,-0.028461533,-0.058479674,0.06397359,-0.014085788,-0.0064591654,0.0053107846,-0.021670444,-0.0216094,-0.017946789,0.06977272,0.007928025,-0.044653323,0.012941223,-0.020388529,-0.07477829,0.019381313,0.02806475,-0.0037866046,-0.012491027,0.011972156,0.01166694,-0.010911526,0.0074358615,-0.017153224,0.011621157,-0.019625485,0.0030903274,0.022540312,0.024188487,-0.0024074032,0.043188278,-0.0047499477,0.01429181,0.023776444,-0.019793356,-0.008507938,-0.010430808,0.00610435,-0.034703232,0.022738704,-0.009683025,-8.3648675E-4,-0.015573723,0.011865331,-0.010339243,0.029407706,0.0068254266,-0.009499895,-0.038121667,-0.041082278,-0.0116822,-0.07300803,0.003242936,0.028385228,-0.010087439,-0.035283145,0.03017075,0.023196531,0.026767576,0.015329549,-0.021502573,-0.03485584,-0.03952567,0.037419666,-0.04236419,-0.00540998,0.03384862,-0.021563618,0.02109053,0.018755617,0.012071352,0.0060051545,-0.020296965,0.020296965,-0.009324395,0.0154592665,-0.0016281446,-0.0038323873,-0.0029091043,0.025088878,0.015718702,0.0023291912,0.0053603826,0.08228664,0.0030445447,-0.034092795,-0.008279025,0.016588572,-0.018862441,-0.013521136,-0.029606098,-0.049292628,-0.0017502316,0.079234466,-0.01968653,-0.015733963,0.02333388,0.010560526,-0.011659309,0.01516931,0.009194678,-3.1046342E-4,0.4338972,-6.9818506E-4,0.003868632,0.01290307,0.011224374,0.0017311556,0.024310574,0.07624333,-0.002573365,-0.037389144,0.004685089,0.04395132,-6.5335626E-4,-0.017519485,8.679623E-4,-0.067514114,-0.02928562,0.013131984,0.012796244,-0.024814183,-0.002237626,-0.020693747,-0.013727157,0.04511115,0.022280877,0.04425654,-0.02302866,-0.017946789,-2.0590259E-4,-0.025668792,-0.024005357,-0.0041395123,-0.0051963283,-0.019335529,0.047705498,0.023684878,-0.017137963,0.007737264,0.049597844,-0.030460708,0.01185007,0.0046965345,0.021456791,-0.025516184,0.024508966,-0.0076647745,-0.005127654,0.014391006,0.14589398,0.014535984,0.019076094,-0.0018293974,0.0104155475,-0.014429158,0.016069701,-0.01970179,-0.030964317,0.031864706,-0.034611665,3.183323E-4,0.0023749738,-0.016985355,-0.009324395,0.02334914,-0.009843265,0.007214579,-0.004753763,0.01832831,0.0075236117,-0.023593314,-0.013612701,0.011148069,0.028827794,0.011964526,-0.023593314,0.015474528,-0.018252008,0.03729758,0.011819548,-0.049170543,-0.009110742,-0.07899029,0.02162466,0.011064135,-0.007458753,0.06293585,-0.058815412,-0.03940358,-0.015558463,0.031620532,-0.014528354,-0.029667143,0.0018427507,-0.0088284165,-0.0061577633,-0.019427095,0.009011547,-0.008736852,-0.011804287,0.04254732,-0.003076974,0.002838523,0.00679872,0.016100224,-0.0050322735,-0.0024589086,0.01796205,-0.0070924917,-0.0023177455,0.0029682403,0.03729758,-0.022891313,-0.02003753,-0.051551238,0.00505898,-0.031345837,-0.001856104,-0.025668792,0.008988655,-0.005684676,0.044714365,-0.007111568,-0.0014869815,0.015733963",
             "-0.06877425,-0.110376015,0.056460347,-0.11508854,-0.035770282,0.09110859,0.074779645,0.10778218,0.041168418,0.00877987,-0.06257925,-0.17031246,0.0078012533,-0.099484995,0.049678966,-0.12064676,0.0035742037,-0.07642894,0.084006995,-0.031885564,-0.010203922,0.07147753,-0.013786878,-0.10539152,-4.0443847E-4,-0.0029136464,0.12945361,0.056249112,0.007855949,0.010200525,0.06252866,-0.00992952,0.0710769,-0.05136169,0.018856565,-0.04857356,0.037177686,-0.06614517,-0.093323916,0.03540732,-0.026517263,0.013039894,-0.010858195,0.060076833,0.008916428,-0.034137506,-0.061807502,0.030723315,0.011589745,-0.009525355,-0.07684989,0.019526493,0.0014002267,-0.037037805,0.0056473464,0.028578788,-0.0020790491,-0.08482909,-0.005006633,0.036573328,0.024311012,0.058709033,-0.09075971,-0.0142347375,0.019077899,0.062733464,0.035090093,-0.015764154,-0.050496776,-0.06389214,-0.034335338,0.06915118,0.00588193,0.006075532,-0.06856422,-0.0044007646,-0.01093641,0.0023361351,0.026411468,-0.037694126,-0.05001603,-0.059801526,-0.019670893,0.0147637185,-0.050749764,0.016313113,0.023929767,0.02460238,0.0127752125,-0.056655247,-0.004906456,0.03167615,0.04177655,0.03865271,-0.058377806,-0.03636661"
         };
+    }
+
+    private static Dataset createH5Dataset(String datasetPath, String querySetPath) {
+        return new Main.ImplicitH5Dataset(datasetPath, querySetPath);
+    }
+
+    private static class ImplicitH5Dataset extends FSDatasetInstanceSingularizator.H5FloatVectorDataset {
+
+        private final File datasetFile;
+        private final File querySetFile;
+
+        public ImplicitH5Dataset(String datasetPath, String querySetPath) {
+            super("Implicit_dataset_" + new File(datasetPath).getName());
+            this.datasetFile = new File(datasetPath);
+            this.querySetFile = new File(querySetPath);
+        }
+
+        @Override
+        public List<Object> getMetricQueryObjects() {
+            FSMetricSpacesStorage storage = (FSMetricSpacesStorage) metricSpacesStorage;
+            Iterator it = storage.getIteratorOfObjects(querySetFile);
+            return Tools.getObjectsFromIterator(it);
+        }
+
+        @Override
+        public Iterator<Object> getMetricObjectsFromDataset(Object... params) {
+            FSMetricSpacesStorage storage = (FSMetricSpacesStorage) metricSpacesStorage;
+            Iterator it = storage.getIteratorOfObjects(datasetFile, params);
+            return it;
+        }
+
+        @Override
+        public List<Object> getPivots(int objCount) {
+            return metricSpacesStorage.getPivots("laion2B-en-clip768v2-n=100M.h5_2048pivots.gz", objCount);
+        }
+
     }
 
 }
