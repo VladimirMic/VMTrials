@@ -39,6 +39,10 @@ public class Main {
     private static SISAPChallengeEvaluator algorithm = null;
 
     public static void main(String[] args) {
+        System.out.print("Args: ");
+        for (int i = 0; i < args.length; i++) {
+            System.out.print(args[i] + " ");
+        }
         String dataset768DimPath = args[0];
         String datasetPCA96DimPath = args[1];
         String querySet768DimPath = args[2];
@@ -215,7 +219,7 @@ public class Main {
         @Override
         public List<Object> getMetricQueryObjects() {
             FSMetricSpacesStorage storage = (FSMetricSpacesStorage) metricSpacesStorage;
-            Iterator it = storage.getIteratorOfObjects(querySetFile);
+            Iterator it = storage.getIteratorOfObjects(querySetFile, "Q");
             return Tools.getObjectsFromIterator(it);
         }
 
