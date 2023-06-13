@@ -5,7 +5,7 @@ import io.jhdf.api.Dataset;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.nio.file.Paths;
-import vm.m2.tools.Tools;
+import vm.datatools.Tools;
 
 /**
  *
@@ -27,8 +27,7 @@ public class Reader {
             for (int i = 0; i < dimensions[0]; i++) {
                 sliceOffset[0] = i;
                 float[][] dataBuffer = (float[][]) dataset.getData(sliceOffset, sliceDimensions);
-                Tools.printArray(dataBuffer[0], ";");
-                System.out.println("");
+                Tools.printArray(dataBuffer[0], ";", true, System.out);
             }
         }
     }

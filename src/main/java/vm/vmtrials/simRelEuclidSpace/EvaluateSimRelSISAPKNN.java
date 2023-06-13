@@ -14,7 +14,6 @@ import vm.fs.store.dataTransforms.FSSVDStorageImpl;
 import vm.fs.store.queryResults.FSNearestNeighboursStorageImpl;
 import vm.fs.store.queryResults.FSQueryExecutionStatsStoreImpl;
 import vm.fs.store.queryResults.recallEvaluation.FSRecallOfCandidateSetsStorageImpl;
-import vm.m2.dataset.M2DatasetInstanceSingularizator;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.Dataset;
 import vm.objTransforms.perform.PCAMetricObjectTransformer;
@@ -40,8 +39,10 @@ public class EvaluateSimRelSISAPKNN {
     public static final Boolean INVOLVE_OBJS_UNKNOWN_RELATION = true;
 
     public static void main(String[] args) {
-        Dataset fullDataset = new M2DatasetInstanceSingularizator.DeCAF20MDataset();
-        Dataset pcaDataset = new FSDatasetInstanceSingularizator.DeCAF20M_PCA256Dataset();
+        Dataset fullDataset = new FSDatasetInstanceSingularizator.DeCAFDataset();
+        Dataset pcaDataset = new FSDatasetInstanceSingularizator.DeCAF_PCA256Dataset();
+//        Dataset fullDataset = new M2DatasetInstanceSingularizator.DeCAF20MDataset();
+//        Dataset pcaDataset = new FSDatasetInstanceSingularizator.DeCAF20M_PCA256Dataset();
         run(fullDataset, pcaDataset);
     }
 
