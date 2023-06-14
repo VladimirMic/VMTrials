@@ -151,10 +151,14 @@ public class Main {
     private static String buildAndStoreAlgorithm(Dataset fullDataset, Dataset pcaDataset, int datasetSizeInMillions) {
         LOG.log(Level.INFO, "Build start");
         storeVoronoiPartitioning(fullDataset);
+        System.gc();
         storeTOmegaThresholdsForSimRel(pcaDataset, datasetSizeInMillions);
+        System.gc();
         AbstractObjectToSketchTransformator sketchingTechnique = createSketches(fullDataset);
         Dataset sketchesDataset = createImplicitSketchesDataset(sketchingTechnique, fullDataset.getDatasetName(), SKETCH_LENGTH, 0.5f);
+        System.gc();
         learnSketchMapping(fullDataset, sketchesDataset, 0.004f, SKETCH_LENGTH, 2f);
+        System.gc();
         LOG.log(Level.INFO, "Build finished");
         String ret = sketchingTechnique.getNameOfTransformedSetOfObjects(fullDataset.getDatasetName(), false, SKETCH_LENGTH, 0.5f);
         return ret;

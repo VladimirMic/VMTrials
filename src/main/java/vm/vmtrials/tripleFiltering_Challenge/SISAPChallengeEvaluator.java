@@ -45,12 +45,12 @@ public class SISAPChallengeEvaluator {
 
     private final float distIntervalsForPX = 0.004f;
 
-    private final VoronoiPartitionsCandSetIdentifier ALG_VORONOI;
-    private final SecondaryFilteringWithSketches SKETCH_FILTERING;
-    private final SimRelEuclideanPCAImpl SIM_REL_FILTER;
-    private final Integer K;
+    private final VoronoiPartitionsCandSetIdentifier algVoronoi;
+    private final SecondaryFilteringWithSketches algSketchFiltering;
+    private final SimRelEuclideanPCAImpl algSimRelFiltering;
+    private final Integer k;
 
-    private final VorSkeSim ALGORITHM;
+    private final VorSkeSim vorSkeSimAlg;
     private final AbstractMetricSpace fullMetricSpace;
     private final AbstractMetricSpace pcaDatasetMetricSpace;
 
@@ -67,10 +67,10 @@ public class SISAPChallengeEvaluator {
      */
     public SISAPChallengeEvaluator(Dataset fullDataset, Dataset pcaDataset, Dataset sketchesDataset, int voronoiK, int kPCA, int k) {
         String resultNamePrefix = "Voronoi" + voronoiK + "_pCum" + pCum;
-        ALG_VORONOI = new VoronoiPartitionsCandSetIdentifier(fullDataset, new FSVoronoiPartitioningStorage(), pivotsUsedForTheVoronoi);
+        algVoronoi = new VoronoiPartitionsCandSetIdentifier(fullDataset, new FSVoronoiPartitioningStorage(), pivotsUsedForTheVoronoi);
         EvaluateVorSkeSimMain.initSimRel(querySampleCount, pcaLength, kPCA, dataSampleCount, pcaDataset.getDatasetName(), percentile, prefixLength);
-        SKETCH_FILTERING = EvaluateVorSkeSimMain.initSecondaryFilteringWithSketches(fullDataset, sketchesDataset, resultNamePrefix, pCum, distIntervalsForPX);
-        K = k;
+        algSketchFiltering = EvaluateVorSkeSimMain.initSecondaryFilteringWithSketches(fullDataset, sketchesDataset, resultNamePrefix, pCum, distIntervalsForPX);
+        this.k = k;
 
         fullMetricSpace = fullDataset.getMetricSpace();
         pcaDatasetMetricSpace = pcaDataset.getMetricSpace();
@@ -82,15 +82,15 @@ public class SISAPChallengeEvaluator {
         List pivots = fullDataset.getPivots(-1);
         AbstractObjectToSketchTransformator sketchingTechnique = new SketchingGHP(fullDataset.getDistanceFunction(), fullDataset.getMetricSpace(), pivots, false, fullDataset.getDatasetName(), 0.5f, sketchLength, storageOfPivotPairs);
 
-        SIM_REL_FILTER = initSimRel(querySampleCount, pcaLength, kPCA, dataSampleCount, pcaDataset.getDatasetName(), percentile, prefixLength);
+        algSimRelFiltering = initSimRel(querySampleCount, pcaLength, kPCA, dataSampleCount, pcaDataset.getDatasetName(), percentile, prefixLength);
 
-        ALGORITHM = new VorSkeSim(
-                ALG_VORONOI,
+        vorSkeSimAlg = new VorSkeSim(
+                algVoronoi,
                 voronoiK,
-                SKETCH_FILTERING,
+                algSketchFiltering,
                 sketchingTechnique,
                 sketchesDataset.getMetricSpace(),
-                SIM_REL_FILTER, kPCA, pcaOMap, fullDataset.getKeyValueStorage(), fullDataset.getDistanceFunction());
+                algSimRelFiltering, kPCA, pcaOMap, fullDataset.getKeyValueStorage(), fullDataset.getDistanceFunction());
 
     }
 
@@ -98,7 +98,7 @@ public class SISAPChallengeEvaluator {
         AbstractMap.SimpleEntry<String, float[]> query = new AbstractMap.SimpleEntry<>(queryObjID, qVectorData);
         AbstractMap.SimpleEntry<String, float[]> queryPCA = new AbstractMap.SimpleEntry<>(queryObjID, pcaQDataPreffixOrFull);
 
-        TreeSet ret = ALGORITHM.completeKnnSearch(fullMetricSpace, query, K, null, pcaDatasetMetricSpace, queryPCA);
+        TreeSet ret = vorSkeSimAlg.completeKnnSearch(fullMetricSpace, query, k, null, pcaDatasetMetricSpace, queryPCA);
         return ret;
     }
 
