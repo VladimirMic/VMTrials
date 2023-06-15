@@ -151,14 +151,14 @@ public class Main {
         LOG.log(Level.INFO, "Starting the Voronoi partitioning");
         storeVoronoiPartitioning(fullDataset);
         System.gc();
-        LOG.log(Level.INFO, "Starting the learning of the tOmega thresholds for the simRel");
+        LOG.log(Level.INFO, "Starting the learn of the tOmega thresholds for the simRel");
         storeTOmegaThresholdsForSimRel(pcaDataset, datasetSizeInMillions);
         System.gc();
-        LOG.log(Level.INFO, "Starting the sketch transformation with the predefined sketching technique");
+        LOG.log(Level.INFO, "Starting the sketching transformation with the predefined sketching technique");
         AbstractObjectToSketchTransformator sketchingTechnique = createSketches(fullDataset);
         Dataset sketchesDataset = createImplicitSketchesDataset(sketchingTechnique, fullDataset.getDatasetName(), SKETCH_LENGTH, 0.5f);
         System.gc();
-        LOG.log(Level.INFO, "Starting the learning of the Secondary filtering with sketches");
+        LOG.log(Level.INFO, "Starting the learn of the Secondary filtering with sketches");
         learnSketchMapping(fullDataset, sketchesDataset, 0.004f, SKETCH_LENGTH, 2f);
         System.gc();
         LOG.log(Level.INFO, "Build finished");
