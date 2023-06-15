@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,6 +31,7 @@ import vm.objTransforms.objectToSketchTransformators.SketchingGHP;
 import vm.objTransforms.storeLearned.GHPSketchingPivotPairsStoreInterface;
 import vm.queryResults.recallEvaluation.RecallOfCandsSetsEvaluator;
 import vm.search.SearchingAlgorithm;
+import vm.search.devel.CheckingOfNearestNeighbours;
 import vm.search.impl.VoronoiPartitionsCandSetIdentifier;
 import vm.search.impl.multiFiltering.VorSkeSimSorting;
 import vm.simRel.impl.SimRelEuclideanPCAImpl;
@@ -122,6 +124,7 @@ public class EvaluateVorSkeSimMain {
             float pCum,
             float distIntervalsForPX
     ) {
+
         //queries
         List<Object> fullQueries = fullDataset.getMetricQueryObjects();
 
@@ -157,14 +160,19 @@ public class EvaluateVorSkeSimMain {
 //        TreeSet[] results = alg.completeKnnSearchOfQuerySet(fullMetricSpace, fullQueries, k, fullDataset.getMetricObjectsFromDataset(), pcaDatasetMetricSpace, pcaQMap);
         TreeSet[] results = new TreeSet[fullQueries.size()];
 
-        for (int i = 0; i < fullQueries.size(); i++) {
+        CheckingOfNearestNeighbours DEVEL = new CheckingOfNearestNeighbours(new FSNearestNeighboursStorageImpl(), fullDataset.getDatasetName(), fullDataset.getQuerySetName());
+
+        for (int i = 339; i < fullQueries.size(); i++) {
             Object query = fullQueries.get(i);
             Object qId = fullMetricSpace.getIDOfMetricObject(query);
             Object pcaQData = pcaQMap.get(qId);
-            results[i] = alg.completeKnnSearch(fullMetricSpace, query, k, null, pcaDatasetMetricSpace, pcaQData);
-            if (i == 150) {
-                break;
-            }
+            Set<String> ANSWER = DEVEL.getIDsOfNNForQuery(qId.toString(), k);
+            results[i] = alg.completeKnnSearch(fullMetricSpace, query, k, null, pcaDatasetMetricSpace, pcaQData, ANSWER);
+
+//            if (i == 499) {
+//            break;
+//            }
+            System.exit(0);
         }
         LOG.log(Level.INFO, "Storing statistics of queries");
         FSQueryExecutionStatsStoreImpl statsStorage = new FSQueryExecutionStatsStoreImpl(fullDataset.getDatasetName(), fullDataset.getQuerySetName(), k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), resultName, null);
