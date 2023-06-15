@@ -18,6 +18,7 @@ import vm.objTransforms.objectToSketchTransformators.SketchingGHP;
 import vm.objTransforms.storeLearned.GHPSketchingPivotPairsStoreInterface;
 import vm.search.impl.VoronoiPartitionsCandSetIdentifier;
 import vm.search.impl.multiFiltering.VorSkeSim;
+import vm.search.impl.multiFiltering.VorSkeSimSorting;
 import vm.simRel.impl.SimRelEuclideanPCAImpl;
 import static vm.vmtrials.tripleFiltering_Challenge.EvaluateVorSkeSimMain.initSimRel;
 
@@ -50,7 +51,7 @@ public class SISAPChallengeEvaluator {
     private final SimRelEuclideanPCAImpl algSimRelFiltering;
     private final Integer k;
 
-    private final VorSkeSim vorSkeSimAlg;
+    private final VorSkeSimSorting vorSkeSimAlg;
     private final AbstractMetricSpace fullMetricSpace;
     private final AbstractMetricSpace pcaDatasetMetricSpace;
 
@@ -84,7 +85,7 @@ public class SISAPChallengeEvaluator {
 
         algSimRelFiltering = initSimRel(querySampleCount, pcaLength, kPCA, dataSampleCount, pcaDataset.getDatasetName(), percentile, prefixLength);
 
-        vorSkeSimAlg = new VorSkeSim(
+        vorSkeSimAlg = new VorSkeSimSorting<float[]>(
                 algVoronoi,
                 voronoiK,
                 algSketchFiltering,
