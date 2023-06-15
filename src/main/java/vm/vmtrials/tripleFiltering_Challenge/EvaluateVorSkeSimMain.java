@@ -99,10 +99,10 @@ public class EvaluateVorSkeSimMain {
         int pcaLength = 96;
         /* number of query objects to learn t(\Omega) thresholds. We use different objects than the queries tested. */
         int querySampleCount = 100;
-        /* size of the data sample to learn t(\Omega) thresholds, SISAP: 100K */
+        /* size of the data sample to learn t(\Omega) thresholds: SISAP: 100 000 */
         int dataSampleCount = 100000;
         /* percentile - defined in the paper. Defines the precision of the simRel */
-        float percentile = 0.9f;
+        float percentile = 0.95f;
 
         SimRelEuclideanPCAImpl simRel = initSimRel(querySampleCount, pcaLength, kPCA, dataSampleCount, pcaDataset.getDatasetName(), percentile, prefixLength);
         String resultName = "VorskesimSorting_" + fullDataset.getDatasetName() + "_kVoronoi" + kVoronoi + "_kPCA" + kPCA + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__" + dataSampleCount + "o__k" + k + "_perc" + percentile + "_pCum" + pCum + "_sketchLength" + sketchLength;

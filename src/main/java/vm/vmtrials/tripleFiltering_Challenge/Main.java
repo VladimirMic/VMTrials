@@ -147,21 +147,21 @@ public class Main {
      * *************************************************
      */
     private static String buildAndStoreAlgorithm(Dataset fullDataset, Dataset pcaDataset, int datasetSizeInMillions) {
-        LOG.log(Level.INFO, "Build start");
-        LOG.log(Level.INFO, "Starting the Voronoi partitioning");
+        LOG.log(Level.INFO, "\nBuild start");
+        LOG.log(Level.INFO, "\nStarting the Voronoi partitioning");
         storeVoronoiPartitioning(fullDataset);
         System.gc();
-        LOG.log(Level.INFO, "Starting the learn of the tOmega thresholds for the simRel");
+        LOG.log(Level.INFO, "\nStarting the learn of the tOmega thresholds for the simRel");
         storeTOmegaThresholdsForSimRel(pcaDataset, datasetSizeInMillions);
         System.gc();
-        LOG.log(Level.INFO, "Starting the sketching transformation with the predefined sketching technique");
+        LOG.log(Level.INFO, "\nStarting the sketching transformation with the predefined sketching technique");
         AbstractObjectToSketchTransformator sketchingTechnique = createSketches(fullDataset);
         Dataset sketchesDataset = createImplicitSketchesDataset(sketchingTechnique, fullDataset.getDatasetName(), SKETCH_LENGTH, 0.5f);
         System.gc();
-        LOG.log(Level.INFO, "Starting the learn of the Secondary filtering with sketches");
+        LOG.log(Level.INFO, "\nStarting the learn of the Secondary filtering with sketches");
         learnSketchMapping(fullDataset, sketchesDataset, 0.004f, SKETCH_LENGTH, 2f);
         System.gc();
-        LOG.log(Level.INFO, "Build finished");
+        LOG.log(Level.INFO, "\nBuild finished");
         String ret = sketchingTechnique.getNameOfTransformedSetOfObjects(fullDataset.getDatasetName(), false, SKETCH_LENGTH, 0.5f);
         return ret;
     }
@@ -178,8 +178,8 @@ public class Main {
         int kPCA = getPCAK(datasetSizeInMillions);
         /* number of query objects to learn t(\Omega) thresholds. We use different objects than the pivots tested. */
         int querySampleCount = 100;//200
-        /* size of the data sample to learn t(\Omega) thresholds, IS: 1M */
-        int dataSampleCount = 100000; // 1000000 = 1M
+        /* size of the data sample to learn t(\Omega) thresholds: SISAP: 100 000 */
+        int dataSampleCount = 1000; // 100000 = 100K
         int pcaLength = 96;
         SimRelEuclidThresholdsTOmegaStorage simRelStorage = new FSSimRelThresholdsTOmegaStorage(querySampleCount, pcaLength, kPCA, dataSampleCount);
         ThresholdsTOmegaEvaluator evaluator = new ThresholdsTOmegaEvaluator(querySampleCount, kPCA);
