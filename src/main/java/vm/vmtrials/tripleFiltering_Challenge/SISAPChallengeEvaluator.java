@@ -85,13 +85,13 @@ public class SISAPChallengeEvaluator {
 
         algSimRelFiltering = initSimRel(querySampleCount, pcaLength, kPCA, dataSampleCount, pcaDataset.getDatasetName(), percentile, prefixLength);
 
-        vorSkeSimAlg = new VorSkeSimSorting<float[]>(
+        vorSkeSimAlg = new VorSkeSimSorting<>(
                 algVoronoi,
                 voronoiK,
                 algSketchFiltering,
                 sketchingTechnique,
                 sketchesDataset.getMetricSpace(),
-                algSimRelFiltering, kPCA, pcaOMap, fullDataset.getKeyValueStorage(), fullDataset.getDistanceFunction());
+                algSimRelFiltering, kPCA, Integer.MAX_VALUE, pcaOMap, fullDataset.getKeyValueStorage(), fullDataset.getDistanceFunction());
 
     }
 

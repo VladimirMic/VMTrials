@@ -78,6 +78,11 @@ public class EvaluateVorSkeSimMain {
             500,
             500
         };
+        int[] maxKSimRel = new int[]{
+            500,
+            800,
+            800
+        };
         float[] distIntervalsForPX = new float[]{
             0.004f,
             0.004f,
@@ -85,12 +90,12 @@ public class EvaluateVorSkeSimMain {
         };
 
         for (int i = 2; i < fullDatasets.length; i++) {
-            run(fullDatasets[i], pcaDatasets[i], sketchesDatasets[i], voronoiK[i], minKSimRel[i], distIntervalsForPX[i], sketchLength, pCum);
+            run(fullDatasets[i], pcaDatasets[i], sketchesDatasets[i], voronoiK[i], minKSimRel[i], maxKSimRel[i], distIntervalsForPX[i], sketchLength, pCum);
             System.exit(0);
         }
     }
 
-    private static void run(Dataset fullDataset, Dataset pcaDataset, Dataset sketchesDataset, int kVoronoi, int kPCA, float distIntervalsForPX, int sketchLength, float pCum) {
+    private static void run(Dataset fullDataset, Dataset pcaDataset, Dataset sketchesDataset, int kVoronoi, int simRelMinAnswerSize, int simRelMaxAnswerSize, float distIntervalsForPX, int sketchLength, float pCum) {
         /* kNN queries - the result set size */
         int k = 10;
         /*  prefix of the shortened vectors used by the simRel */
@@ -104,10 +109,10 @@ public class EvaluateVorSkeSimMain {
         /* percentile - defined in the paper. Defines the precision of the simRel */
         float percentile = 0.95f;
 
-        SimRelEuclideanPCAImpl simRel = initSimRel(querySampleCount, pcaLength, kPCA, dataSampleCount, pcaDataset.getDatasetName(), percentile, prefixLength);
-        String resultName = "VorskesimSorting_" + fullDataset.getDatasetName() + "_kVoronoi" + kVoronoi + "_kPCA" + kPCA + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__" + dataSampleCount + "o__k" + k + "_perc" + percentile + "_pCum" + pCum + "_sketchLength" + sketchLength;
+        SimRelEuclideanPCAImpl simRel = initSimRel(querySampleCount, pcaLength, simRelMinAnswerSize, dataSampleCount, pcaDataset.getDatasetName(), percentile, prefixLength);
+        String resultName = "VorskesimSorting_" + fullDataset.getDatasetName() + "_kVoronoi" + kVoronoi + "_kPCA" + simRelMinAnswerSize + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__" + dataSampleCount + "o__k" + k + "_perc" + percentile + "_pCum" + pCum + "_sketchLength" + sketchLength;
 
-        testQueries(fullDataset, pcaDataset, sketchesDataset, simRel, kVoronoi, kPCA, k, prefixLength, resultName, sketchLength, pCum, distIntervalsForPX);
+        testQueries(fullDataset, pcaDataset, sketchesDataset, simRel, kVoronoi, simRelMinAnswerSize, simRelMaxAnswerSize, k, prefixLength, resultName, sketchLength, pCum, distIntervalsForPX);
     }
 
     private static void testQueries(
@@ -116,7 +121,8 @@ public class EvaluateVorSkeSimMain {
             Dataset sketchesDataset,
             SimRelEuclideanPCAImpl simRel,
             int voronoiK,
-            int kPCA,
+            int simRelMinAnswerSize,
+            int simRelMaxAnswerSize,
             int k,
             int prefixLength,
             String resultName,
@@ -155,7 +161,12 @@ public class EvaluateVorSkeSimMain {
                 sketchFiltering,
                 sketchingTechnique,
                 sketchesDataset.getMetricSpace(),
-                simRel, kPCA, pcaOMap, fullDataset.getKeyValueStorage(), fullDataset.getDistanceFunction());
+                simRel,
+                simRelMinAnswerSize,
+                simRelMaxAnswerSize,
+                pcaOMap,
+                fullDataset.getKeyValueStorage(),
+                fullDataset.getDistanceFunction());
 
 //        TreeSet[] results = alg.completeKnnSearchOfQuerySet(fullMetricSpace, fullQueries, k, fullDataset.getMetricObjectsFromDataset(), pcaDatasetMetricSpace, pcaQMap);
         TreeSet[] results = new TreeSet[fullQueries.size()];

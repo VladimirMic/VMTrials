@@ -12,7 +12,7 @@
             <properties>
                 <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
                 <exec.executable>java</exec.executable>
-                <exec.mainClass>vm.vmtrials.tripleFiltering_Challenge.Main</exec.mainClass>
+                <exec.mainClass>vm.vmtrials.tripleFiltering_Challenge.EvaluateVorSkeSimMain</exec.mainClass>
                 <exec.vmArgs>-Xmx95g</exec.vmArgs>
                 <exec.appArgs>c:\Data\Similarity_search\Dataset\Dataset\Pokus_laion2B-en-clip768v2-n=100K.h5 c:\Data\Similarity_search\Dataset\Dataset\Pokus_laion2B-en-pca96v2-n=100k.h5 c:\Data\Similarity_search\Dataset\Query\Pokus_public-queries-10k-clip768v2.h5 c:\Data\Similarity_search\Dataset\Query\Pokus_public-queries-10k-pca96v2.h5 100000</exec.appArgs>
             </properties>
@@ -30,7 +30,7 @@
                 <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
                 <exec.executable>java</exec.executable>
                 <jpda.listen>true</jpda.listen>
-                <exec.mainClass>vm.vmtrials.tripleFiltering_Challenge.Main</exec.mainClass>
+                <exec.mainClass>vm.vmtrials.tripleFiltering_Challenge.EvaluateVorSkeSimMain</exec.mainClass>
                 <exec.vmArgs>-Xmx95g -agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address}</exec.vmArgs>
                 <exec.appArgs>c:\Data\Similarity_search\Dataset\Dataset\Pokus_laion2B-en-clip768v2-n=100K.h5 c:\Data\Similarity_search\Dataset\Dataset\Pokus_laion2B-en-pca96v2-n=100k.h5 c:\Data\Similarity_search\Dataset\Query\Pokus_public-queries-10k-clip768v2.h5 c:\Data\Similarity_search\Dataset\Query\Pokus_public-queries-10k-pca96v2.h5 100000</exec.appArgs>
             </properties>
@@ -47,7 +47,7 @@
             <properties>
                 <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
                 <exec.executable>java</exec.executable>
-                <exec.mainClass>vm.vmtrials.tripleFiltering_Challenge.Main</exec.mainClass>
+                <exec.mainClass>vm.vmtrials.tripleFiltering_Challenge.EvaluateVorSkeSimMain</exec.mainClass>
                 <exec.vmArgs>-Xmx95g</exec.vmArgs>
                 <exec.appArgs>c:\Data\Similarity_search\Dataset\Dataset\Pokus_laion2B-en-clip768v2-n=100K.h5 c:\Data\Similarity_search\Dataset\Dataset\Pokus_laion2B-en-pca96v2-n=100k.h5 c:\Data\Similarity_search\Dataset\Query\Pokus_public-queries-10k-clip768v2.h5 c:\Data\Similarity_search\Dataset\Query\Pokus_public-queries-10k-pca96v2.h5 100000</exec.appArgs>
             </properties>
