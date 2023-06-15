@@ -59,8 +59,6 @@ public class Main {
         Dataset pcaDataset = createH5Dataset(datasetPCA96DimPath, querySetPCA96DimPath, true);
 
         String nameOfSketchDataset = buildAndStoreAlgorithm(fullDataset, pcaDataset, datasetSize);
-        
-        
 
         if (algorithm == null) {
             algorithm = initAlgorithm(fullDataset, pcaDataset, nameOfSketchDataset, datasetSize, k);
@@ -112,9 +110,9 @@ public class Main {
     public static int getVoronoiK(int size) {
         switch (size) {
             case 100000:
-                return 100000;
+                return 10000;
             case 300000:
-                return 300000;
+                return 50000;
             case 10000000:
                 return 400000;
             case 30000000:
@@ -150,13 +148,17 @@ public class Main {
      */
     private static String buildAndStoreAlgorithm(Dataset fullDataset, Dataset pcaDataset, int datasetSizeInMillions) {
         LOG.log(Level.INFO, "Build start");
+        LOG.log(Level.INFO, "Starting the Voronoi partitioning");
         storeVoronoiPartitioning(fullDataset);
         System.gc();
+        LOG.log(Level.INFO, "Starting the learning of the tOmega thresholds for the simRel");
         storeTOmegaThresholdsForSimRel(pcaDataset, datasetSizeInMillions);
         System.gc();
+        LOG.log(Level.INFO, "Starting the sketch transformation with the predefined sketching technique");
         AbstractObjectToSketchTransformator sketchingTechnique = createSketches(fullDataset);
         Dataset sketchesDataset = createImplicitSketchesDataset(sketchingTechnique, fullDataset.getDatasetName(), SKETCH_LENGTH, 0.5f);
         System.gc();
+        LOG.log(Level.INFO, "Starting the learning of the Secondary filtering with sketches");
         learnSketchMapping(fullDataset, sketchesDataset, 0.004f, SKETCH_LENGTH, 2f);
         System.gc();
         LOG.log(Level.INFO, "Build finished");
