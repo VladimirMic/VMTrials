@@ -12,7 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.datatools.Tools;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
-import vm.fs.dataset.FSDatasetInstanceSingularizator.FSFloatVectorDataset;
+import vm.fs.dataset.FSDatasetInstanceSingularizator.FSHammingSpaceDataset;
 import vm.fs.main.search.filtering.learning.LearnSecondaryFilteringWithGHPSketchesMain;
 import vm.fs.metricSpaceImpl.FSMetricSpaceImpl;
 import vm.fs.metricSpaceImpl.FSMetricSpacesStorage;
@@ -93,7 +93,7 @@ public class Main {
 
     private static SISAPChallengeEvaluator initAlgorithm(Dataset fullDataset, Dataset pcaDataset, String nameOfSketchDataset, int datasetSize, int k) {
         LOG.log(Level.INFO, "Initializing algorithm");
-        Dataset sketchesDataset = new FSFloatVectorDataset(nameOfSketchDataset);
+        Dataset sketchesDataset = new FSHammingSpaceDataset(nameOfSketchDataset);
 
         int voronoiK = getVoronoiK(datasetSize);
         int kPCA = getPCAK(datasetSize);
