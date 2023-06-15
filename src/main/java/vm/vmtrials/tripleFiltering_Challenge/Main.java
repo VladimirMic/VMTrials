@@ -174,12 +174,12 @@ public class Main {
         vp.splitByVoronoi(dataset.getMetricObjectsFromDataset(), dataset.getDatasetName(), pivotCount, storage);
     }
 
-    private static void storeTOmegaThresholdsForSimRel(Dataset pcaDataset, int datasetSizeInMillions) {
-        int kPCA = getPCAK(datasetSizeInMillions);
+    private static void storeTOmegaThresholdsForSimRel(Dataset pcaDataset, int datasetSize) {
+        int kPCA = getPCAK(datasetSize);
         /* number of query objects to learn t(\Omega) thresholds. We use different objects than the pivots tested. */
         int querySampleCount = 100;//200
         /* size of the data sample to learn t(\Omega) thresholds: SISAP: 100 000 */
-        int dataSampleCount = 1000; // 100000 = 100K
+        int dataSampleCount = getVoronoiK(datasetSize); // 100000 = 100K
         int pcaLength = 96;
         SimRelEuclidThresholdsTOmegaStorage simRelStorage = new FSSimRelThresholdsTOmegaStorage(querySampleCount, pcaLength, kPCA, dataSampleCount);
         ThresholdsTOmegaEvaluator evaluator = new ThresholdsTOmegaEvaluator(querySampleCount, kPCA);
