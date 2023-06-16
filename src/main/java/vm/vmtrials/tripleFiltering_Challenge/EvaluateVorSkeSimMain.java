@@ -79,9 +79,9 @@ public class EvaluateVorSkeSimMain {
             500
         };
         int[] maxKSimRel = new int[]{
-            500,
-            800,
-            800
+            100000,
+            100000,
+            100000
         };
         float[] distIntervalsForPX = new float[]{
             0.004f,

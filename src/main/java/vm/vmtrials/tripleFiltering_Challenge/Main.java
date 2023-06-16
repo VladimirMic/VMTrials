@@ -112,7 +112,7 @@ public class Main {
             case 100000:
                 return 1000;
             case 300000:
-                return 50000;
+                return 1000;
             case 10000000:
                 return 400000;
             case 30000000:
