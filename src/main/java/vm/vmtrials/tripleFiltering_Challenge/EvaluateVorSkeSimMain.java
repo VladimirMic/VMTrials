@@ -107,10 +107,10 @@ public class EvaluateVorSkeSimMain {
         /* size of the data sample to learn t(\Omega) thresholds: SISAP: 100 000 */
         int dataSampleCount = 100000;
         /* percentile - defined in the paper. Defines the precision of the simRel */
-        float percentile = 0.95f;
+        float percentile = 0.9f;
 
         SimRelEuclideanPCAImpl simRel = initSimRel(querySampleCount, pcaLength, simRelMinAnswerSize, dataSampleCount, pcaDataset.getDatasetName(), percentile, prefixLength);
-        String resultName = "VorskesimSorting_" + fullDataset.getDatasetName() + "_kVoronoi" + kVoronoi + "_kPCA" + simRelMinAnswerSize + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__" + dataSampleCount + "o__k" + k + "_perc" + percentile + "_pCum" + pCum + "_sketchLength" + sketchLength;
+        String resultName = "VorskesimSorting_" + fullDataset.getDatasetName() + "_kVoronoi" + kVoronoi + "_simRelMinAnswerSize" + simRelMinAnswerSize + "simRelMaxAnswerSize" + simRelMaxAnswerSize + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__" + dataSampleCount + "o__k" + k + "_perc" + percentile + "_pCum" + pCum + "_sketchLength" + sketchLength;
 
         testQueries(fullDataset, pcaDataset, sketchesDataset, simRel, kVoronoi, simRelMinAnswerSize, simRelMaxAnswerSize, k, prefixLength, resultName, sketchLength, pCum, distIntervalsForPX);
     }
@@ -168,22 +168,22 @@ public class EvaluateVorSkeSimMain {
                 fullDataset.getKeyValueStorage(),
                 fullDataset.getDistanceFunction());
 
-//        TreeSet[] results = alg.completeKnnSearchOfQuerySet(fullMetricSpace, fullQueries, k, fullDataset.getMetricObjectsFromDataset(), pcaDatasetMetricSpace, pcaQMap);
         TreeSet[] results = new TreeSet[fullQueries.size()];
 
         CheckingOfNearestNeighbours DEVEL = new CheckingOfNearestNeighbours(new FSNearestNeighboursStorageImpl(), fullDataset.getDatasetName(), fullDataset.getQuerySetName());
-
+//339
         for (int i = 339; i < fullQueries.size(); i++) {
             Object query = fullQueries.get(i);
             Object qId = fullMetricSpace.getIDOfMetricObject(query);
             Object pcaQData = pcaQMap.get(qId);
             Set<String> ANSWER = DEVEL.getIDsOfNNForQuery(qId.toString(), k);
+//            Set<String> ANSWER = null;
             results[i] = alg.completeKnnSearch(fullMetricSpace, query, k, null, pcaDatasetMetricSpace, pcaQData, ANSWER);
 
 //            if (i == 499) {
-//            break;
+//                break;
 //            }
-            System.exit(0);
+            break;
         }
         LOG.log(Level.INFO, "Storing statistics of queries");
         FSQueryExecutionStatsStoreImpl statsStorage = new FSQueryExecutionStatsStoreImpl(fullDataset.getDatasetName(), fullDataset.getQuerySetName(), k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), resultName, null);
