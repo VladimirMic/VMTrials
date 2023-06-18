@@ -69,8 +69,8 @@ public class EvaluateVorSkeSimMain {
 
         int[] voronoiK = new int[]{
             400000,
-            1000000,
-            3000000
+            300000,
+            500000
         };
 
         int[] minKSimRel = new int[]{

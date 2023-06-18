@@ -19,10 +19,10 @@ public class PrintCellsSizes {
 
     public static void main(String[] args) {
         Dataset[] datasets = new Dataset[]{
-            new FSDatasetInstanceSingularizator.LAION_100k_Dataset(),
-            new FSDatasetInstanceSingularizator.LAION_300k_Dataset(),
-            new FSDatasetInstanceSingularizator.LAION_10M_Dataset(),
-            new FSDatasetInstanceSingularizator.LAION_30M_Dataset(),
+//            new FSDatasetInstanceSingularizator.LAION_100k_Dataset(),
+//            new FSDatasetInstanceSingularizator.LAION_300k_Dataset(),
+//            new FSDatasetInstanceSingularizator.LAION_10M_Dataset(),
+//            new FSDatasetInstanceSingularizator.LAION_30M_Dataset(),
             new FSDatasetInstanceSingularizator.LAION_100M_Dataset()
         };
         for (Dataset dataset : datasets) {
@@ -31,7 +31,7 @@ public class PrintCellsSizes {
     }
 
     private static void run(Dataset dataset) {
-        int pivotCount = 1536;
+        int pivotCount = 20000;
         FSVoronoiPartitioningStorage storage = new FSVoronoiPartitioningStorage();
         Map<Object, TreeSet<Object>> vp = storage.load(dataset.getDatasetName(), pivotCount);
         File file = storage.getFileForFSVoronoiStorage(dataset.getDatasetName(), pivotCount, false);
