@@ -17,7 +17,6 @@ import vm.objTransforms.objectToSketchTransformators.AbstractObjectToSketchTrans
 import vm.objTransforms.objectToSketchTransformators.SketchingGHP;
 import vm.objTransforms.storeLearned.GHPSketchingPivotPairsStoreInterface;
 import vm.search.impl.VoronoiPartitionsCandSetIdentifier;
-import vm.search.impl.multiFiltering.VorSkeSim;
 import vm.search.impl.multiFiltering.VorSkeSimSorting;
 import vm.simRel.impl.SimRelEuclideanPCAImpl;
 import static vm.vmtrials.tripleFiltering_Challenge.EvaluateVorSkeSimMain.initSimRel;
@@ -32,15 +31,11 @@ public class SISAPChallengeEvaluator {
     private final float pCum = 0.5f;
 
     /*  prefix of the shortened vectors used by the simRel */
-    private final int prefixLength = 8;
+    private final int prefixLength = 24;
     /*  prefix of the shortened vectors used by the simRel */
     private final int pcaLength = 96;
     /* number of query objects to learn t(\Omega) thresholds in the simRel. We use different objects than the queries tested. */
     private final int querySampleCount = 100;
-    /* size of the data sample to learn t(\Omega) thresholds, SISAP: 100K */
-    private final int dataSampleCount = 100000;
-
-    private final int pivotsUsedForTheVoronoi = 2048;
     /* percentile - defined in the paper. Defines the precision of the simRel */
     private final float percentile = 0.9f;
 
@@ -65,11 +60,12 @@ public class SISAPChallengeEvaluator {
      * for 100M dataset
      * @param kPCA set 300 for 10M dataset, 500 otherwise
      * @param k set 10 for the sisap challenge
+     * @param pivotsUsedForTheVoronoi
      */
-    public SISAPChallengeEvaluator(Dataset fullDataset, Dataset pcaDataset, Dataset sketchesDataset, int voronoiK, int kPCA, int k) {
+    public SISAPChallengeEvaluator(Dataset fullDataset, Dataset pcaDataset, Dataset sketchesDataset, int voronoiK, int kPCA, int k, int pivotsUsedForTheVoronoi) {
         String resultNamePrefix = "Voronoi" + voronoiK + "_pCum" + pCum;
         algVoronoi = new VoronoiPartitionsCandSetIdentifier(fullDataset, new FSVoronoiPartitioningStorage(), pivotsUsedForTheVoronoi);
-        EvaluateVorSkeSimMain.initSimRel(querySampleCount, pcaLength, kPCA, dataSampleCount, pcaDataset.getDatasetName(), percentile, prefixLength);
+        EvaluateVorSkeSimMain.initSimRel(querySampleCount, pcaLength, kPCA, voronoiK, pcaDataset.getDatasetName(), percentile, prefixLength);
         algSketchFiltering = EvaluateVorSkeSimMain.initSecondaryFilteringWithSketches(fullDataset, sketchesDataset, resultNamePrefix, pCum, distIntervalsForPX);
         this.k = k;
 
@@ -83,7 +79,7 @@ public class SISAPChallengeEvaluator {
         List pivots = fullDataset.getPivots(-1);
         AbstractObjectToSketchTransformator sketchingTechnique = new SketchingGHP(fullDataset.getDistanceFunction(), fullDataset.getMetricSpace(), pivots, false, fullDataset.getDatasetName(), 0.5f, sketchLength, storageOfPivotPairs);
 
-        algSimRelFiltering = initSimRel(querySampleCount, pcaLength, kPCA, dataSampleCount, pcaDataset.getDatasetName(), percentile, prefixLength);
+        algSimRelFiltering = initSimRel(querySampleCount, pcaLength, kPCA, voronoiK, pcaDataset.getDatasetName(), percentile, prefixLength);
 
         vorSkeSimAlg = new VorSkeSimSorting<>(
                 algVoronoi,

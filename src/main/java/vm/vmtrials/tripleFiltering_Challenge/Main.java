@@ -12,7 +12,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.datatools.Tools;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
-import vm.fs.dataset.FSDatasetInstanceSingularizator.FSHammingSpaceDataset;
 import vm.fs.main.search.filtering.learning.LearnSecondaryFilteringWithGHPSketchesMain;
 import vm.fs.metricSpaceImpl.FSMetricSpaceImpl;
 import vm.fs.metricSpaceImpl.FSMetricSpacesStorage;
@@ -52,16 +51,23 @@ public class Main {
         String querySet768DimPath = args[2];
         String querySetPCA96DimPath = args[3];
         int datasetSize = Integer.parseInt(args[4]);
+        boolean build = args.length <= 5 || Boolean.parseBoolean(args[5]);
 
         int k = 10;
 
         Dataset fullDataset = createH5Dataset(dataset768DimPath, querySet768DimPath, false);
         Dataset pcaDataset = createH5Dataset(datasetPCA96DimPath, querySetPCA96DimPath, true);
 
-        String nameOfSketchDataset = buildAndStoreAlgorithm(fullDataset, pcaDataset, datasetSize);
+        Dataset sketchesDataset;
+        if (build) {
+            sketchesDataset = buildAndStoreAlgorithm(fullDataset, pcaDataset, datasetSize);
+        } else {
+            AbstractObjectToSketchTransformator sketchingTechnique = createSketches(fullDataset);
+            sketchesDataset = createImplicitSketchesDataset(sketchingTechnique, fullDataset.getDatasetName(), SKETCH_LENGTH, 0.5f);
+        }
 
         if (algorithm == null) {
-            algorithm = initAlgorithm(fullDataset, pcaDataset, nameOfSketchDataset, datasetSize, k);
+            algorithm = initAlgorithm(fullDataset, pcaDataset, sketchesDataset, datasetSize, k);
         }
 
         List fullQueries = fullDataset.getMetricQueryObjects();
@@ -91,13 +97,13 @@ public class Main {
 
     }
 
-    private static SISAPChallengeEvaluator initAlgorithm(Dataset fullDataset, Dataset pcaDataset, String nameOfSketchDataset, int datasetSize, int k) {
+    private static SISAPChallengeEvaluator initAlgorithm(Dataset fullDataset, Dataset pcaDataset, Dataset sketchesDataset, int datasetSize, int k) {
         LOG.log(Level.INFO, "Initializing algorithm");
-        Dataset sketchesDataset = new FSHammingSpaceDataset(nameOfSketchDataset);
 
+        int pivotsUsedForTheVoronoi = getPivotCount(datasetSize);
         int voronoiK = getVoronoiK(datasetSize);
         int kPCA = getPCAK(datasetSize);
-        SISAPChallengeEvaluator ret = new SISAPChallengeEvaluator(fullDataset, pcaDataset, sketchesDataset, voronoiK, kPCA, k);
+        SISAPChallengeEvaluator ret = new SISAPChallengeEvaluator(fullDataset, pcaDataset, sketchesDataset, voronoiK, kPCA, k, pivotsUsedForTheVoronoi);
         Logger.getLogger(Main.class.getName()).log(Level.INFO, "Algorithm initialised");
         return ret;
     }
@@ -124,18 +130,27 @@ public class Main {
         }
     }
 
+    private static int getPivotCount(int size) {
+        switch (size) {
+            case 100000:
+            case 300000:
+                return 50;
+            default:
+                return 20000;
+        }
+    }
+
     private static int getPCAK(int size) {
         switch (size) {
             case 100000:
-                return 300;
             case 300000:
-                return 300;
+                return 100;
             case 10000000:
-                return 300;
+                return 200;
             case 30000000:
-                return 500;
+                return 200;
             case 100000000:
-                return 500;
+                return 200;
             default:
                 throw new AssertionError();
         }
@@ -146,13 +161,13 @@ public class Main {
      * Build indexes and create auxiliary files ********
      * *************************************************
      */
-    private static String buildAndStoreAlgorithm(Dataset fullDataset, Dataset pcaDataset, int datasetSizeInMillions) {
+    private static Dataset buildAndStoreAlgorithm(Dataset fullDataset, Dataset pcaDataset, int sizeIfDataset) {
         LOG.log(Level.INFO, "\nBuild start");
         LOG.log(Level.INFO, "\nStarting the Voronoi partitioning");
-        storeVoronoiPartitioning(fullDataset);
+        storeVoronoiPartitioning(fullDataset, sizeIfDataset);
         System.gc();
         LOG.log(Level.INFO, "\nStarting the learn of the tOmega thresholds for the simRel");
-        storeTOmegaThresholdsForSimRel(pcaDataset, datasetSizeInMillions);
+        storeTOmegaThresholdsForSimRel(pcaDataset, sizeIfDataset);
         System.gc();
         LOG.log(Level.INFO, "\nStarting the sketching transformation with the predefined sketching technique");
         AbstractObjectToSketchTransformator sketchingTechnique = createSketches(fullDataset);
@@ -162,13 +177,13 @@ public class Main {
         learnSketchMapping(fullDataset, sketchesDataset, 0.004f, SKETCH_LENGTH, 2f);
         System.gc();
         LOG.log(Level.INFO, "\nBuild finished");
-        String ret = sketchingTechnique.getNameOfTransformedSetOfObjects(fullDataset.getDatasetName(), false, SKETCH_LENGTH, 0.5f);
-        return ret;
+        return sketchesDataset;
+
     }
 
-    private static void storeVoronoiPartitioning(Dataset dataset) {
-        int pivotCount = 2048;
-        List<Object> pivots = dataset.getPivots(-1);
+    private static void storeVoronoiPartitioning(Dataset dataset, int sizeIfDataset) {
+        int pivotCount = getPivotCount(sizeIfDataset);
+        List<Object> pivots = dataset.getPivots(2 * pivotCount);
         VoronoiPartitioning vp = new VoronoiPartitioning(dataset.getMetricSpace(), dataset.getDistanceFunction(), pivots);
         FSVoronoiPartitioningStorage storage = new FSVoronoiPartitioningStorage();
         vp.splitByVoronoi(dataset.getMetricObjectsFromDataset(), dataset.getDatasetName(), pivotCount, storage);
@@ -191,7 +206,8 @@ public class Main {
         GHPSketchingPivotPairsStoreInterface storageOfPivotPairs = new FSGHPSketchesPivotPairsStorageImpl();
         TransformDataToGHPSketches evaluator = new TransformDataToGHPSketches(fullDataset, storageOfPivotPairs, storageForSketches, 0.5f, -1);
         int[] sketchesLengths = new int[]{SKETCH_LENGTH};
-        AbstractObjectToSketchTransformator ret = evaluator.createSketchesForDatasetPivotsAndQueries(sketchesLengths);
+        String[] sketchesPairsName = new String[]{"laion2B-en-clip768v2-n=1M_sample.h5_GHP_50_" + SKETCH_LENGTH};
+        AbstractObjectToSketchTransformator ret = evaluator.createSketchesForDatasetPivotsAndQueries(sketchesLengths, sketchesPairsName);
         return ret;
     }
 
@@ -209,7 +225,7 @@ public class Main {
     }
 
     private static Dataset createImplicitSketchesDataset(AbstractObjectToSketchTransformator sketchingTechnique, String fullDatasetName, int sketchLength, float balance) {
-        String name = sketchingTechnique.getNameOfTransformedSetOfObjects(fullDatasetName, false, sketchLength, balance);
+        String name = sketchingTechnique.getNameOfTransformedSetOfObjects(fullDatasetName, sketchLength, balance);
         FSDatasetInstanceSingularizator.FSHammingSpaceDataset dataset = new FSDatasetInstanceSingularizator.FSHammingSpaceDataset(name);
         return dataset;
     }
@@ -243,11 +259,11 @@ public class Main {
         }
 
         @Override
-        public List<Object> getPivots(int objCount) {
+        public List<Object> getPivots(int objLoadedCount) {
             if (isPCA) {
-                return metricSpacesStorage.getPivots("laion2B-en-pca96v2-n=100M.h5", objCount);
+                return metricSpacesStorage.getPivots("laion2B-en-pca96v2-n=100M.h5", objLoadedCount);
             }
-            return metricSpacesStorage.getPivots("laion2B-en-clip768v2-n=100M.h5_2048pivots", objCount);
+            return metricSpacesStorage.getPivots("laion2B-en-clip768v2-n=100M.h5_20000pivots", objLoadedCount);
         }
 
         @Override
