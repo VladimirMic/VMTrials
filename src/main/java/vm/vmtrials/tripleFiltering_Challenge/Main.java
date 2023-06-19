@@ -82,6 +82,9 @@ public class Main {
             Object pcaQObject = pcaQueries.get(i);
             String fullQID = metricSpace.getIDOfMetricObject(fullQObject).toString();
             Object pcaQID = metricSpace.getIDOfMetricObject(pcaQObject);
+            if (!pcaQID.equals(fullQID)) {
+                throw new IllegalArgumentException(pcaQID + ", " + fullQID);
+            }
             float[] fullQData = metricSpace.getDataOfMetricObject(fullQObject);
             float[] pcaQData = metricSpace.getDataOfMetricObject(pcaQObject);
             results[i] = algorithm.evaluatekNNQuery(fullQID, fullQData, pcaQData);
@@ -92,7 +95,7 @@ public class Main {
 //        statsStorage.storeStatsForQueries(secondaryWithSketches.getDistCompsPerQueries(), secondaryWithSketches.getTimesPerQueries());
 //        statsStorage.saveFile();
         LOG.log(Level.INFO, "Storing results of queries");
-        FSNearestNeighboursStorageImpl resultsStorage = new FSNearestNeighboursStorageImpl();
+        FSNearestNeighboursStorageImpl resultsStorage = new FSNearestNeighboursStorageImpl(false);
         resultsStorage.storeQueryResults(metricSpace, fullQueries, results, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), "Vorkesim_challenge");
 
     }
@@ -261,9 +264,10 @@ public class Main {
         @Override
         public List<Object> getPivots(int objLoadedCount) {
             if (isPCA) {
-                return metricSpacesStorage.getPivots("laion2B-en-pca96v2-n=100M.h5", objLoadedCount);
+                return metricSpacesStorage.getPivots("laion2B-en-pca96v2-n=100M.h5", objLoadedCount); // toto funguje?? Kolik?
             }
-            return metricSpacesStorage.getPivots("laion2B-en-clip768v2-n=100M.h5_20000pivots", objLoadedCount);
+//            return metricSpacesStorage.getPivots("laion2B-en-clip768v2-n=100M.h5_20000pivots", objLoadedCount);
+            return metricSpacesStorage.getPivots("laion2B-en-clip768v2-n=100M.h5_2048pivots", objLoadedCount);
         }
 
         @Override
