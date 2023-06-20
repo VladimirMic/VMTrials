@@ -104,10 +104,11 @@ public class Main {
         FSNearestNeighboursStorageImpl resultsStorage = new FSNearestNeighboursStorageImpl(false);
         resultsStorage.storeQueryResults(metricSpace, fullQueries, results, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), "");
         Map<String, Object> ret = new HashMap<>();
-        ret.put("build_time", buildTime / 1000f);
-        ret.put("query_time", queryTime / 1000f);
+        ret.put("buildtime", buildTime / 1000f);
+        ret.put("querytime", queryTime / 1000f);
         try {
             String mapAsCSVString = Tools.mapAsCSVString(ret, ";", ":");
+            mapAsCSVString = mapAsCSVString.substring(0, mapAsCSVString.length() - 1);
             String name = fullDataset.getDatasetName() + "_" + fullDataset.getQuerySetName() + "_run_params.csv";
             File output = new File(FSGlobal.RESULT_FOLDER, name);
             output = FSGlobal.checkFileExistence(output);
