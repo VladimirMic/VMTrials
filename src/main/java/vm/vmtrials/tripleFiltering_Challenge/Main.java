@@ -11,7 +11,6 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.datatools.Tools;
-import vm.fs.FSGlobal;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
 import vm.fs.main.search.filtering.learning.LearnSecondaryFilteringWithGHPSketchesMain;
 import vm.fs.metricSpaceImpl.FSMetricSpaceImpl;
@@ -239,12 +238,19 @@ public class Main {
         private final File datasetFile;
         private final File querySetFile;
         private final boolean isPCA;
+        private String querySetName;
 
         public ImplicitH5Dataset(String datasetPath, String querySetPath, boolean isPCA) {
             super(new File(datasetPath).getName());
+            querySetName = new File(querySetPath).getName();
             this.datasetFile = new File(datasetPath);
             this.querySetFile = new File(querySetPath);
             this.isPCA = isPCA;
+        }
+
+        @Override
+        public String getQuerySetName() {
+            return querySetName;
         }
 
         @Override
