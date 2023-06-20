@@ -238,7 +238,7 @@ public class Main {
         private final File datasetFile;
         private final File querySetFile;
         private final boolean isPCA;
-        private String querySetName;
+        private final String querySetName;
 
         public ImplicitH5Dataset(String datasetPath, String querySetPath, boolean isPCA) {
             super(new File(datasetPath).getName());
