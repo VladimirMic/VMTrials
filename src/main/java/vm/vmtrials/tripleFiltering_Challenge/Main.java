@@ -5,6 +5,8 @@
 package vm.vmtrials.tripleFiltering_Challenge;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.datatools.Tools;
+import vm.fs.FSGlobal;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
 import vm.fs.main.search.filtering.learning.LearnSecondaryFilteringWithGHPSketchesMain;
 import vm.fs.metricSpaceImpl.FSMetricSpaceImpl;
@@ -43,7 +46,7 @@ public class Main {
 
     private static SISAPChallengeEvaluator algorithm = null;
 
-    public static String main(String[] args) {
+    public static void main(String[] args) {
         long buildTime = -System.currentTimeMillis();
         System.err.println("Args: ");
         for (int i = 0; i < args.length; i++) {
@@ -103,7 +106,16 @@ public class Main {
         Map<String, Object> ret = new HashMap<>();
         ret.put("build_time", buildTime / 1000f);
         ret.put("query_time", queryTime / 1000f);
-        return Tools.mapAsCSVString(ret, ";", ":");
+        try {
+            String mapAsCSVString = Tools.mapAsCSVString(ret, ";", ":");
+            String name = fullDataset.getDatasetName() + "_" + fullDataset.getQuerySetName() + "_run_params.csv";
+            File output = new File(FSGlobal.RESULT_FOLDER, name);
+            output = FSGlobal.checkFileExistence(output);
+            System.setOut(new PrintStream(output));
+            System.out.println(mapAsCSVString);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private static SISAPChallengeEvaluator initAlgorithm(Dataset fullDataset, Dataset pcaDataset, Dataset sketchesDataset, int datasetSize, int k) {
