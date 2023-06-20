@@ -89,7 +89,12 @@ public class SISAPChallengeEvaluator {
                 algSketchFiltering,
                 sketchingTechnique,
                 sketchesDataset.getMetricSpace(),
-                algSimRelFiltering, kPCA, Integer.MAX_VALUE, pcaOMap, fullDataset.getKeyValueStorage(), fullDataset.getDistanceFunction());
+                algSimRelFiltering,
+                kPCA, 
+                Integer.MAX_VALUE,
+                pcaOMap,
+                fullDataset.getKeyValueStorage(),
+                fullDataset.getDistanceFunction());
 
     }
 

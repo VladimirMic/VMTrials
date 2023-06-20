@@ -241,7 +241,7 @@ public class Main {
         private final boolean isPCA;
 
         public ImplicitH5Dataset(String datasetPath, String querySetPath, boolean isPCA) {
-            super(new File(FSGlobal.DATASET_FOLDER, datasetPath).getName());
+            super(new File(datasetPath).getName());
             this.datasetFile = new File(datasetPath);
             this.querySetFile = new File(querySetPath);
             this.isPCA = isPCA;
