@@ -55,8 +55,8 @@ public class Main {
 
         int k = 10;
 
-        Dataset fullDataset = createH5Dataset(dataset768DimPath, querySet768DimPath, false);
-        Dataset pcaDataset = createH5Dataset(datasetPCA96DimPath, querySetPCA96DimPath, true);
+        Dataset fullDataset = createImplicitH5Dataset(dataset768DimPath, querySet768DimPath, false);
+        Dataset pcaDataset = createImplicitH5Dataset(datasetPCA96DimPath, querySetPCA96DimPath, true);
 
         Dataset sketchesDataset;
         if (build) {
@@ -219,7 +219,7 @@ public class Main {
      * Create implicit datasets - full and PCA dataset *
      * *************************************************
      */
-    private static Dataset createH5Dataset(String datasetPath, String querySetPath, boolean isPCA) {
+    private static Dataset createImplicitH5Dataset(String datasetPath, String querySetPath, boolean isPCA) {
         return new Main.ImplicitH5Dataset(datasetPath, querySetPath, isPCA);
     }
 
