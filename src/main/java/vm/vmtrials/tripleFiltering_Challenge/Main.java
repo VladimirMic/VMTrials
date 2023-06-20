@@ -5,8 +5,10 @@
 package vm.vmtrials.tripleFiltering_Challenge;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,7 +43,8 @@ public class Main {
 
     private static SISAPChallengeEvaluator algorithm = null;
 
-    public static void main(String[] args) {
+    public static String main(String[] args) {
+        long buildTime = -System.currentTimeMillis();
         System.err.println("Args: ");
         for (int i = 0; i < args.length; i++) {
             System.err.println(i + ": " + args[i] + " ");
@@ -69,13 +72,15 @@ public class Main {
         if (algorithm == null) {
             algorithm = initAlgorithm(fullDataset, pcaDataset, sketchesDataset, datasetSize, k);
         }
-
+        buildTime += System.currentTimeMillis();
         List fullQueries = fullDataset.getMetricQueryObjects();
         List pcaQueries = pcaDataset.getMetricQueryObjects();
 
         AbstractMetricSpace<float[]> metricSpace = fullDataset.getMetricSpace();
 
         TreeSet[] results = new TreeSet[fullQueries.size()];
+
+        long queryTime = -System.currentTimeMillis();
 
         for (int i = 0; i < fullQueries.size(); i++) {
             Object fullQObject = fullQueries.get(i);
@@ -90,14 +95,15 @@ public class Main {
             results[i] = algorithm.evaluatekNNQuery(fullQID, fullQData, pcaQData);
         }
 
-//        LOG.log(Level.INFO, "Storing statistics of queries");
-//        FSQueryExecutionStatsStoreImpl statsStorage = new FSQueryExecutionStatsStoreImpl(fullDataset.getDatasetName(), fullDataset.getQuerySetName(), k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), "SISAP_Challenge", null);
-//        statsStorage.storeStatsForQueries(secondaryWithSketches.getDistCompsPerQueries(), secondaryWithSketches.getTimesPerQueries());
-//        statsStorage.saveFile();
+        queryTime += System.currentTimeMillis();
+
         LOG.log(Level.INFO, "Storing results of queries");
         FSNearestNeighboursStorageImpl resultsStorage = new FSNearestNeighboursStorageImpl(false);
         resultsStorage.storeQueryResults(metricSpace, fullQueries, results, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), "");
-
+        Map<String, Object> ret = new HashMap<>();
+        ret.put("build_time", buildTime);
+        ret.put("query_time", queryTime);
+        return Tools.mapAsCSVString(ret, ";", ":");
     }
 
     private static SISAPChallengeEvaluator initAlgorithm(Dataset fullDataset, Dataset pcaDataset, Dataset sketchesDataset, int datasetSize, int k) {
