@@ -101,8 +101,8 @@ public class Main {
         FSNearestNeighboursStorageImpl resultsStorage = new FSNearestNeighboursStorageImpl(false);
         resultsStorage.storeQueryResults(metricSpace, fullQueries, results, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), "");
         Map<String, Object> ret = new HashMap<>();
-        ret.put("build_time", buildTime);
-        ret.put("query_time", queryTime);
+        ret.put("build_time", buildTime / 1000f);
+        ret.put("query_time", queryTime / 1000f);
         return Tools.mapAsCSVString(ret, ";", ":");
     }
 
