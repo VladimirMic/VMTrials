@@ -58,8 +58,7 @@ public class Main {
         String querySetPCA96DimPath = args[3];
         int datasetSize = Integer.parseInt(args[4]);
         boolean build = args.length <= 5 || Boolean.parseBoolean(args[5]);
-
-        int k = 10;
+        int k = args.length < 6 ? 10 : Integer.parseInt(args[6]);
 
         Dataset fullDataset = createImplicitH5Dataset(dataset768DimPath, querySet768DimPath, false);
         Dataset pcaDataset = createImplicitH5Dataset(datasetPCA96DimPath, querySetPCA96DimPath, true);
