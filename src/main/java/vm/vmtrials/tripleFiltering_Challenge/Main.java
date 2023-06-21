@@ -137,9 +137,9 @@ public class Main {
     public static int getVoronoiK(int size) {
         switch (size) {
             case 100000:
-                return 10000;
+                return 50000;
             case 300000:
-                return 10000;
+                return 150000;
             case 10000000:
                 return 400000;
             case 30000000:
