@@ -78,7 +78,7 @@ public class SISAPChallengeEvaluator {
         GHPSketchingPivotPairsStoreInterface storageOfPivotPairs = new FSGHPSketchesPivotPairsStorageImpl();
 
         List pivots = fullDataset.getPivots(-1);
-        AbstractObjectToSketchTransformator sketchingTechnique = new SketchingGHP(fullDataset.getDistanceFunction(), fullDataset.getMetricSpace(), pivots, false, fullDataset.getDatasetName(), 0.5f, sketchLength, storageOfPivotPairs);
+        AbstractObjectToSketchTransformator sketchingTechnique = new SketchingGHP(fullDataset.getDistanceFunction(), fullDataset.getMetricSpace(), pivots, fullDataset.getDatasetName(), 0.5f, sketchLength, storageOfPivotPairs);
         sketchingTechnique.setPivotPairsFromStorage(storageOfPivotPairs, "laion2B-en-clip768v2-n=1M_sample.h5_GHP_50_" + SKETCH_LENGTH);
 
         algSimRelFiltering = initSimRel(querySampleCount, pcaLength, kPCA, voronoiK, pcaDataset.getDatasetName(), percentile, prefixLength);
