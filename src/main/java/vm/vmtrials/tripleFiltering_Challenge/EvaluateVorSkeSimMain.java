@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import vm.datatools.DataTypeConvertor;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
 import vm.fs.store.dataTransforms.FSGHPSketchesPivotPairsStorageImpl;
 import vm.fs.store.filtering.FSSecondaryFilteringWithSketchesStorage;
@@ -30,7 +31,6 @@ import vm.objTransforms.objectToSketchTransformators.AbstractObjectToSketchTrans
 import vm.objTransforms.objectToSketchTransformators.SketchingGHP;
 import vm.objTransforms.storeLearned.GHPSketchingPivotPairsStoreInterface;
 import vm.queryResults.recallEvaluation.RecallOfCandsSetsEvaluator;
-import vm.search.SearchingAlgorithm;
 import vm.search.devel.CheckingOfNearestNeighbours;
 import vm.search.impl.VoronoiPartitionsCandSetIdentifier;
 import vm.search.impl.multiFiltering.VorSkeSimSorting;
@@ -47,7 +47,7 @@ public class EvaluateVorSkeSimMain {
     public static final Boolean STORE_RESULTS = true;
 
     public static void main(String[] args) {
-        int sketchLength = 256;
+        int sketchLength = 384;
         // parameter for the Secondary filtering with the sketches
         float pCum = 0.5f;
         Dataset[] fullDatasets = new Dataset[]{
@@ -74,14 +74,14 @@ public class EvaluateVorSkeSimMain {
         };
 
         int[] minKSimRel = new int[]{
-            300,
-            500,
-            500
+            100,
+            100,
+            100
         };
         int[] maxKSimRel = new int[]{
-            100000,
-            100000,
-            100000
+            1000000,
+            1000000,
+            1000000
         };
         float[] distIntervalsForPX = new float[]{
             0.004f,
@@ -100,6 +100,7 @@ public class EvaluateVorSkeSimMain {
         int k = 10;
         /*  prefix of the shortened vectors used by the simRel */
         int prefixLength = 24;
+        int pivotCountForVoronoi = 20000;
         /*  prefix of the shortened vectors used by the simRel */
         int pcaLength = 96;
         /* number of query objects to learn t(\Omega) thresholds. We use different objects than the queries tested. */
@@ -112,7 +113,7 @@ public class EvaluateVorSkeSimMain {
         SimRelEuclideanPCAImpl simRel = initSimRel(querySampleCount, pcaLength, simRelMinAnswerSize, dataSampleCount, pcaDataset.getDatasetName(), percentile, prefixLength);
         String resultName = "VorskesimSorting_" + fullDataset.getDatasetName() + "_kVoronoi" + kVoronoi + "_simRelMinAnswerSize" + simRelMinAnswerSize + "simRelMaxAnswerSize" + simRelMaxAnswerSize + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__" + dataSampleCount + "o__k" + k + "_perc" + percentile + "_pCum" + pCum + "_sketchLength" + sketchLength;
 
-        testQueries(fullDataset, pcaDataset, sketchesDataset, simRel, kVoronoi, simRelMinAnswerSize, simRelMaxAnswerSize, k, prefixLength, resultName, sketchLength, pCum, distIntervalsForPX);
+        testQueries(fullDataset, pcaDataset, sketchesDataset, simRel, pivotCountForVoronoi, kVoronoi, simRelMinAnswerSize, simRelMaxAnswerSize, k, prefixLength, resultName, sketchLength, pCum, distIntervalsForPX);
     }
 
     private static void testQueries(
@@ -120,6 +121,7 @@ public class EvaluateVorSkeSimMain {
             Dataset pcaDataset,
             Dataset sketchesDataset,
             SimRelEuclideanPCAImpl simRel,
+            int pivotCountForVoronoi,
             int voronoiK,
             int simRelMinAnswerSize,
             int simRelMaxAnswerSize,
@@ -146,7 +148,7 @@ public class EvaluateVorSkeSimMain {
         AbstractObjectToSketchTransformator sketchingTechnique = new SketchingGHP(fullDataset.getDistanceFunction(), fullDataset.getMetricSpace(), pivots, true, fullDataset.getDatasetName(), 0.5f, sketchLength, storageOfPivotPairs);
 
         // filtering algorithms and filters
-        VoronoiPartitionsCandSetIdentifier algVoronoi = new VoronoiPartitionsCandSetIdentifier(fullDataset, new FSVoronoiPartitioningStorage(), 2048);
+        VoronoiPartitionsCandSetIdentifier algVoronoi = new VoronoiPartitionsCandSetIdentifier(fullDataset, new FSVoronoiPartitioningStorage(), pivotCountForVoronoi);
 
         String resultNamePrefix = "Voronoi" + voronoiK + "_pCum" + pCum;
         SecondaryFilteringWithSketches sketchFiltering = initSecondaryFilteringWithSketches(fullDataset, sketchesDataset, resultNamePrefix, pCum, distIntervalsForPX);
@@ -155,7 +157,7 @@ public class EvaluateVorSkeSimMain {
         // key value map to PCA of the query objects
         Map pcaQMap = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(pcaDatasetMetricSpace, pcaDataset.getMetricQueryObjects(), false);
 
-        SearchingAlgorithm alg = new VorSkeSimSorting(
+        VorSkeSimSorting alg = new VorSkeSimSorting(
                 algVoronoi,
                 voronoiK,
                 sketchFiltering,
@@ -171,8 +173,10 @@ public class EvaluateVorSkeSimMain {
         TreeSet[] results = new TreeSet[fullQueries.size()];
 
         CheckingOfNearestNeighbours DEVEL = new CheckingOfNearestNeighbours(new FSNearestNeighboursStorageImpl(), fullDataset.getDatasetName(), fullDataset.getQuerySetName());
-//339
-        for (int i = 339; i < fullQueries.size(); i++) {
+
+        FSQueryExecutionStatsStoreImpl statsStorage = new FSQueryExecutionStatsStoreImpl(fullDataset.getDatasetName(), fullDataset.getQuerySetName(), k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), resultName, null);
+
+        for (int i = 0; i < fullQueries.size(); i++) {
             Object query = fullQueries.get(i);
             Object qId = fullMetricSpace.getIDOfMetricObject(query);
             Object pcaQData = pcaQMap.get(qId);
@@ -180,14 +184,23 @@ public class EvaluateVorSkeSimMain {
 //            Set<String> ANSWER = null;
             results[i] = alg.completeKnnSearch(fullMetricSpace, query, k, null, pcaDatasetMetricSpace, pcaQData, ANSWER);
 
-//            if (i == 499) {
-//                break;
-//            }
-            break;
+            long[] earlyStopsPerCoords = (long[]) alg.getSimRelStatsOfLastExecutedQuery();
+            String earlyStopsPerCoordsString = DataTypeConvertor.longToString(earlyStopsPerCoords, ",");
+            if (STORE_RESULTS) {
+                statsStorage.storeStatsForQuery(qId, alg.getDistCompsForQuery(qId), alg.getTimeOfQuery(qId), earlyStopsPerCoordsString);
+            } else {
+                System.out.println(earlyStopsPerCoordsString);
+            }
+            LOG.log(Level.INFO, "Processed query {0}", new Object[]{i + 1});
+//            break;
+
+            if (i == 499) {
+                break;
+            }
+
         }
-        LOG.log(Level.INFO, "Storing statistics of queries");
-        FSQueryExecutionStatsStoreImpl statsStorage = new FSQueryExecutionStatsStoreImpl(fullDataset.getDatasetName(), fullDataset.getQuerySetName(), k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), resultName, null);
-        statsStorage.storeStatsForQueries(alg.getDistCompsPerQueries(), alg.getTimesPerQueries());
+//        LOG.log(Level.INFO, "Storing statistics of queries");
+//        statsStorage.storeStatsForQueries(alg.getDistCompsPerQueries(), alg.getTimesPerQueries());
         statsStorage.saveFile();
 
         LOG.log(Level.INFO, "Storing results of queries");
