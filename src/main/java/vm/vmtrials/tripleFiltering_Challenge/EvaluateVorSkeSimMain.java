@@ -76,7 +76,7 @@ public class EvaluateVorSkeSimMain {
         int[] minKSimRel = new int[]{
             100,
             100,
-            100
+            800
         };
         int[] maxKSimRel = new int[]{
             1000000,
