@@ -47,7 +47,7 @@ public class EvaluateVorSkeSimMain {
     public static final Boolean STORE_RESULTS = true;
 
     public static void main(String[] args) {
-        int sketchLength = 384;
+        int sketchLength = 512;
         // parameter for the Secondary filtering with the sketches
         float pCum = 0.5f;
         Dataset[] fullDatasets = new Dataset[]{
@@ -62,9 +62,9 @@ public class EvaluateVorSkeSimMain {
         };
 
         Dataset[] sketchesDatasets = new Dataset[]{
-            new FSDatasetInstanceSingularizator.LAION_10M_GHP_50_256Dataset(),
-            new FSDatasetInstanceSingularizator.LAION_30M_GHP_50_256Dataset(),
-            new FSDatasetInstanceSingularizator.LAION_100M_GHP_50_256Dataset()
+            new FSDatasetInstanceSingularizator.LAION_10M_GHP_50_512Dataset(),
+            new FSDatasetInstanceSingularizator.LAION_30M_GHP_50_512Dataset(),
+            new FSDatasetInstanceSingularizator.LAION_100M_GHP_50_512Dataset()
         };
 
         int[] voronoiK = new int[]{
