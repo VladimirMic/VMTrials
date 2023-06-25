@@ -49,7 +49,7 @@ public class EvaluateVorSkeSimMain {
     public static void main(String[] args) {
         int sketchLength = 512;
         // parameter for the Secondary filtering with the sketches
-        float pCum = 0.5f;
+        float pCum = 0.55f;
         Dataset[] fullDatasets = new Dataset[]{
             new FSDatasetInstanceSingularizator.LAION_10M_Dataset(),
             new FSDatasetInstanceSingularizator.LAION_30M_Dataset(),
@@ -68,7 +68,7 @@ public class EvaluateVorSkeSimMain {
         };
 
         int[] voronoiK = new int[]{
-            400000,
+            100000,
             300000,
             500000
         };
@@ -76,7 +76,7 @@ public class EvaluateVorSkeSimMain {
         int[] minKSimRel = new int[]{
             100,
             100,
-            800
+            1000
         };
         int[] maxKSimRel = new int[]{
             1000000,
@@ -91,7 +91,6 @@ public class EvaluateVorSkeSimMain {
 
         for (int i = 2; i < fullDatasets.length; i++) {
             run(fullDatasets[i], pcaDatasets[i], sketchesDatasets[i], voronoiK[i], minKSimRel[i], maxKSimRel[i], distIntervalsForPX[i], sketchLength, pCum);
-            System.exit(0);
         }
     }
 
@@ -99,7 +98,7 @@ public class EvaluateVorSkeSimMain {
         /* kNN queries - the result set size */
         int k = 10;
         /*  prefix of the shortened vectors used by the simRel */
-        int prefixLength = 24;
+        int prefixLength = 32;
         int pivotCountForVoronoi = 20000;
         /*  prefix of the shortened vectors used by the simRel */
         int pcaLength = 96;
@@ -108,10 +107,10 @@ public class EvaluateVorSkeSimMain {
         /* size of the data sample to learn t(\Omega) thresholds: SISAP: 100 000 */
         int dataSampleCount = 100000;
         /* percentile - defined in the paper. Defines the precision of the simRel */
-        float percentile = 0.9f;
+        float percentile = 0.95f;
 
         SimRelEuclideanPCAImpl simRel = initSimRel(querySampleCount, pcaLength, simRelMinAnswerSize, dataSampleCount, pcaDataset.getDatasetName(), percentile, prefixLength);
-        String resultName = "VorskesimSorting_" + fullDataset.getDatasetName() + "_kVoronoi" + kVoronoi + "_simRelMinAnswerSize" + simRelMinAnswerSize + "simRelMaxAnswerSize" + simRelMaxAnswerSize + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__" + dataSampleCount + "o__k" + k + "_perc" + percentile + "_pCum" + pCum + "_sketchLength" + sketchLength;
+        String resultName = "CRANBERRY_" + fullDataset.getDatasetName() + "_kVoronoi" + kVoronoi + "_simRelMinAnswerSize" + simRelMinAnswerSize + "simRelMaxAnswerSize" + simRelMaxAnswerSize + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__" + dataSampleCount + "o__k" + k + "_perc" + percentile + "_pCum" + pCum + "_sketchLength" + sketchLength;
 
         testQueries(fullDataset, pcaDataset, sketchesDataset, simRel, pivotCountForVoronoi, kVoronoi, simRelMinAnswerSize, simRelMaxAnswerSize, k, prefixLength, resultName, sketchLength, pCum, distIntervalsForPX);
     }
@@ -180,8 +179,8 @@ public class EvaluateVorSkeSimMain {
             Object query = fullQueries.get(i);
             Object qId = fullMetricSpace.getIDOfMetricObject(query);
             Object pcaQData = pcaQMap.get(qId);
-            Set<String> ANSWER = DEVEL.getIDsOfNNForQuery(qId.toString(), k);
-//            Set<String> ANSWER = null;
+//            Set<String> ANSWER = DEVEL.getIDsOfNNForQuery(qId.toString(), k);
+            Set<String> ANSWER = null;
             results[i] = alg.completeKnnSearch(fullMetricSpace, query, k, null, pcaDatasetMetricSpace, pcaQData, ANSWER);
 
             long[] earlyStopsPerCoords = (long[]) alg.getSimRelStatsOfLastExecutedQuery();
@@ -192,7 +191,6 @@ public class EvaluateVorSkeSimMain {
                 System.out.println(earlyStopsPerCoordsString);
             }
             LOG.log(Level.INFO, "Processed query {0}", new Object[]{i + 1});
-//            break;
 
             if (i == 499) {
                 break;
