@@ -58,7 +58,7 @@ public class EvaluateVorSkeSimMain {
         Dataset[] pcaDatasets = new Dataset[]{
             new FSDatasetInstanceSingularizator.LAION_10M_PCA96Dataset(),
             new FSDatasetInstanceSingularizator.LAION_30M_PCA96Dataset(),
-            new FSDatasetInstanceSingularizator.LAION_100M_PCA96Dataset()
+            new FSDatasetInstanceSingularizator.LAION_100M_PCA256Dataset()
         };
 
         Dataset[] sketchesDatasets = new Dataset[]{
@@ -98,16 +98,16 @@ public class EvaluateVorSkeSimMain {
         /* kNN queries - the result set size */
         int k = 10;
         /*  prefix of the shortened vectors used by the simRel */
-        int prefixLength = 32;
+        int prefixLength = 24;
         int pivotCountForVoronoi = 20000;
         /*  prefix of the shortened vectors used by the simRel */
-        int pcaLength = 96;
+        int pcaLength = 256;
         /* number of query objects to learn t(\Omega) thresholds. We use different objects than the queries tested. */
         int querySampleCount = 100;
         /* size of the data sample to learn t(\Omega) thresholds: SISAP: 100 000 */
         int dataSampleCount = 100000;
         /* percentile - defined in the paper. Defines the precision of the simRel */
-        float percentile = 0.95f;
+        float percentile = 0.9f;
 
         SimRelEuclideanPCAImpl simRel = initSimRel(querySampleCount, pcaLength, simRelMinAnswerSize, dataSampleCount, pcaDataset.getDatasetName(), percentile, prefixLength);
         String resultName = "CRANBERRY_" + fullDataset.getDatasetName() + "_kVoronoi" + kVoronoi + "_simRelMinAnswerSize" + simRelMinAnswerSize + "simRelMaxAnswerSize" + simRelMaxAnswerSize + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__" + dataSampleCount + "o__k" + k + "_perc" + percentile + "_pCum" + pCum + "_sketchLength" + sketchLength;
