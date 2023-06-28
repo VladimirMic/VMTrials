@@ -19,7 +19,6 @@ import vm.objTransforms.storeLearned.GHPSketchingPivotPairsStoreInterface;
 import vm.search.impl.VoronoiPartitionsCandSetIdentifier;
 import vm.search.impl.multiFiltering.VorSkeSimSorting;
 import vm.simRel.impl.SimRelEuclideanPCAImpl;
-import static vm.vmtrials.tripleFiltering_Challenge.EvaluateVorSkeSimMain.initSimRel;
 import static vm.vmtrials.tripleFiltering_Challenge.Main.SKETCH_LENGTH;
 
 /**
@@ -66,7 +65,7 @@ public class SISAPChallengeEvaluator {
     public SISAPChallengeEvaluator(Dataset fullDataset, Dataset pcaDataset, Dataset sketchesDataset, int voronoiK, int kPCA, int k, int pivotsUsedForTheVoronoi) {
         String resultNamePrefix = "Voronoi" + voronoiK + "_pCum" + pCum;
         algVoronoi = new VoronoiPartitionsCandSetIdentifier(fullDataset, new FSVoronoiPartitioningStorage(), pivotsUsedForTheVoronoi);
-        EvaluateVorSkeSimMain.initSimRel(querySampleCount, pcaLength, kPCA, voronoiK, pcaDataset.getDatasetName(), percentile, prefixLength);
+        algSimRelFiltering = (SimRelEuclideanPCAImpl) new EvaluateVorSkeSimMain().initSimRel(querySampleCount, pcaLength, kPCA, voronoiK, pcaDataset.getDatasetName(), percentile, prefixLength);
         algSketchFiltering = EvaluateVorSkeSimMain.initSecondaryFilteringWithSketches(fullDataset, sketchesDataset, resultNamePrefix, pCum, distIntervalsForPX);
         this.k = k;
 
@@ -81,7 +80,7 @@ public class SISAPChallengeEvaluator {
         AbstractObjectToSketchTransformator sketchingTechnique = new SketchingGHP(fullDataset.getDistanceFunction(), fullDataset.getMetricSpace(), pivots, fullDataset.getDatasetName(), 0.5f, sketchLength, storageOfPivotPairs);
         sketchingTechnique.setPivotPairsFromStorage(storageOfPivotPairs, "laion2B-en-clip768v2-n=1M_sample.h5_GHP_50_" + SKETCH_LENGTH);
 
-        algSimRelFiltering = initSimRel(querySampleCount, pcaLength, kPCA, voronoiK, pcaDataset.getDatasetName(), percentile, prefixLength);
+//        algSimRelFiltering = initSimRel(querySampleCount, pcaLength, kPCA, voronoiK, pcaDataset.getDatasetName(), percentile, prefixLength);
 
         vorSkeSimAlg = new VorSkeSimSorting<>(
                 algVoronoi,

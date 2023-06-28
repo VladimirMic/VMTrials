@@ -13,6 +13,7 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.datatools.DataTypeConvertor;
+import vm.datatools.Tools;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
 import vm.fs.store.dataTransforms.FSGHPSketchesPivotPairsStorageImpl;
 import vm.fs.store.filtering.FSSecondaryFilteringWithSketchesStorage;
@@ -34,7 +35,7 @@ import vm.queryResults.recallEvaluation.RecallOfCandsSetsEvaluator;
 import vm.search.devel.CheckingOfNearestNeighbours;
 import vm.search.impl.VoronoiPartitionsCandSetIdentifier;
 import vm.search.impl.multiFiltering.VorSkeSimSorting;
-import vm.simRel.impl.SimRelEuclideanPCAImpl;
+import vm.simRel.SimRelInterface;
 import vm.simRel.impl.SimRelEuclideanPCAImplForTesting;
 
 /**
@@ -49,7 +50,7 @@ public class EvaluateVorSkeSimMain {
     public static void main(String[] args) {
         int sketchLength = 512;
         // parameter for the Secondary filtering with the sketches
-        float pCum = 0.55f;
+        float pCum = 0.5f;
         Dataset[] fullDatasets = new Dataset[]{
             new FSDatasetInstanceSingularizator.LAION_10M_Dataset(),
             new FSDatasetInstanceSingularizator.LAION_30M_Dataset(),
@@ -58,7 +59,7 @@ public class EvaluateVorSkeSimMain {
         Dataset[] pcaDatasets = new Dataset[]{
             new FSDatasetInstanceSingularizator.LAION_10M_PCA96Dataset(),
             new FSDatasetInstanceSingularizator.LAION_30M_PCA96Dataset(),
-            new FSDatasetInstanceSingularizator.LAION_100M_PCA256Dataset()
+            new FSDatasetInstanceSingularizator.LAION_100M_PCA96Dataset()
         };
 
         Dataset[] sketchesDatasets = new Dataset[]{
@@ -97,11 +98,11 @@ public class EvaluateVorSkeSimMain {
     private static void run(Dataset fullDataset, Dataset pcaDataset, Dataset sketchesDataset, int kVoronoi, int simRelMinAnswerSize, int simRelMaxAnswerSize, float distIntervalsForPX, int sketchLength, float pCum) {
         /* kNN queries - the result set size */
         int k = 10;
-        /*  prefix of the shortened vectors used by the simRel */
+        /*  prefix of the PCA shortened vectors used by the simRel */
         int prefixLength = 24;
         int pivotCountForVoronoi = 20000;
         /*  prefix of the shortened vectors used by the simRel */
-        int pcaLength = 256;
+        int pcaLength = 96;
         /* number of query objects to learn t(\Omega) thresholds. We use different objects than the queries tested. */
         int querySampleCount = 100;
         /* size of the data sample to learn t(\Omega) thresholds: SISAP: 100 000 */
@@ -109,8 +110,8 @@ public class EvaluateVorSkeSimMain {
         /* percentile - defined in the paper. Defines the precision of the simRel */
         float percentile = 0.9f;
 
-        SimRelEuclideanPCAImpl simRel = initSimRel(querySampleCount, pcaLength, simRelMinAnswerSize, dataSampleCount, pcaDataset.getDatasetName(), percentile, prefixLength);
-        String resultName = "CRANBERRY_" + fullDataset.getDatasetName() + "_kVoronoi" + kVoronoi + "_simRelMinAnswerSize" + simRelMinAnswerSize + "simRelMaxAnswerSize" + simRelMaxAnswerSize + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__" + dataSampleCount + "o__k" + k + "_perc" + percentile + "_pCum" + pCum + "_sketchLength" + sketchLength;
+        SimRelInterface<float[]> simRel = initSimRel(querySampleCount, pcaLength, simRelMinAnswerSize, dataSampleCount, pcaDataset.getDatasetName(), percentile, prefixLength);
+        String resultName = "CRANBERRY2_" + fullDataset.getDatasetName() + "_kVoronoi" + kVoronoi + "_pca" + pcaLength + "_simRelMinAns" + simRelMinAnswerSize + "simRelMaxAns" + simRelMaxAnswerSize + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__" + dataSampleCount + "o__k" + k + "_perc" + percentile + "_pCum" + pCum + "_sketches" + sketchLength + "";
 
         testQueries(fullDataset, pcaDataset, sketchesDataset, simRel, pivotCountForVoronoi, kVoronoi, simRelMinAnswerSize, simRelMaxAnswerSize, k, prefixLength, resultName, sketchLength, pCum, distIntervalsForPX);
     }
@@ -119,7 +120,7 @@ public class EvaluateVorSkeSimMain {
             Dataset fullDataset,
             Dataset pcaDataset,
             Dataset sketchesDataset,
-            SimRelEuclideanPCAImpl simRel,
+            SimRelInterface<float[]> simRel,
             int pivotCountForVoronoi,
             int voronoiK,
             int simRelMinAnswerSize,
@@ -215,23 +216,30 @@ public class EvaluateVorSkeSimMain {
 
     public static Map<Object, Object> getMapOfPrefixes(AbstractMetricSpace<float[]> metricSpace, Iterator metricObjectsFromDataset, int prefixLength) {
         Map<Object, Object> ret = new HashMap<>();
-        for (int i = 1; metricObjectsFromDataset.hasNext(); i++) {
-            Object next = metricObjectsFromDataset.next();
-            Object id = metricSpace.getIDOfMetricObject(next);
-            float[] vector = metricSpace.getDataOfMetricObject(next);
-            float[] shortVec = new float[prefixLength];
-            System.arraycopy(vector, 0, shortVec, 0, prefixLength);
-//            AbstractMap.SimpleEntry obj = new AbstractMap.SimpleEntry(id, shortVec);
-//            ret.put(id, obj);
-            ret.put(id, shortVec);
-            if (i % 500000 == 0) {
-                LOG.log(Level.INFO, "Loaded {0} prefixes", i);
+
+        int counter = 0;
+        boolean add = false;
+        while (metricObjectsFromDataset.hasNext()) {
+            List<Object> batch = Tools.getObjectsFromIterator(metricObjectsFromDataset, 1000000);
+            counter += batch.size();
+            for (Object next : batch) {
+                Object id = metricSpace.getIDOfMetricObject(next);
+                float[] vector = metricSpace.getDataOfMetricObject(next);
+                if (add || vector.length == prefixLength) {
+                    ret.put(id, vector);
+                    add = true;
+                } else {
+                    float[] shortVec = new float[prefixLength];
+                    System.arraycopy(vector, 0, shortVec, 0, prefixLength);
+                    ret.put(id, shortVec);
+                }
             }
+            LOG.log(Level.INFO, "Loaded {0} prefixes", counter);
         }
         return ret;
     }
 
-    public static SimRelEuclideanPCAImpl initSimRel(int querySampleCount, int pcaLength, int kPCA, int dataSampleCount, String pcaDatasetName, float percentile, int prefixLength) {
+    public static SimRelInterface<float[]> initSimRel(int querySampleCount, int pcaLength, int kPCA, int dataSampleCount, String pcaDatasetName, float percentile, int prefixLength) {
         FSSimRelThresholdsTOmegaStorage simRelStorage = new FSSimRelThresholdsTOmegaStorage(querySampleCount, pcaLength, kPCA, dataSampleCount);
         float[][] simRelThresholds = simRelStorage.load(pcaDatasetName);
         int idx = FSSimRelThresholdsTOmegaStorage.percentileToArrayIdx(percentile);

@@ -6,7 +6,6 @@ package vm.vmtrials.hdf5;
 
 import java.util.AbstractMap;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
@@ -26,11 +25,11 @@ import vm.metricSpace.ToolsMetricDomain;
 import vm.queryResults.QueryNearestNeighboursStoreInterface;
 import vm.queryResults.errorOnDistEvaluation.ErrorOnDistEvaluator;
 import vm.queryResults.recallEvaluation.RecallOfCandsSetsEvaluator;
-import vm.vmtrials.deprecated.SimRelInstantRefinement;
 import vm.search.impl.VoronoiPartitionsCandSetIdentifier;
 import vm.simRel.impl.SimRelEuclideanPCAImpl;
 import vm.simRel.impl.SimRelEuclideanPCAImplForTesting;
 import vm.vmtrials.deprecated.SimRelInstantRefinement;
+import vm.vmtrials.tripleFiltering_Challenge.EvaluateVorSkeSimMain;
 
 /**
  *
@@ -115,7 +114,7 @@ public class EvaluateSimRelInstantWithVoronoi {
         AbstractMetricSpace metricSpaceOfFullDataset = fullDataset.getMetricSpace();
         AbstractMetricSpace pcaDatasetMetricSpace = pcaDataset.getMetricSpace();
 
-        Map pcaOMap = getMapOfPrefixes(pcaDatasetMetricSpace, pcaDataset.getMetricObjectsFromDataset(), prefixLength);
+        Map pcaOMap = EvaluateVorSkeSimMain.getMapOfPrefixes(pcaDatasetMetricSpace, pcaDataset.getMetricObjectsFromDataset(), prefixLength);
         Map pcaQueriesMap = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(pcaDatasetMetricSpace, pcaDataset.getMetricQueryObjects(), false);
 
         for (int i = 0; i < fullQueries.size(); i++) {
@@ -165,23 +164,6 @@ public class EvaluateSimRelInstantWithVoronoi {
             eodEvaluator.evaluateAndStoreErrorsOnDist(fullDataset.getDatasetName(), fullDataset.getQuerySetName(), k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), resultName);
             recallStorage.saveFile();
         }
-    }
-
-    private static Map<Object, Object> getMapOfPrefixes(AbstractMetricSpace<float[]> metricSpace, Iterator metricObjectsFromDataset, int prefixLength) {
-        Map<Object, Object> ret = new HashMap<>();
-        for (int i = 1; metricObjectsFromDataset.hasNext(); i++) {
-            Object next = metricObjectsFromDataset.next();
-            Object id = metricSpace.getIDOfMetricObject(next);
-            float[] vector = metricSpace.getDataOfMetricObject(next);
-            float[] shortVec = new float[prefixLength];
-            System.arraycopy(vector, 0, shortVec, 0, prefixLength);
-            AbstractMap.SimpleEntry obj = new AbstractMap.SimpleEntry(id, shortVec);
-            ret.put(id, obj);
-            if (i % 500000 == 0) {
-                LOG.log(Level.INFO, "Loaded {0} prefixes", i);
-            }
-        }
-        return ret;
     }
 
 }
