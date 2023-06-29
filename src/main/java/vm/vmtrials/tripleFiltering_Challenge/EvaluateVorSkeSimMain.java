@@ -226,7 +226,7 @@ public class EvaluateVorSkeSimMain {
         int counter = 0;
         boolean add = false;
         while (metricObjectsFromDataset.hasNext()) {
-            List<Object> batch = Tools.getObjectsFromIterator(metricObjectsFromDataset, 1000000);
+            List<Object> batch = Tools.getObjectsFromIterator(metricObjectsFromDataset, 5000000);
             counter += batch.size();
             for (Object next : batch) {
                 Object id = metricSpace.getIDOfMetricObject(next);
