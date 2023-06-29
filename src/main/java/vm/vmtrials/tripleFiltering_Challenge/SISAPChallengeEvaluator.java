@@ -8,6 +8,7 @@ import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
+import vm.fs.main.search.filtering.learning.LearnTOmegaThresholdsForSimRelCranberry;
 import vm.fs.store.dataTransforms.FSGHPSketchesPivotPairsStorageImpl;
 import vm.fs.store.voronoiPartitioning.FSVoronoiPartitioningStorage;
 import vm.metricSpace.AbstractMetricSpace;
@@ -18,6 +19,7 @@ import vm.objTransforms.objectToSketchTransformators.SketchingGHP;
 import vm.objTransforms.storeLearned.GHPSketchingPivotPairsStoreInterface;
 import vm.search.impl.VoronoiPartitionsCandSetIdentifier;
 import vm.search.impl.multiFiltering.VorSkeSimSorting;
+import vm.simRel.SimRelInterface;
 import vm.simRel.impl.SimRelEuclideanPCAImpl;
 import static vm.vmtrials.tripleFiltering_Challenge.Main.SKETCH_LENGTH;
 
@@ -43,7 +45,7 @@ public class SISAPChallengeEvaluator {
 
     private final VoronoiPartitionsCandSetIdentifier algVoronoi;
     private final SecondaryFilteringWithSketches algSketchFiltering;
-    private final SimRelEuclideanPCAImpl algSimRelFiltering;
+    private final SimRelInterface<float[]> algSimRelFiltering;
     private final Integer k;
 
     private final VorSkeSimSorting vorSkeSimAlg;
@@ -65,8 +67,8 @@ public class SISAPChallengeEvaluator {
     public SISAPChallengeEvaluator(Dataset fullDataset, Dataset pcaDataset, Dataset sketchesDataset, int voronoiK, int kPCA, int k, int pivotsUsedForTheVoronoi) {
         String resultNamePrefix = "Voronoi" + voronoiK + "_pCum" + pCum;
         algVoronoi = new VoronoiPartitionsCandSetIdentifier(fullDataset, new FSVoronoiPartitioningStorage(), pivotsUsedForTheVoronoi);
-        algSimRelFiltering = (SimRelEuclideanPCAImpl) new EvaluateVorSkeSimMain().initSimRel(querySampleCount, pcaLength, kPCA, voronoiK, pcaDataset.getDatasetName(), percentile, prefixLength);
-        algSketchFiltering = EvaluateVorSkeSimMain.initSecondaryFilteringWithSketches(fullDataset, sketchesDataset, resultNamePrefix, pCum, distIntervalsForPX);
+        algSimRelFiltering = EvaluateVorSkeSimMain.initSimRel(querySampleCount, pcaLength, kPCA, voronoiK, pcaDataset.getDatasetName(), percentile, prefixLength, null);
+        algSketchFiltering = LearnTOmegaThresholdsForSimRelCranberry.initSecondaryFilteringWithSketches(fullDataset, sketchesDataset, resultNamePrefix, pCum, distIntervalsForPX);
         this.k = k;
 
         fullMetricSpace = fullDataset.getMetricSpace();
