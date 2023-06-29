@@ -193,7 +193,6 @@ public class EvaluateVorSkeSimMain {
             } else {
                 System.out.println(earlyStopsPerCoordsString);
             }
-            LOG.log(Level.INFO, "Processed query {0}", new Object[]{i + 1});
 
             if (i == 499) {
                 break;
@@ -226,7 +225,7 @@ public class EvaluateVorSkeSimMain {
         int counter = 0;
         boolean add = false;
         while (metricObjectsFromDataset.hasNext()) {
-            List<Object> batch = Tools.getObjectsFromIterator(metricObjectsFromDataset, 5000000);
+            List<Object> batch = Tools.getObjectsFromIterator(metricObjectsFromDataset, 10000000);
             counter += batch.size();
             for (Object next : batch) {
                 Object id = metricSpace.getIDOfMetricObject(next);
