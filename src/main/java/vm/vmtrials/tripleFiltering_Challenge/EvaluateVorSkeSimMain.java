@@ -15,7 +15,6 @@ import java.util.logging.Logger;
 import vm.datatools.DataTypeConvertor;
 import vm.datatools.Tools;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
-import vm.fs.main.search.filtering.learning.LearnTOmegaThresholdsForSimRelCranberry;
 import vm.fs.store.dataTransforms.FSGHPSketchesPivotPairsStorageImpl;
 import vm.fs.store.filtering.FSSimRelThresholdsTOmegaStorage;
 import vm.fs.store.queryResults.FSNearestNeighboursStorageImpl;
@@ -30,7 +29,6 @@ import vm.objTransforms.objectToSketchTransformators.AbstractObjectToSketchTrans
 import vm.objTransforms.objectToSketchTransformators.SketchingGHP;
 import vm.objTransforms.storeLearned.GHPSketchingPivotPairsStoreInterface;
 import vm.queryResults.recallEvaluation.RecallOfCandsSetsEvaluator;
-import vm.search.devel.CheckingOfNearestNeighbours;
 import vm.search.impl.VoronoiPartitionsCandSetIdentifier;
 import vm.search.impl.multiFiltering.VorSkeSimSorting;
 import vm.simRel.SimRelInterface;
@@ -45,7 +43,7 @@ public class EvaluateVorSkeSimMain {
 
     private static final Logger LOG = Logger.getLogger(EvaluateVorSkeSimMain.class.getName());
     public static final Boolean STORE_RESULTS = true;
-    public static final Boolean LEARN_SIMREL = true;
+    public static final Boolean LEARN_SIMREL = false;
 
     public static void main(String[] args) {
 //        vm.javatools.Tools.sleep(120);
@@ -58,8 +56,8 @@ public class EvaluateVorSkeSimMain {
             new FSDatasetInstanceSingularizator.LAION_100M_Dataset()
         };
         Dataset[] pcaDatasets = new Dataset[]{
-            new FSDatasetInstanceSingularizator.LAION_10M_PCA96Dataset(),
-            new FSDatasetInstanceSingularizator.LAION_30M_PCA96Dataset(),
+            new FSDatasetInstanceSingularizator.LAION_10M_PCA256Dataset(),
+            new FSDatasetInstanceSingularizator.LAION_30M_PCA256Dataset(),
             new FSDatasetInstanceSingularizator.LAION_100M_PCA96Dataset()
         };
 
@@ -76,8 +74,8 @@ public class EvaluateVorSkeSimMain {
         };
 
         int[] minKSimRel = new int[]{
-            500,
-            500,
+            100,
+            100,
             1000
         };
         int[] maxKSimRel = new int[]{
@@ -91,7 +89,7 @@ public class EvaluateVorSkeSimMain {
             0.004f
         };
 
-        for (int i = 0; i < fullDatasets.length; i++) {
+        for (int i = 2; i < fullDatasets.length; i++) {
             run(fullDatasets[i], pcaDatasets[i], sketchesDatasets[i], voronoiK[i], minKSimRel[i], maxKSimRel[i], distIntervalsForPX[i], sketchLength, pCum);
             break;
         }
@@ -113,7 +111,7 @@ public class EvaluateVorSkeSimMain {
         float percentile = 0.9f;
 
         SimRelInterface<float[]> simRel = initSimRel(querySampleCount, pcaLength, simRelMinAnswerSize, dataSampleCount, pcaDataset.getDatasetName(), percentile, prefixLength, pivotCountForVoronoi);
-        String resultName = "CRANBERRY3_" + fullDataset.getDatasetName() + "_kVoronoi" + kVoronoi + "_pca" + pcaLength + "_simRelMinAns" + simRelMinAnswerSize + "simRelMaxAns" + simRelMaxAnswerSize + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__" + dataSampleCount + "o__k" + k + "_perc" + percentile + "_pCum" + pCum + "_sketches" + sketchLength + "";
+        String resultName = "CRANBERRY4_" + fullDataset.getDatasetName() + "_kVoronoi" + kVoronoi + "_pca" + pcaLength + "_simRelMinAns" + simRelMinAnswerSize + "simRelMaxAns" + simRelMaxAnswerSize + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__" + dataSampleCount + "o__k" + k + "_perc" + percentile + "_pCum" + pCum + "_sketches" + sketchLength + "";
 
         testQueries(fullDataset, pcaDataset, sketchesDataset, simRel, pivotCountForVoronoi, kVoronoi, simRelMinAnswerSize, simRelMaxAnswerSize, k, prefixLength, pcaLength, resultName, sketchLength, pCum, distIntervalsForPX, querySampleCount);
     }
@@ -155,7 +153,7 @@ public class EvaluateVorSkeSimMain {
         VoronoiPartitionsCandSetIdentifier algVoronoi = new VoronoiPartitionsCandSetIdentifier(fullDataset, new FSVoronoiPartitioningStorage(), pivotCountForVoronoi);
 
         String resultNamePrefix = "Voronoi" + voronoiK + "_pCum" + pCum;
-        SecondaryFilteringWithSketches sketchFiltering = LearnTOmegaThresholdsForSimRelCranberry.initSecondaryFilteringWithSketches(fullDataset, sketchesDataset, resultNamePrefix, pCum, distIntervalsForPX);
+        SecondaryFilteringWithSketches sketchFiltering = SISAPChallengeEvaluator.initSecondaryFilteringWithSketches(fullDataset, sketchesDataset, resultNamePrefix, pCum, distIntervalsForPX);
 
         Map pcaOMap = getMapOfPrefixes(pcaDatasetMetricSpace, pcaDataset.getMetricObjectsFromDataset(), prefixLength);
         // key value map to PCA of the query objects
@@ -176,14 +174,11 @@ public class EvaluateVorSkeSimMain {
 
         TreeSet[] results = new TreeSet[fullQueries.size()];
 
-        CheckingOfNearestNeighbours DEVEL = new CheckingOfNearestNeighbours(new FSNearestNeighboursStorageImpl(), fullDataset.getDatasetName(), fullDataset.getQuerySetName());
+//        CheckingOfNearestNeighbours DEVEL = new CheckingOfNearestNeighbours(new FSNearestNeighboursStorageImpl(), fullDataset.getDatasetName(), fullDataset.getQuerySetName());
 
         FSQueryExecutionStatsStoreImpl statsStorage = new FSQueryExecutionStatsStoreImpl(fullDataset.getDatasetName(), fullDataset.getQuerySetName(), k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), resultName, null);
 
         for (int i = 0; i < fullQueries.size(); i++) {
-            if (LEARN_SIMREL) {
-                System.gc();
-            }
             Object query = fullQueries.get(i);
             Object qId = fullMetricSpace.getIDOfMetricObject(query);
             Object pcaQData = pcaQMap.get(qId);
@@ -203,7 +198,7 @@ public class EvaluateVorSkeSimMain {
             if (i == 499) {
                 break;
             }
-            if (LEARN_SIMREL && i == querySampleCount) {
+            if (LEARN_SIMREL && i == querySampleCount - 1) {
                 float[][] ret = ((SimRelEuclideanPCAForLearning) simRel).getDiffWhenWrong(FSSimRelThresholdsTOmegaStorage.PERCENTILES);
                 FSSimRelThresholdsTOmegaStorage simRelStorage = new FSSimRelThresholdsTOmegaStorage(querySampleCount, pcaLength, simRelMinAnswerSize, pivotCountForVoronoi, voronoiK);
                 simRelStorage.store(ret, pcaDataset.getDatasetName());

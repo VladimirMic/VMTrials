@@ -8,19 +8,20 @@ import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
-import vm.fs.main.search.filtering.learning.LearnTOmegaThresholdsForSimRelCranberry;
 import vm.fs.store.dataTransforms.FSGHPSketchesPivotPairsStorageImpl;
+import vm.fs.store.filtering.FSSecondaryFilteringWithSketchesStorage;
 import vm.fs.store.voronoiPartitioning.FSVoronoiPartitioningStorage;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.Dataset;
 import vm.metricSpace.distance.bounding.nopivot.impl.SecondaryFilteringWithSketches;
+import vm.metricSpace.distance.bounding.nopivot.learning.LearningSecondaryFilteringWithSketches;
+import vm.metricSpace.distance.bounding.nopivot.storeLearned.SecondaryFilteringWithSketchesStoreInterface;
 import vm.objTransforms.objectToSketchTransformators.AbstractObjectToSketchTransformator;
 import vm.objTransforms.objectToSketchTransformators.SketchingGHP;
 import vm.objTransforms.storeLearned.GHPSketchingPivotPairsStoreInterface;
 import vm.search.impl.VoronoiPartitionsCandSetIdentifier;
 import vm.search.impl.multiFiltering.VorSkeSimSorting;
 import vm.simRel.SimRelInterface;
-import vm.simRel.impl.SimRelEuclideanPCAImpl;
 import static vm.vmtrials.tripleFiltering_Challenge.Main.SKETCH_LENGTH;
 
 /**
@@ -28,6 +29,11 @@ import static vm.vmtrials.tripleFiltering_Challenge.Main.SKETCH_LENGTH;
  * @author Vlada
  */
 public class SISAPChallengeEvaluator {
+
+    public static SecondaryFilteringWithSketches initSecondaryFilteringWithSketches(Dataset fullDataset, Dataset sketchesDataset, String filterNamePrefix, float pCum, float distIntervalForPX) {
+        SecondaryFilteringWithSketchesStoreInterface secondaryFilteringStorage = new FSSecondaryFilteringWithSketchesStorage();
+        return new SecondaryFilteringWithSketches(filterNamePrefix, fullDataset.getDatasetName(), sketchesDataset, secondaryFilteringStorage, pCum, LearningSecondaryFilteringWithSketches.SKETCHES_SAMPLE_COUNT_FOR_IDIM_PX, LearningSecondaryFilteringWithSketches.DISTS_COMPS_FOR_SK_IDIM_AND_PX, distIntervalForPX);
+    }
 
     private final int sketchLength = 256;
     private final float pCum = 0.5f;
@@ -68,7 +74,7 @@ public class SISAPChallengeEvaluator {
         String resultNamePrefix = "Voronoi" + voronoiK + "_pCum" + pCum;
         algVoronoi = new VoronoiPartitionsCandSetIdentifier(fullDataset, new FSVoronoiPartitioningStorage(), pivotsUsedForTheVoronoi);
         algSimRelFiltering = EvaluateVorSkeSimMain.initSimRel(querySampleCount, pcaLength, kPCA, voronoiK, pcaDataset.getDatasetName(), percentile, prefixLength, null);
-        algSketchFiltering = LearnTOmegaThresholdsForSimRelCranberry.initSecondaryFilteringWithSketches(fullDataset, sketchesDataset, resultNamePrefix, pCum, distIntervalsForPX);
+        algSketchFiltering = initSecondaryFilteringWithSketches(fullDataset, sketchesDataset, resultNamePrefix, pCum, distIntervalsForPX);
         this.k = k;
 
         fullMetricSpace = fullDataset.getMetricSpace();
