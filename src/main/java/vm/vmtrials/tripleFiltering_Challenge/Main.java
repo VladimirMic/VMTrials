@@ -143,9 +143,9 @@ public class Main {
             case 10000000:
                 return 400000;
             case 30000000:
-                return 1000000;
+                return 900000;
             case 100000000:
-                return 3000000;
+                return 1000000;
             default:
                 throw new AssertionError();
         }
@@ -167,11 +167,11 @@ public class Main {
             case 300000:
                 return 100;
             case 10000000:
-                return 200;
+                return 100;
             case 30000000:
-                return 200;
+                return 100;
             case 100000000:
-                return 200;
+                return 100;
             default:
                 throw new AssertionError();
         }
