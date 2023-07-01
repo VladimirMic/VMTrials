@@ -23,7 +23,6 @@ import vm.fs.metricSpaceImpl.FSMetricSpaceImpl;
 import vm.fs.metricSpaceImpl.FSMetricSpacesStorage;
 import vm.fs.store.dataTransforms.FSGHPSketchesPivotPairsStorageImpl;
 import vm.fs.store.dataTransforms.FSSVDStorageImpl;
-import vm.fs.store.filtering.FSSimRelThresholdsTOmegaStorage;
 import vm.fs.store.queryResults.FSNearestNeighboursStorageImpl;
 import vm.fs.store.voronoiPartitioning.FSVoronoiPartitioningStorage;
 import vm.metricSpace.AbstractMetricSpace;
@@ -34,12 +33,9 @@ import vm.metricSpace.voronoiPartitioning.VoronoiPartitioning;
 import vm.objTransforms.MetricObjectTransformerInterface;
 import vm.objTransforms.MetricObjectsParallelTransformerImpl;
 import vm.objTransforms.objectToSketchTransformators.AbstractObjectToSketchTransformator;
-import vm.objTransforms.perform.PCAMetricObjectTransformer;
 import vm.objTransforms.perform.PCAPrefixMetricObjectTransformer;
 import vm.objTransforms.perform.TransformDataToGHPSketches;
 import vm.objTransforms.storeLearned.GHPSketchingPivotPairsStoreInterface;
-import vm.simRel.impl.learn.ThresholdsTOmegaEvaluator;
-import vm.simRel.impl.learn.storeLearnt.SimRelEuclidThresholdsTOmegaStorage;
 
 /**
  *
@@ -48,7 +44,7 @@ import vm.simRel.impl.learn.storeLearnt.SimRelEuclidThresholdsTOmegaStorage;
 public class Main {
 
     public static final Logger LOG = Logger.getLogger(Main.class.getName());
-    public static final Integer SKETCH_LENGTH = 256;
+    public static final Integer SKETCH_LENGTH = 512;
 
     private static SISAPChallengeEvaluator algorithm = null;
 
@@ -62,14 +58,15 @@ public class Main {
         String querySet768DimPath = args[1];
         int datasetSize = Integer.parseInt(args[2]);
         boolean build = args.length <= 3 || Boolean.parseBoolean(args[3]);
+        boolean makeAllSteps = false;
         int k = args.length <= 4 ? 10 : Integer.parseInt(args[4]);
 
         Dataset fullDataset = createImplicitH5Dataset(dataset768DimPath, querySet768DimPath);
-        Dataset pcaDataset = transformDatasetAndQueriesToPCAPreffixes(fullDataset, 256, 24);
+        Dataset pcaDataset = transformDatasetAndQueriesToPCAPreffixes(fullDataset, 256, 24, makeAllSteps);
 
         Dataset sketchesDataset;
         if (build) {
-            sketchesDataset = buildAndStoreAlgorithm(fullDataset, pcaDataset, datasetSize);
+            sketchesDataset = buildAndStoreAlgorithm(fullDataset, datasetSize, makeAllSteps);
         } else {
             AbstractObjectToSketchTransformator sketchingTechnique = createSketches(fullDataset);
             sketchesDataset = createImplicitSketchesDataset(sketchingTechnique, fullDataset.getDatasetName(), SKETCH_LENGTH, 0.5f);
@@ -186,14 +183,15 @@ public class Main {
      * Build indexes and create auxiliary files ********
      * *************************************************
      */
-    private static Dataset buildAndStoreAlgorithm(Dataset fullDataset, Dataset pcaDataset, int sizeIfDataset) {
-        LOG.log(Level.INFO, "\nBuild start");
-        LOG.log(Level.INFO, "\nStarting the Voronoi partitioning");
-        storeVoronoiPartitioning(fullDataset, sizeIfDataset);
-        System.gc();
-        LOG.log(Level.INFO, "\nStarting the learn of the tOmega thresholds for the simRel");
-        storeTOmegaThresholdsForSimRel(pcaDataset, sizeIfDataset);
-        System.gc();
+    private static Dataset buildAndStoreAlgorithm(Dataset fullDataset, int sizeIfDataset, boolean makeAllSteps) {
+        if (makeAllSteps) {
+            LOG.log(Level.INFO, "\nStarting the Voronoi partitioning");
+            createAndStoreVoronoiPartitioning(fullDataset, sizeIfDataset);
+            System.gc();
+        }
+//        LOG.log(Level.INFO, "\nStarting the learn of the tOmega thresholds for the simRel");
+//        storeTOmegaThresholdsForSimRel(pcaDataset, sizeIfDataset);
+//        System.gc();
         LOG.log(Level.INFO, "\nStarting the sketching transformation with the predefined sketching technique");
         AbstractObjectToSketchTransformator sketchingTechnique = createSketches(fullDataset);
         Dataset sketchesDataset = createImplicitSketchesDataset(sketchingTechnique, fullDataset.getDatasetName(), SKETCH_LENGTH, 0.5f);
@@ -206,7 +204,7 @@ public class Main {
 
     }
 
-    private static void storeVoronoiPartitioning(Dataset dataset, int sizeIfDataset) {
+    private static void createAndStoreVoronoiPartitioning(Dataset dataset, int sizeIfDataset) {
         int pivotCount = getPivotCount(sizeIfDataset);
         List<Object> pivots = dataset.getPivots(2 * pivotCount);
         VoronoiPartitioning vp = new VoronoiPartitioning(dataset.getMetricSpace(), dataset.getDistanceFunction(), pivots);
@@ -214,24 +212,12 @@ public class Main {
         vp.splitByVoronoi(dataset.getMetricObjectsFromDataset(), dataset.getDatasetName(), pivotCount, storage);
     }
 
-    private static void storeTOmegaThresholdsForSimRel(Dataset pcaDataset, int datasetSize) {
-        int kPCA = getPCAK(datasetSize);
-        /* number of query objects to learn t(\Omega) thresholds. We use different objects than the pivots tested. */
-        int querySampleCount = 100;//200
-        /* size of the data sample to learn t(\Omega) thresholds: SISAP: 100 000 */
-        int dataSampleCount = getVoronoiK(datasetSize); // 100000 = 100K
-        int pcaLength = 96;
-        SimRelEuclidThresholdsTOmegaStorage simRelStorage = new FSSimRelThresholdsTOmegaStorage(querySampleCount, pcaLength, kPCA, dataSampleCount);
-        ThresholdsTOmegaEvaluator evaluator = new ThresholdsTOmegaEvaluator(querySampleCount, kPCA);
-        evaluator.learnTOmegaThresholds(pcaDataset, simRelStorage, dataSampleCount, pcaLength, FSSimRelThresholdsTOmegaStorage.PERCENTILES);
-    }
-
     private static AbstractObjectToSketchTransformator createSketches(Dataset fullDataset) {
         MetricSpacesStorageInterface storageForSketches = new FSMetricSpacesStorage(new FSMetricSpaceImpl<>(), SingularisedConvertors.LONG_VECTOR_SPACE);
         GHPSketchingPivotPairsStoreInterface storageOfPivotPairs = new FSGHPSketchesPivotPairsStorageImpl();
         TransformDataToGHPSketches evaluator = new TransformDataToGHPSketches(fullDataset, storageOfPivotPairs, storageForSketches, 0.5f, -1);
         int[] sketchesLengths = new int[]{SKETCH_LENGTH};
-        String[] sketchesPairsName = new String[]{"laion2B-en-clip768v2-n=1M_sample.h5_GHP_50_" + SKETCH_LENGTH};
+        String[] sketchesPairsName = new String[]{"laion2B-en-clip768v2-n=100M.h5_GHP_50_" + SKETCH_LENGTH};
         AbstractObjectToSketchTransformator ret = evaluator.createSketchesForDatasetPivotsAndQueries(sketchesLengths, sketchesPairsName);
         return ret;
     }
@@ -255,10 +241,10 @@ public class Main {
         return dataset;
     }
 
-    private static Dataset transformDatasetAndQueriesToPCAPreffixes(Dataset dataset, int pcaLength, int storedPrefix) {
+    private static Dataset transformDatasetAndQueriesToPCAPreffixes(Dataset dataset, int pcaLength, int storedPrefix, boolean transform) {
+        String datasetUsedToLearnSVD = "laion2B-en-clip768v2-n=100M.h5";
         AbstractMetricSpace<float[]> metricSpace = dataset.getMetricSpace();
         MetricSpacesStorageInterface metricSpacesStorage = dataset.getMetricSpacesStorage();
-        String datasetUsedToLearnSVD = "laion2B-en-clip768v2-n=100M.h5";
         int sampleSetSize = 500000;
         FSSVDStorageImpl svdStorage = new FSSVDStorageImpl(datasetUsedToLearnSVD, sampleSetSize, false);
         float[][] vtMatrixFull = svdStorage.getVTMatrix();
@@ -266,11 +252,14 @@ public class Main {
         float[][] vtMatrix = Tools.shrinkMatrix(vtMatrixFull, pcaLength, vtMatrixFull[0].length);
 
         MetricObjectTransformerInterface pca = new PCAPrefixMetricObjectTransformer(vtMatrix, svdStorage.getMeansOverColumns(), metricSpace, metricSpace, storedPrefix);
-
-        MetricObjectsParallelTransformerImpl parallelTransformerImpl = new MetricObjectsParallelTransformerImpl(pca, metricSpacesStorage, pca.getNameOfTransformedSetOfObjects(dataset.getDatasetName(), false));
-        FSApplyPCAMain.transformPivots(dataset.getPivots(-1).iterator(), parallelTransformerImpl, "Pivot set with name \"" + datasetUsedToLearnSVD + "\" transformed by VT matrix of svd " + sampleSetSize + " to the length " + pcaLength);
-        FSApplyPCAMain.transformQueryObjects(dataset.getMetricQueryObjects().iterator(), parallelTransformerImpl, "Query set with name \"" + datasetUsedToLearnSVD + "\" transformed by VT matrix of svd " + sampleSetSize + " to the length " + pcaLength);
-        FSApplyPCAMain.transformDataset(dataset.getMetricObjectsFromDataset(), parallelTransformerImpl, "Dataset with name \"" + datasetUsedToLearnSVD + "\" transformed by VT matrix of svd " + sampleSetSize + " to the length " + pcaLength);
+        if (transform) {
+            LOG.log(Level.INFO, "\nTransform to the prefixes of PCA start");
+            MetricObjectsParallelTransformerImpl parallelTransformerImpl = new MetricObjectsParallelTransformerImpl(pca, metricSpacesStorage, pca.getNameOfTransformedSetOfObjects(dataset.getDatasetName(), false));
+            FSApplyPCAMain.transformPivots(dataset.getPivots(-1).iterator(), parallelTransformerImpl, "Pivot set with name \"" + datasetUsedToLearnSVD + "\" transformed by VT matrix of svd " + sampleSetSize + " to the length " + pcaLength);
+            FSApplyPCAMain.transformQueryObjects(dataset.getMetricQueryObjects().iterator(), parallelTransformerImpl, "Query set with name \"" + datasetUsedToLearnSVD + "\" transformed by VT matrix of svd " + sampleSetSize + " to the length " + pcaLength);
+            FSApplyPCAMain.transformDataset(dataset.getMetricObjectsFromDataset(), parallelTransformerImpl, "Dataset with name \"" + datasetUsedToLearnSVD + "\" transformed by VT matrix of svd " + sampleSetSize + " to the length " + pcaLength);
+            LOG.log(Level.INFO, "\nTransform to the prefixes of PCA finished");
+        }
         Dataset ret = new FSDatasetInstanceSingularizator.FSFloatVectorDataset(pca.getNameOfTransformedSetOfObjects(datasetUsedToLearnSVD));
         return ret;
     }
