@@ -96,15 +96,14 @@ public class Main {
 
         AbstractMetricSpace<float[]> fullMetricSpace = fullDataset.getMetricSpace();
 
-        long queryTime = -System.currentTimeMillis();
-
         CranberryAlgorithm cranberryAlg = algBuilder.getCranberryAlg();
+        long queryTime = -System.currentTimeMillis();
         TreeSet[] results = cranberryAlg.completeKnnSearchOfQuerySet(fullMetricSpace, fullQueries, k, null, pcaDatasetMetricSpace, pcaQMap);
 
         queryTime += System.currentTimeMillis();
         algBuilder.shutDownThreadPool();
 
-        LOG.log(Level.INFO, "Storing results of queries");
+        LOG.log(Level.INFO, "Storing results of queries: buildtime: {0}, querytime: {1}", new Object[]{buildTime, queryTime});
         FSNearestNeighboursStorageImpl resultsStorage = new FSNearestNeighboursStorageImpl(false);
         resultsStorage.storeQueryResults(pcaDatasetMetricSpace, fullQueries, results, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), "");
         Map<String, Object> ret = new HashMap<>();
