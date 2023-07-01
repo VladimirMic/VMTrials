@@ -7,7 +7,6 @@ package vm.vmtrials.tripleFiltering_Challenge;
 import java.util.AbstractMap;
 import java.util.Map;
 import java.util.TreeSet;
-import vm.fs.store.dataTransforms.FSGHPSketchesPivotPairsStorageImpl;
 import vm.fs.store.filtering.FSSecondaryFilteringWithSketchesStorage;
 import vm.fs.store.voronoiPartitioning.FSVoronoiPartitioningStorage;
 import vm.metricSpace.AbstractMetricSpace;
@@ -16,7 +15,6 @@ import vm.metricSpace.distance.bounding.nopivot.impl.SecondaryFilteringWithSketc
 import vm.metricSpace.distance.bounding.nopivot.learning.LearningSecondaryFilteringWithSketches;
 import vm.metricSpace.distance.bounding.nopivot.storeLearned.SecondaryFilteringWithSketchesStoreInterface;
 import vm.objTransforms.objectToSketchTransformators.AbstractObjectToSketchTransformator;
-import vm.objTransforms.storeLearned.GHPSketchingPivotPairsStoreInterface;
 import vm.search.impl.VoronoiPartitionsCandSetIdentifier;
 import vm.search.impl.multiFiltering.CranberryAlgorithm;
 import vm.simRel.SimRelInterface;
