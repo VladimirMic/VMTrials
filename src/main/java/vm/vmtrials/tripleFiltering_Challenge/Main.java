@@ -28,6 +28,7 @@ import vm.fs.store.voronoiPartitioning.FSVoronoiPartitioningStorage;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.Dataset;
 import vm.metricSpace.MetricSpacesStorageInterface;
+import vm.metricSpace.ToolsMetricDomain;
 import vm.metricSpace.dataToStringConvertors.SingularisedConvertors;
 import vm.metricSpace.voronoiPartitioning.VoronoiPartitioning;
 import vm.objTransforms.MetricObjectTransformerInterface;
@@ -37,6 +38,7 @@ import vm.objTransforms.objectToSketchTransformators.SketchingGHP;
 import vm.objTransforms.perform.PCAPrefixMetricObjectTransformer;
 import vm.objTransforms.perform.TransformDataToGHPSketches;
 import vm.objTransforms.storeLearned.GHPSketchingPivotPairsStoreInterface;
+import vm.search.impl.multiFiltering.CranberryAlgorithm;
 
 /**
  *
@@ -47,9 +49,9 @@ public class Main {
     public static final Logger LOG = Logger.getLogger(Main.class.getName());
     public static final Integer SKETCH_LENGTH = 512;
 
-    private static SISAPChallengeEvaluator algorithm = null;
+    private static SISAPChallengeAlgBuilder algBuilder = null;
 
-    private static final Boolean makeAllSteps = false;
+    private static final Boolean makeAllSteps = true;
 
     public static void main(String[] args) {
         long buildTime = -System.currentTimeMillis();
@@ -79,37 +81,31 @@ public class Main {
             sketchesDataset = createImplicitSketchesDataset(sketchingTechnique, fullDataset.getDatasetName(), SKETCH_LENGTH, 0.5f);
         }
 
-        if (algorithm == null) {
-            algorithm = initAlgorithm(fullDataset, pcaDataset, sketchesDataset, sketchingTechnique, datasetSize, k);
+        if (algBuilder == null) {
+            algBuilder = initAlgorithm(fullDataset, pcaDataset, sketchesDataset, sketchingTechnique, datasetSize, k);
         }
         buildTime += System.currentTimeMillis();
         List fullQueries = fullDataset.getMetricQueryObjects();
         List pcaQueries = pcaDataset.getMetricQueryObjects();
 
-        AbstractMetricSpace<float[]> metricSpace = fullDataset.getMetricSpace();
+        AbstractMetricSpace pcaDatasetMetricSpace = pcaDataset.getMetricSpace();
 
-        TreeSet[] results = new TreeSet[fullQueries.size()];
+        // key value map to PCA of the query objects
+        Map pcaQMap = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(pcaDatasetMetricSpace, pcaQueries, false);
+
+        AbstractMetricSpace<float[]> fullMetricSpace = fullDataset.getMetricSpace();
 
         long queryTime = -System.currentTimeMillis();
 
-        for (int i = 0; i < fullQueries.size(); i++) {
-            Object fullQObject = fullQueries.get(i);
-            Object pcaQObject = pcaQueries.get(i);
-            String fullQID = metricSpace.getIDOfMetricObject(fullQObject).toString();
-            Object pcaQID = metricSpace.getIDOfMetricObject(pcaQObject);
-            if (!pcaQID.equals(fullQID)) {
-                throw new IllegalArgumentException(pcaQID + ", " + fullQID);
-            }
-            float[] fullQData = metricSpace.getDataOfMetricObject(fullQObject);
-            float[] pcaQData = metricSpace.getDataOfMetricObject(pcaQObject);
-            results[i] = algorithm.evaluatekNNQuery(fullQID, fullQData, pcaQData);
-        }
+        CranberryAlgorithm cranberryAlg = algBuilder.getCranberryAlg();
+        TreeSet[] results = cranberryAlg.completeKnnSearchOfQuerySet(fullMetricSpace, fullQueries, k, null, pcaDatasetMetricSpace, pcaQMap);
 
         queryTime += System.currentTimeMillis();
+        algBuilder.shutDownThreadPool();
 
         LOG.log(Level.INFO, "Storing results of queries");
         FSNearestNeighboursStorageImpl resultsStorage = new FSNearestNeighboursStorageImpl(false);
-        resultsStorage.storeQueryResults(metricSpace, fullQueries, results, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), "");
+        resultsStorage.storeQueryResults(pcaDatasetMetricSpace, fullQueries, results, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), "");
         Map<String, Object> ret = new HashMap<>();
         ret.put("buildtime", buildTime / 1000f);
         ret.put("querytime", queryTime / 1000f);
@@ -126,13 +122,13 @@ public class Main {
         }
     }
 
-    private static SISAPChallengeEvaluator initAlgorithm(Dataset fullDataset, Dataset pcaDataset, Dataset sketchesDataset, AbstractObjectToSketchTransformator sketchingTechnique, int datasetSize, int k) {
+    private static SISAPChallengeAlgBuilder initAlgorithm(Dataset fullDataset, Dataset pcaDataset, Dataset sketchesDataset, AbstractObjectToSketchTransformator sketchingTechnique, int datasetSize, int k) {
         LOG.log(Level.INFO, "Initializing algorithm");
 
         int pivotsUsedForTheVoronoi = getPivotCount(datasetSize);
         int voronoiK = getVoronoiK(datasetSize);
         int kPCA = getPCAK(datasetSize);
-        SISAPChallengeEvaluator ret = new SISAPChallengeEvaluator(fullDataset, pcaDataset, sketchesDataset, sketchingTechnique, voronoiK, kPCA, k, pivotsUsedForTheVoronoi, "laion2B-en-clip768v2-n=100M.h5_PCA_pref24of256_q100voronoiP20000_voronoiK1000000_pcaLength256_kPCA100.csv");
+        SISAPChallengeAlgBuilder ret = new SISAPChallengeAlgBuilder(fullDataset, pcaDataset, sketchesDataset, sketchingTechnique, voronoiK, kPCA, k, pivotsUsedForTheVoronoi, "laion2B-en-clip768v2-n=100M.h5_PCA_pref24of256_q100voronoiP20000_voronoiK1000000_pcaLength256_kPCA100.csv");
         Logger.getLogger(Main.class.getName()).log(Level.INFO, "Algorithm initialised");
         return ret;
     }

@@ -152,7 +152,7 @@ public class EvaluateCRANBERRYMain {
         VoronoiPartitionsCandSetIdentifier algVoronoi = new VoronoiPartitionsCandSetIdentifier(fullDataset, new FSVoronoiPartitioningStorage(), pivotCountForVoronoi);
 
         String resultNamePrefix = "Voronoi" + voronoiK + "_pCum" + pCum;
-        SecondaryFilteringWithSketches sketchFiltering = SISAPChallengeEvaluator.initSecondaryFilteringWithSketches(fullDataset, sketchesDataset, resultNamePrefix, pCum, distIntervalsForPX);
+        SecondaryFilteringWithSketches sketchFiltering = SISAPChallengeAlgBuilder.initSecondaryFilteringWithSketches(fullDataset, sketchesDataset, resultNamePrefix, pCum, distIntervalsForPX);
 
         Map pcaOMap = getMapOfPrefixes(pcaDatasetMetricSpace, pcaDataset.getMetricObjectsFromDataset(), prefixLength);
         // key value map to PCA of the query objects
@@ -174,13 +174,16 @@ public class EvaluateCRANBERRYMain {
 //        CheckingOfNearestNeighbours DEVEL = new CheckingOfNearestNeighbours(new FSNearestNeighboursStorageImpl(), fullDataset.getDatasetName(), fullDataset.getQuerySetName());
         FSQueryExecutionStatsStoreImpl statsStorage = new FSQueryExecutionStatsStoreImpl(fullDataset.getDatasetName(), fullDataset.getQuerySetName(), k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), resultName, null);
 
-        long overalTime = -System.currentTimeMillis();
+
+        long overallTime = -System.currentTimeMillis();
         TreeSet[] results = alg.completeKnnSearchOfQuerySet(fullMetricSpace, fullQueries, k, null, pcaDatasetMetricSpace, pcaQMap);
-        overalTime += System.currentTimeMillis();
-        LOG.log(Level.INFO, "Overall time: {0}", overalTime);
+        overallTime += System.currentTimeMillis();
+
+        LOG.log(Level.INFO, "Overall time: {0}", overallTime);
         QueryNearestNeighboursStoreInterface storage = new FSNearestNeighboursStorageImpl();
         List<Object> queryObjectsIDs = ToolsMetricDomain.getIDsAsList(fullQueries.iterator(), fullMetricSpace);
         storage.storeQueryResults(queryObjectsIDs, results, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), "Cranberry_final_par" + CranberryAlgorithm.PARALELISM);
+
 //        TreeSet[] results = new TreeSet[fullQueries.size()];
 //        for (int i = 0; i < fullQueries.size(); i++) {
 //            Object query = fullQueries.get(i);

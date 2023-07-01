@@ -25,14 +25,13 @@ import vm.simRel.SimRelInterface;
  *
  * @author Vlada
  */
-public class SISAPChallengeEvaluator {
+public class SISAPChallengeAlgBuilder {
 
     public static SecondaryFilteringWithSketches initSecondaryFilteringWithSketches(Dataset fullDataset, Dataset sketchesDataset, String filterNamePrefix, float pCum, float distIntervalForPX) {
         SecondaryFilteringWithSketchesStoreInterface secondaryFilteringStorage = new FSSecondaryFilteringWithSketchesStorage();
         return new SecondaryFilteringWithSketches(filterNamePrefix, fullDataset.getDatasetName(), sketchesDataset, secondaryFilteringStorage, pCum, LearningSecondaryFilteringWithSketches.SKETCHES_SAMPLE_COUNT_FOR_IDIM_PX, LearningSecondaryFilteringWithSketches.DISTS_COMPS_FOR_SK_IDIM_AND_PX, distIntervalForPX);
     }
 
-    private final int sketchLength = Main.SKETCH_LENGTH;
     private final float pCum = 0.6f;
 
     /*  prefix of the shortened vectors used by the simRel */
@@ -70,7 +69,7 @@ public class SISAPChallengeEvaluator {
      * @param tOmegaStresholdsFileNameVoluntary if the file has a specific name
      * different from the automatically derived
      */
-    public SISAPChallengeEvaluator(Dataset fullDataset, Dataset pcaDataset, Dataset sketchesDataset, AbstractObjectToSketchTransformator sketchingTechnique, int voronoiK, int kPCA, int k, int pivotsUsedForTheVoronoi, String tOmegaStresholdsFileNameVoluntary) {
+    public SISAPChallengeAlgBuilder(Dataset fullDataset, Dataset pcaDataset, Dataset sketchesDataset, AbstractObjectToSketchTransformator sketchingTechnique, int voronoiK, int kPCA, int k, int pivotsUsedForTheVoronoi, String tOmegaStresholdsFileNameVoluntary) {
         String resultNamePrefix = "CRANBERRY_Voronoi" + voronoiK + "_pCum" + pCum;
         algVoronoi = new VoronoiPartitionsCandSetIdentifier(fullDataset, new FSVoronoiPartitioningStorage(), pivotsUsedForTheVoronoi);
         algSimRelFiltering = EvaluateCRANBERRYMain.initSimRel(querySampleCount, pcaLength, kPCA, voronoiK, pcaDataset.getDatasetName(), percentile, prefixLength, null, tOmegaStresholdsFileNameVoluntary);
@@ -81,11 +80,6 @@ public class SISAPChallengeEvaluator {
         pcaDatasetMetricSpace = pcaDataset.getMetricSpace();
         Map pcaOMap = EvaluateCRANBERRYMain.getMapOfPrefixes(pcaDatasetMetricSpace, pcaDataset.getMetricObjectsFromDataset(), prefixLength);
 
-        // sketching technique to transform query object to sketch
-        GHPSketchingPivotPairsStoreInterface storageOfPivotPairs = new FSGHPSketchesPivotPairsStorageImpl();
-
-
-//        algSimRelFiltering = initSimRel(querySampleCount, pcaLength, kPCA, voronoiK, pcaDataset.getDatasetName(), percentile, prefixLength);
         cranberryAlg = new CranberryAlgorithm<>(
                 algVoronoi,
                 voronoiK,
@@ -101,12 +95,20 @@ public class SISAPChallengeEvaluator {
 
     }
 
-    public TreeSet<Map.Entry<Object, Float>> evaluatekNNQuery(String queryObjID, float[] qVectorData, float[] pcaQDataPreffixOrFull) {
+    protected TreeSet<Map.Entry<Object, Float>> evaluatekNNQuery(String queryObjID, float[] qVectorData, float[] pcaQDataPreffixOrFull) {
         AbstractMap.SimpleEntry<String, float[]> query = new AbstractMap.SimpleEntry<>(queryObjID, qVectorData);
         AbstractMap.SimpleEntry<String, float[]> queryPCA = new AbstractMap.SimpleEntry<>(queryObjID, pcaQDataPreffixOrFull);
 
         TreeSet ret = cranberryAlg.completeKnnSearch(fullMetricSpace, query, k, null, pcaDatasetMetricSpace, queryPCA);
         return ret;
+    }
+
+    public CranberryAlgorithm getCranberryAlg() {
+        return cranberryAlg;
+    }
+
+    public void shutDownThreadPool() {
+        algSketchFiltering.shutdownThreadPool();
     }
 
 }
