@@ -17,10 +17,12 @@ import java.util.logging.Logger;
 import vm.datatools.Tools;
 import vm.fs.FSGlobal;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
+import vm.fs.main.objTransforms.apply.FSApplyPCAMain;
 import vm.fs.main.search.filtering.learning.LearnSecondaryFilteringWithGHPSketchesMain;
 import vm.fs.metricSpaceImpl.FSMetricSpaceImpl;
 import vm.fs.metricSpaceImpl.FSMetricSpacesStorage;
 import vm.fs.store.dataTransforms.FSGHPSketchesPivotPairsStorageImpl;
+import vm.fs.store.dataTransforms.FSSVDStorageImpl;
 import vm.fs.store.filtering.FSSimRelThresholdsTOmegaStorage;
 import vm.fs.store.queryResults.FSNearestNeighboursStorageImpl;
 import vm.fs.store.voronoiPartitioning.FSVoronoiPartitioningStorage;
@@ -29,7 +31,11 @@ import vm.metricSpace.Dataset;
 import vm.metricSpace.MetricSpacesStorageInterface;
 import vm.metricSpace.dataToStringConvertors.SingularisedConvertors;
 import vm.metricSpace.voronoiPartitioning.VoronoiPartitioning;
+import vm.objTransforms.MetricObjectTransformerInterface;
+import vm.objTransforms.MetricObjectsParallelTransformerImpl;
 import vm.objTransforms.objectToSketchTransformators.AbstractObjectToSketchTransformator;
+import vm.objTransforms.perform.PCAMetricObjectTransformer;
+import vm.objTransforms.perform.PCAPrefixMetricObjectTransformer;
 import vm.objTransforms.perform.TransformDataToGHPSketches;
 import vm.objTransforms.storeLearned.GHPSketchingPivotPairsStoreInterface;
 import vm.simRel.impl.learn.ThresholdsTOmegaEvaluator;
@@ -53,15 +59,13 @@ public class Main {
             System.err.println(i + ": " + args[i] + " ");
         }
         String dataset768DimPath = args[0];
-        String datasetPCA96DimPath = args[1];
-        String querySet768DimPath = args[2];
-        String querySetPCA96DimPath = args[3];
-        int datasetSize = Integer.parseInt(args[4]);
-        boolean build = args.length <= 5 || Boolean.parseBoolean(args[5]);
-        int k = args.length < 6 ? 10 : Integer.parseInt(args[6]);
+        String querySet768DimPath = args[1];
+        int datasetSize = Integer.parseInt(args[2]);
+        boolean build = args.length <= 3 || Boolean.parseBoolean(args[3]);
+        int k = args.length <= 4 ? 10 : Integer.parseInt(args[4]);
 
-        Dataset fullDataset = createImplicitH5Dataset(dataset768DimPath, querySet768DimPath, false);
-        Dataset pcaDataset = createImplicitH5Dataset(datasetPCA96DimPath, querySetPCA96DimPath, true);
+        Dataset fullDataset = createImplicitH5Dataset(dataset768DimPath, querySet768DimPath);
+        Dataset pcaDataset = transformDatasetAndQueriesToPCAPreffixes(fullDataset, 256, 24);
 
         Dataset sketchesDataset;
         if (build) {
@@ -237,8 +241,8 @@ public class Main {
      * Create implicit datasets - full and PCA dataset *
      * *************************************************
      */
-    private static Dataset createImplicitH5Dataset(String datasetPath, String querySetPath, boolean isPCA) {
-        return new Main.ImplicitH5Dataset(datasetPath, querySetPath, isPCA);
+    private static Dataset createImplicitH5Dataset(String datasetPath, String querySetPath) {
+        return new Main.ImplicitH5Dataset(datasetPath, querySetPath);
     }
 
     private static void learnSketchMapping(Dataset fullDataset, Dataset sketchesDataset, float distIntervalForpx, int sketchLength, float maxDist) {
@@ -251,19 +255,37 @@ public class Main {
         return dataset;
     }
 
+    private static Dataset transformDatasetAndQueriesToPCAPreffixes(Dataset dataset, int pcaLength, int storedPrefix) {
+        AbstractMetricSpace<float[]> metricSpage = dataset.getMetricSpace();
+        MetricSpacesStorageInterface spaceStorage = dataset.getMetricSpacesStorage();
+        String origDatasetName = dataset.getDatasetName();
+        int sampleSetSize = 500000;
+        FSSVDStorageImpl svdStorage = new FSSVDStorageImpl(origDatasetName, sampleSetSize, false);
+        float[][] vtMatrixFull = svdStorage.getVTMatrix();
+
+        float[][] vtMatrix = Tools.shrinkMatrix(vtMatrixFull, pcaLength, vtMatrixFull[0].length);
+
+        MetricObjectTransformerInterface pca = new PCAPrefixMetricObjectTransformer(vtMatrix, svdStorage.getMeansOverColumns(), metricSpage, metricSpage, storedPrefix);
+
+        MetricObjectsParallelTransformerImpl parallelTransformerImpl = new MetricObjectsParallelTransformerImpl(pca, spaceStorage, pca.getNameOfTransformedSetOfObjects(origDatasetName, false));
+        FSApplyPCAMain.transformPivots(dataset.getPivotSetName(), spaceStorage, parallelTransformerImpl, "Pivot set with name \"" + origDatasetName + "\" transformed by VT matrix of svd " + sampleSetSize + " to the length " + pcaLength);
+        FSApplyPCAMain.transformQueryObjects(dataset.getQuerySetName(), spaceStorage, parallelTransformerImpl, "Query set with name \"" + origDatasetName + "\" transformed by VT matrix of svd " + sampleSetSize + " to the length " + pcaLength);
+        FSApplyPCAMain.transformDataset(origDatasetName, spaceStorage, parallelTransformerImpl, "Dataset with name \"" + origDatasetName + "\" transformed by VT matrix of svd " + sampleSetSize + " to the length " + pcaLength);
+        Dataset ret = new FSDatasetInstanceSingularizator.FSFloatVectorDataset(pca.getNameOfTransformedSetOfObjects(origDatasetName));
+        return ret;
+    }
+
     private static class ImplicitH5Dataset extends FSDatasetInstanceSingularizator.H5FloatVectorDataset {
 
         private final File datasetFile;
         private final File querySetFile;
-        private final boolean isPCA;
         private final String querySetName;
 
-        public ImplicitH5Dataset(String datasetPath, String querySetPath, boolean isPCA) {
+        public ImplicitH5Dataset(String datasetPath, String querySetPath) {
             super(new File(datasetPath).getName());
             querySetName = new File(querySetPath).getName();
             this.datasetFile = new File(datasetPath);
             this.querySetFile = new File(querySetPath);
-            this.isPCA = isPCA;
         }
 
         @Override
@@ -288,11 +310,7 @@ public class Main {
 
         @Override
         public List<Object> getPivots(int objLoadedCount) {
-            if (isPCA) {
-                return metricSpacesStorage.getPivots("laion2B-en-pca96v2-n=100M.h5", objLoadedCount); // toto funguje?? Kolik?
-            }
-//            return metricSpacesStorage.getPivots("laion2B-en-clip768v2-n=100M.h5_20000pivots", objLoadedCount);
-            return metricSpacesStorage.getPivots("laion2B-en-clip768v2-n=100M.h5_2048pivots", objLoadedCount);
+            return metricSpacesStorage.getPivots("laion2B-en-clip768v2-n=100M.h5_20000pivots", objLoadedCount);
         }
 
         @Override
