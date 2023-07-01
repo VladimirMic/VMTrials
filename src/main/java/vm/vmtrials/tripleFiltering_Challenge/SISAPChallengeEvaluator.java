@@ -18,7 +18,7 @@ import vm.metricSpace.distance.bounding.nopivot.storeLearned.SecondaryFilteringW
 import vm.objTransforms.objectToSketchTransformators.AbstractObjectToSketchTransformator;
 import vm.objTransforms.storeLearned.GHPSketchingPivotPairsStoreInterface;
 import vm.search.impl.VoronoiPartitionsCandSetIdentifier;
-import vm.search.impl.multiFiltering.VorSkeSimSorting;
+import vm.search.impl.multiFiltering.CranberryAlgorithm;
 import vm.simRel.SimRelInterface;
 
 /**
@@ -51,7 +51,7 @@ public class SISAPChallengeEvaluator {
     private final SimRelInterface<float[]> algSimRelFiltering;
     private final Integer k;
 
-    private final VorSkeSimSorting vorSkeSimAlg;
+    private final CranberryAlgorithm cranberryAlg;
     private final AbstractMetricSpace fullMetricSpace;
     private final AbstractMetricSpace pcaDatasetMetricSpace;
 
@@ -73,20 +73,20 @@ public class SISAPChallengeEvaluator {
     public SISAPChallengeEvaluator(Dataset fullDataset, Dataset pcaDataset, Dataset sketchesDataset, AbstractObjectToSketchTransformator sketchingTechnique, int voronoiK, int kPCA, int k, int pivotsUsedForTheVoronoi, String tOmegaStresholdsFileNameVoluntary) {
         String resultNamePrefix = "CRANBERRY_Voronoi" + voronoiK + "_pCum" + pCum;
         algVoronoi = new VoronoiPartitionsCandSetIdentifier(fullDataset, new FSVoronoiPartitioningStorage(), pivotsUsedForTheVoronoi);
-        algSimRelFiltering = EvaluateVorSkeSimMain.initSimRel(querySampleCount, pcaLength, kPCA, voronoiK, pcaDataset.getDatasetName(), percentile, prefixLength, null, tOmegaStresholdsFileNameVoluntary);
+        algSimRelFiltering = EvaluateCRANBERRYMain.initSimRel(querySampleCount, pcaLength, kPCA, voronoiK, pcaDataset.getDatasetName(), percentile, prefixLength, null, tOmegaStresholdsFileNameVoluntary);
         algSketchFiltering = initSecondaryFilteringWithSketches(fullDataset, sketchesDataset, resultNamePrefix, pCum, distIntervalsForPX);
         this.k = k;
 
         fullMetricSpace = fullDataset.getMetricSpace();
         pcaDatasetMetricSpace = pcaDataset.getMetricSpace();
-        Map pcaOMap = EvaluateVorSkeSimMain.getMapOfPrefixes(pcaDatasetMetricSpace, pcaDataset.getMetricObjectsFromDataset(), prefixLength);
+        Map pcaOMap = EvaluateCRANBERRYMain.getMapOfPrefixes(pcaDatasetMetricSpace, pcaDataset.getMetricObjectsFromDataset(), prefixLength);
 
         // sketching technique to transform query object to sketch
         GHPSketchingPivotPairsStoreInterface storageOfPivotPairs = new FSGHPSketchesPivotPairsStorageImpl();
 
 
 //        algSimRelFiltering = initSimRel(querySampleCount, pcaLength, kPCA, voronoiK, pcaDataset.getDatasetName(), percentile, prefixLength);
-        vorSkeSimAlg = new VorSkeSimSorting<>(
+        cranberryAlg = new CranberryAlgorithm<>(
                 algVoronoi,
                 voronoiK,
                 algSketchFiltering,
@@ -105,7 +105,7 @@ public class SISAPChallengeEvaluator {
         AbstractMap.SimpleEntry<String, float[]> query = new AbstractMap.SimpleEntry<>(queryObjID, qVectorData);
         AbstractMap.SimpleEntry<String, float[]> queryPCA = new AbstractMap.SimpleEntry<>(queryObjID, pcaQDataPreffixOrFull);
 
-        TreeSet ret = vorSkeSimAlg.completeKnnSearch(fullMetricSpace, query, k, null, pcaDatasetMetricSpace, queryPCA);
+        TreeSet ret = cranberryAlg.completeKnnSearch(fullMetricSpace, query, k, null, pcaDatasetMetricSpace, queryPCA);
         return ret;
     }
 

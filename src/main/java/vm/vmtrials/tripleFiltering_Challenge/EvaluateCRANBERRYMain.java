@@ -29,8 +29,8 @@ import vm.objTransforms.storeLearned.GHPSketchingPivotPairsStoreInterface;
 import vm.queryResults.QueryNearestNeighboursStoreInterface;
 import vm.queryResults.recallEvaluation.RecallOfCandsSetsEvaluator;
 import vm.search.impl.VoronoiPartitionsCandSetIdentifier;
-import vm.search.impl.multiFiltering.VorSkeSimSorting;
-import static vm.search.impl.multiFiltering.VorSkeSimSorting.MAX_DIST_COMPS;
+import vm.search.impl.multiFiltering.CranberryAlgorithm;
+import static vm.search.impl.multiFiltering.CranberryAlgorithm.MAX_DIST_COMPS;
 import vm.simRel.SimRelInterface;
 import vm.simRel.impl.SimRelEuclideanPCAImplForTesting;
 import vm.simRel.impl.learn.SimRelEuclideanPCAForLearning;
@@ -39,9 +39,9 @@ import vm.simRel.impl.learn.SimRelEuclideanPCAForLearning;
  *
  * @author Vlada
  */
-public class EvaluateVorSkeSimMain {
+public class EvaluateCRANBERRYMain {
 
-    private static final Logger LOG = Logger.getLogger(EvaluateVorSkeSimMain.class.getName());
+    private static final Logger LOG = Logger.getLogger(EvaluateCRANBERRYMain.class.getName());
     public static final Boolean STORE_RESULTS = true;
     public static final Boolean LEARN_SIMREL = false;
 
@@ -110,7 +110,7 @@ public class EvaluateVorSkeSimMain {
         float percentile = 0.99f;
 
         SimRelInterface<float[]> simRel = initSimRel(querySampleCount, pcaLength, simRelMinAnswerSize, dataSampleCount, pcaDataset.getDatasetName(), percentile, prefixLength, pivotCountForVoronoi);
-        String resultName = "CRANBERRY_PAR_" + VorSkeSimSorting.PARALELISM + "_" + MAX_DIST_COMPS + "maxDists_" + fullDataset.getDatasetName() + "_kVoronoi" + kVoronoi + "_pca" + pcaLength + "_simRelMinAns" + simRelMinAnswerSize + "simRelMaxAns" + simRelMaxAnswerSize + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__" + dataSampleCount + "o__k" + k + "_perc" + percentile + "_pCum" + pCum + "_sketches" + sketchLength + "";
+        String resultName = "CRANBERRY_PAR_" + CranberryAlgorithm.PARALELISM + "_" + MAX_DIST_COMPS + "maxDists_" + fullDataset.getDatasetName() + "_kVoronoi" + kVoronoi + "_pca" + pcaLength + "_simRelMinAns" + simRelMinAnswerSize + "simRelMaxAns" + simRelMaxAnswerSize + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__" + dataSampleCount + "o__k" + k + "_perc" + percentile + "_pCum" + pCum + "_sketches" + sketchLength + "";
 
         testQueries(fullDataset, pcaDataset, sketchesDataset, simRel, pivotCountForVoronoi, kVoronoi, simRelMinAnswerSize, simRelMaxAnswerSize, k, prefixLength, pcaLength, resultName, sketchLength, pCum, distIntervalsForPX, querySampleCount);
     }
@@ -158,7 +158,7 @@ public class EvaluateVorSkeSimMain {
         // key value map to PCA of the query objects
         Map pcaQMap = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(pcaDatasetMetricSpace, pcaDataset.getMetricQueryObjects(), false);
 
-        VorSkeSimSorting alg = new VorSkeSimSorting(
+        CranberryAlgorithm alg = new CranberryAlgorithm(
                 algVoronoi,
                 voronoiK,
                 sketchFiltering,
@@ -180,7 +180,7 @@ public class EvaluateVorSkeSimMain {
         LOG.log(Level.INFO, "Overall time: {0}", overalTime);
         QueryNearestNeighboursStoreInterface storage = new FSNearestNeighboursStorageImpl();
         List<Object> queryObjectsIDs = ToolsMetricDomain.getIDsAsList(fullQueries.iterator(), fullMetricSpace);
-        storage.storeQueryResults(queryObjectsIDs, results, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), "Cranberry_final_par" + VorSkeSimSorting.PARALELISM);
+        storage.storeQueryResults(queryObjectsIDs, results, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), "Cranberry_final_par" + CranberryAlgorithm.PARALELISM);
 //        TreeSet[] results = new TreeSet[fullQueries.size()];
 //        for (int i = 0; i < fullQueries.size(); i++) {
 //            Object query = fullQueries.get(i);
