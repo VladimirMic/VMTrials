@@ -256,22 +256,22 @@ public class Main {
     }
 
     private static Dataset transformDatasetAndQueriesToPCAPreffixes(Dataset dataset, int pcaLength, int storedPrefix) {
-        AbstractMetricSpace<float[]> metricSpage = dataset.getMetricSpace();
-        MetricSpacesStorageInterface spaceStorage = dataset.getMetricSpacesStorage();
-        String origDatasetName = dataset.getDatasetName();
+        AbstractMetricSpace<float[]> metricSpace = dataset.getMetricSpace();
+        MetricSpacesStorageInterface metricSpacesStorage = dataset.getMetricSpacesStorage();
+        String datasetUsedToLearnSVD = "laion2B-en-clip768v2-n=100M.h5";
         int sampleSetSize = 500000;
-        FSSVDStorageImpl svdStorage = new FSSVDStorageImpl(origDatasetName, sampleSetSize, false);
+        FSSVDStorageImpl svdStorage = new FSSVDStorageImpl(datasetUsedToLearnSVD, sampleSetSize, false);
         float[][] vtMatrixFull = svdStorage.getVTMatrix();
 
         float[][] vtMatrix = Tools.shrinkMatrix(vtMatrixFull, pcaLength, vtMatrixFull[0].length);
 
-        MetricObjectTransformerInterface pca = new PCAPrefixMetricObjectTransformer(vtMatrix, svdStorage.getMeansOverColumns(), metricSpage, metricSpage, storedPrefix);
+        MetricObjectTransformerInterface pca = new PCAPrefixMetricObjectTransformer(vtMatrix, svdStorage.getMeansOverColumns(), metricSpace, metricSpace, storedPrefix);
 
-        MetricObjectsParallelTransformerImpl parallelTransformerImpl = new MetricObjectsParallelTransformerImpl(pca, spaceStorage, pca.getNameOfTransformedSetOfObjects(origDatasetName, false));
-        FSApplyPCAMain.transformPivots(dataset.getPivotSetName(), spaceStorage, parallelTransformerImpl, "Pivot set with name \"" + origDatasetName + "\" transformed by VT matrix of svd " + sampleSetSize + " to the length " + pcaLength);
-        FSApplyPCAMain.transformQueryObjects(dataset.getQuerySetName(), spaceStorage, parallelTransformerImpl, "Query set with name \"" + origDatasetName + "\" transformed by VT matrix of svd " + sampleSetSize + " to the length " + pcaLength);
-        FSApplyPCAMain.transformDataset(origDatasetName, spaceStorage, parallelTransformerImpl, "Dataset with name \"" + origDatasetName + "\" transformed by VT matrix of svd " + sampleSetSize + " to the length " + pcaLength);
-        Dataset ret = new FSDatasetInstanceSingularizator.FSFloatVectorDataset(pca.getNameOfTransformedSetOfObjects(origDatasetName));
+        MetricObjectsParallelTransformerImpl parallelTransformerImpl = new MetricObjectsParallelTransformerImpl(pca, metricSpacesStorage, pca.getNameOfTransformedSetOfObjects(dataset.getDatasetName(), false));
+        FSApplyPCAMain.transformPivots(dataset.getPivots(-1).iterator(), parallelTransformerImpl, "Pivot set with name \"" + datasetUsedToLearnSVD + "\" transformed by VT matrix of svd " + sampleSetSize + " to the length " + pcaLength);
+        FSApplyPCAMain.transformQueryObjects(dataset.getMetricQueryObjects().iterator(), parallelTransformerImpl, "Query set with name \"" + datasetUsedToLearnSVD + "\" transformed by VT matrix of svd " + sampleSetSize + " to the length " + pcaLength);
+        FSApplyPCAMain.transformDataset(dataset.getMetricObjectsFromDataset(), parallelTransformerImpl, "Dataset with name \"" + datasetUsedToLearnSVD + "\" transformed by VT matrix of svd " + sampleSetSize + " to the length " + pcaLength);
+        Dataset ret = new FSDatasetInstanceSingularizator.FSFloatVectorDataset(pca.getNameOfTransformedSetOfObjects(datasetUsedToLearnSVD));
         return ret;
     }
 
@@ -310,7 +310,7 @@ public class Main {
 
         @Override
         public List<Object> getPivots(int objLoadedCount) {
-            return metricSpacesStorage.getPivots("laion2B-en-clip768v2-n=100M.h5_20000pivots", objLoadedCount);
+            return metricSpacesStorage.getPivots("laion2B-en-clip768v2-n=100M.h5_20000pivots.gz", objLoadedCount);
         }
 
         @Override
