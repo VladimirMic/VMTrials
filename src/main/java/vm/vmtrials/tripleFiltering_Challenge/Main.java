@@ -48,21 +48,24 @@ public class Main {
 
     private static SISAPChallengeEvaluator algorithm = null;
 
+    private static Boolean makeAllSteps = false;
     public static void main(String[] args) {
         long buildTime = -System.currentTimeMillis();
         System.err.println("Args: ");
         for (int i = 0; i < args.length; i++) {
             System.err.println(i + ": " + args[i] + " ");
         }
-        String dataset768DimPath = args[0];
-        String querySet768DimPath = args[1];
-        int datasetSize = Integer.parseInt(args[2]);
-        boolean build = args.length <= 3 || Boolean.parseBoolean(args[3]);
-        boolean makeAllSteps = false;
-        int k = args.length <= 4 ? 10 : Integer.parseInt(args[4]);
+        int param = 0;
+        String dataset768DimPath = args[param++];
+        param++;
+        String querySet768DimPath = args[param++];
+        param++;
+        int datasetSize = Integer.parseInt(args[param++]);
+        boolean build = args.length <= param || Boolean.parseBoolean(args[param++]);
+        int k = args.length <= param ? 10 : Integer.parseInt(args[param++]);
 
         Dataset fullDataset = createImplicitH5Dataset(dataset768DimPath, querySet768DimPath);
-        Dataset pcaDataset = transformDatasetAndQueriesToPCAPreffixes(fullDataset, 256, 24, makeAllSteps);
+        Dataset pcaDataset = transformDatasetAndQueriesToPCAPreffixes(fullDataset, 256, 24);
 
         Dataset sketchesDataset;
         if (build) {
@@ -241,7 +244,7 @@ public class Main {
         return dataset;
     }
 
-    private static Dataset transformDatasetAndQueriesToPCAPreffixes(Dataset dataset, int pcaLength, int storedPrefix, boolean transform) {
+    private static Dataset transformDatasetAndQueriesToPCAPreffixes(Dataset dataset, int pcaLength, int storedPrefix) {
         String datasetUsedToLearnSVD = "laion2B-en-clip768v2-n=100M.h5";
         AbstractMetricSpace<float[]> metricSpace = dataset.getMetricSpace();
         MetricSpacesStorageInterface metricSpacesStorage = dataset.getMetricSpacesStorage();
@@ -252,7 +255,7 @@ public class Main {
         float[][] vtMatrix = Tools.shrinkMatrix(vtMatrixFull, pcaLength, vtMatrixFull[0].length);
 
         MetricObjectTransformerInterface pca = new PCAPrefixMetricObjectTransformer(vtMatrix, svdStorage.getMeansOverColumns(), metricSpace, metricSpace, storedPrefix);
-        if (transform) {
+        if (makeAllSteps) {
             LOG.log(Level.INFO, "\nTransform to the prefixes of PCA start");
             MetricObjectsParallelTransformerImpl parallelTransformerImpl = new MetricObjectsParallelTransformerImpl(pca, metricSpacesStorage, pca.getNameOfTransformedSetOfObjects(dataset.getDatasetName(), false));
             FSApplyPCAMain.transformPivots(dataset.getPivots(-1).iterator(), parallelTransformerImpl, "Pivot set with name \"" + datasetUsedToLearnSVD + "\" transformed by VT matrix of svd " + sampleSetSize + " to the length " + pcaLength);
