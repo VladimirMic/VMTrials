@@ -33,6 +33,7 @@ import vm.metricSpace.voronoiPartitioning.VoronoiPartitioning;
 import vm.objTransforms.MetricObjectTransformerInterface;
 import vm.objTransforms.MetricObjectsParallelTransformerImpl;
 import vm.objTransforms.objectToSketchTransformators.AbstractObjectToSketchTransformator;
+import vm.objTransforms.objectToSketchTransformators.SketchingGHP;
 import vm.objTransforms.perform.PCAPrefixMetricObjectTransformer;
 import vm.objTransforms.perform.TransformDataToGHPSketches;
 import vm.objTransforms.storeLearned.GHPSketchingPivotPairsStoreInterface;
@@ -48,7 +49,8 @@ public class Main {
 
     private static SISAPChallengeEvaluator algorithm = null;
 
-    private static Boolean makeAllSteps = false;
+    private static final Boolean makeAllSteps = false;
+
     public static void main(String[] args) {
         long buildTime = -System.currentTimeMillis();
         System.err.println("Args: ");
@@ -68,15 +70,17 @@ public class Main {
         Dataset pcaDataset = transformDatasetAndQueriesToPCAPreffixes(fullDataset, 256, 24);
 
         Dataset sketchesDataset;
-        if (build) {
+        AbstractObjectToSketchTransformator sketchingTechnique;
+        if (makeAllSteps) {
             sketchesDataset = buildAndStoreAlgorithm(fullDataset, datasetSize, makeAllSteps);
+            sketchingTechnique = getSketchingTechnique(fullDataset);
         } else {
-            AbstractObjectToSketchTransformator sketchingTechnique = createSketches(fullDataset);
+            sketchingTechnique = getSketchingTechnique(fullDataset);
             sketchesDataset = createImplicitSketchesDataset(sketchingTechnique, fullDataset.getDatasetName(), SKETCH_LENGTH, 0.5f);
         }
 
         if (algorithm == null) {
-            algorithm = initAlgorithm(fullDataset, pcaDataset, sketchesDataset, datasetSize, k);
+            algorithm = initAlgorithm(fullDataset, pcaDataset, sketchesDataset, sketchingTechnique, datasetSize, k);
         }
         buildTime += System.currentTimeMillis();
         List fullQueries = fullDataset.getMetricQueryObjects();
@@ -122,13 +126,13 @@ public class Main {
         }
     }
 
-    private static SISAPChallengeEvaluator initAlgorithm(Dataset fullDataset, Dataset pcaDataset, Dataset sketchesDataset, int datasetSize, int k) {
+    private static SISAPChallengeEvaluator initAlgorithm(Dataset fullDataset, Dataset pcaDataset, Dataset sketchesDataset, AbstractObjectToSketchTransformator sketchingTechnique, int datasetSize, int k) {
         LOG.log(Level.INFO, "Initializing algorithm");
 
         int pivotsUsedForTheVoronoi = getPivotCount(datasetSize);
         int voronoiK = getVoronoiK(datasetSize);
         int kPCA = getPCAK(datasetSize);
-        SISAPChallengeEvaluator ret = new SISAPChallengeEvaluator(fullDataset, pcaDataset, sketchesDataset, voronoiK, kPCA, k, pivotsUsedForTheVoronoi);
+        SISAPChallengeEvaluator ret = new SISAPChallengeEvaluator(fullDataset, pcaDataset, sketchesDataset, sketchingTechnique, voronoiK, kPCA, k, pivotsUsedForTheVoronoi, "laion2B-en-clip768v2-n=100M.h5_PCA_pref24of256_q100voronoiP20000_voronoiK1000000_pcaLength256_kPCA100.csv");
         Logger.getLogger(Main.class.getName()).log(Level.INFO, "Algorithm initialised");
         return ret;
     }
@@ -200,7 +204,9 @@ public class Main {
         Dataset sketchesDataset = createImplicitSketchesDataset(sketchingTechnique, fullDataset.getDatasetName(), SKETCH_LENGTH, 0.5f);
         System.gc();
         LOG.log(Level.INFO, "\nStarting the learn of the Secondary filtering with sketches");
-        learnSketchMapping(fullDataset, sketchesDataset, 0.004f, SKETCH_LENGTH, 2f);
+        if (makeAllSteps) {
+            learnSketchMapping(fullDataset, sketchesDataset, 0.004f, SKETCH_LENGTH, 2f);
+        }
         System.gc();
         LOG.log(Level.INFO, "\nBuild finished");
         return sketchesDataset;
@@ -222,6 +228,11 @@ public class Main {
         int[] sketchesLengths = new int[]{SKETCH_LENGTH};
         String[] sketchesPairsName = new String[]{"laion2B-en-clip768v2-n=100M.h5_GHP_50_" + SKETCH_LENGTH};
         AbstractObjectToSketchTransformator ret = evaluator.createSketchesForDatasetPivotsAndQueries(sketchesLengths, sketchesPairsName);
+        return ret;
+    }
+
+    private static AbstractObjectToSketchTransformator getSketchingTechnique(Dataset dataset) {
+        SketchingGHP ret = new SketchingGHP(dataset.getDistanceFunction(), dataset.getMetricSpace(), dataset.getPivots(-1), "laion2B-en-clip768v2-n=100M.h5_GHP_50_512", new FSGHPSketchesPivotPairsStorageImpl());
         return ret;
     }
 
@@ -263,7 +274,8 @@ public class Main {
             FSApplyPCAMain.transformDataset(dataset.getMetricObjectsFromDataset(), parallelTransformerImpl, "Dataset with name \"" + datasetUsedToLearnSVD + "\" transformed by VT matrix of svd " + sampleSetSize + " to the length " + pcaLength);
             LOG.log(Level.INFO, "\nTransform to the prefixes of PCA finished");
         }
-        Dataset ret = new FSDatasetInstanceSingularizator.FSFloatVectorDataset(pca.getNameOfTransformedSetOfObjects(datasetUsedToLearnSVD));
+        String newName = pca.getNameOfTransformedSetOfObjects(dataset.getDatasetName());
+        Dataset ret = new FSDatasetInstanceSingularizator.FSFloatVectorDataset(newName);
         return ret;
     }
 

@@ -250,12 +250,16 @@ public class EvaluateVorSkeSimMain {
     }
 
     public static SimRelInterface<float[]> initSimRel(int querySampleCount, int pcaLength, int kPCA, int dataSampleCount, String pcaDatasetName, float percentile, int prefixLength, Integer pivotsCount) {
+        return initSimRel(querySampleCount, pcaLength, kPCA, dataSampleCount, pcaDatasetName, percentile, prefixLength, pivotsCount, null);
+    }
+
+    public static SimRelInterface<float[]> initSimRel(int querySampleCount, int pcaLength, int kPCA, int dataSampleCount, String pcaDatasetName, float percentile, int prefixLength, Integer pivotsCount, String directFileNameString) {
 //        return new DumbSimRel<>();
         if (LEARN_SIMREL) {
             SimRelEuclideanPCAForLearning simRelLearn = new SimRelEuclideanPCAForLearning(pcaLength);
             return simRelLearn;
         }
-        FSSimRelThresholdsTOmegaStorage simRelStorage = new FSSimRelThresholdsTOmegaStorage(querySampleCount, pcaLength, kPCA, pivotsCount, dataSampleCount);
+        FSSimRelThresholdsTOmegaStorage simRelStorage = new FSSimRelThresholdsTOmegaStorage(querySampleCount, pcaLength, kPCA, pivotsCount, dataSampleCount, directFileNameString);
         float[][] simRelThresholds = simRelStorage.load(pcaDatasetName);
         int idx = FSSimRelThresholdsTOmegaStorage.percentileToArrayIdx(percentile);
         float[] learnedErrors = simRelThresholds[idx];

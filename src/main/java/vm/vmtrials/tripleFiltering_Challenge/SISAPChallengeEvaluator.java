@@ -5,7 +5,6 @@
 package vm.vmtrials.tripleFiltering_Challenge;
 
 import java.util.AbstractMap;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 import vm.fs.store.dataTransforms.FSGHPSketchesPivotPairsStorageImpl;
@@ -17,12 +16,10 @@ import vm.metricSpace.distance.bounding.nopivot.impl.SecondaryFilteringWithSketc
 import vm.metricSpace.distance.bounding.nopivot.learning.LearningSecondaryFilteringWithSketches;
 import vm.metricSpace.distance.bounding.nopivot.storeLearned.SecondaryFilteringWithSketchesStoreInterface;
 import vm.objTransforms.objectToSketchTransformators.AbstractObjectToSketchTransformator;
-import vm.objTransforms.objectToSketchTransformators.SketchingGHP;
 import vm.objTransforms.storeLearned.GHPSketchingPivotPairsStoreInterface;
 import vm.search.impl.VoronoiPartitionsCandSetIdentifier;
 import vm.search.impl.multiFiltering.VorSkeSimSorting;
 import vm.simRel.SimRelInterface;
-import static vm.vmtrials.tripleFiltering_Challenge.Main.SKETCH_LENGTH;
 
 /**
  *
@@ -35,17 +32,17 @@ public class SISAPChallengeEvaluator {
         return new SecondaryFilteringWithSketches(filterNamePrefix, fullDataset.getDatasetName(), sketchesDataset, secondaryFilteringStorage, pCum, LearningSecondaryFilteringWithSketches.SKETCHES_SAMPLE_COUNT_FOR_IDIM_PX, LearningSecondaryFilteringWithSketches.DISTS_COMPS_FOR_SK_IDIM_AND_PX, distIntervalForPX);
     }
 
-    private final int sketchLength = 256;
-    private final float pCum = 0.5f;
+    private final int sketchLength = Main.SKETCH_LENGTH;
+    private final float pCum = 0.6f;
 
     /*  prefix of the shortened vectors used by the simRel */
     private final int prefixLength = 24;
     /*  prefix of the shortened vectors used by the simRel */
-    private final int pcaLength = 96;
+    private final int pcaLength = 256;
     /* number of query objects to learn t(\Omega) thresholds in the simRel. We use different objects than the queries tested. */
     private final int querySampleCount = 100;
     /* percentile - defined in the paper. Defines the precision of the simRel */
-    private final float percentile = 0.9f;
+    private final float percentile = 0.99f;
 
     private final float distIntervalsForPX = 0.004f;
 
@@ -64,16 +61,19 @@ public class SISAPChallengeEvaluator {
      * @param fullDataset
      * @param pcaDataset
      * @param sketchesDataset
+     * @param sketchingTechnique
      * @param voronoiK set 400 000 for 10M dataset, 1M for 30M dataset and 3M
      * for 100M dataset
      * @param kPCA set 300 for 10M dataset, 500 otherwise
      * @param k set 10 for the sisap challenge
      * @param pivotsUsedForTheVoronoi
+     * @param tOmegaStresholdsFileNameVoluntary if the file has a specific name
+     * different from the automatically derived
      */
-    public SISAPChallengeEvaluator(Dataset fullDataset, Dataset pcaDataset, Dataset sketchesDataset, int voronoiK, int kPCA, int k, int pivotsUsedForTheVoronoi) {
-        String resultNamePrefix = "Voronoi" + voronoiK + "_pCum" + pCum;
+    public SISAPChallengeEvaluator(Dataset fullDataset, Dataset pcaDataset, Dataset sketchesDataset, AbstractObjectToSketchTransformator sketchingTechnique, int voronoiK, int kPCA, int k, int pivotsUsedForTheVoronoi, String tOmegaStresholdsFileNameVoluntary) {
+        String resultNamePrefix = "CRANBERRY_Voronoi" + voronoiK + "_pCum" + pCum;
         algVoronoi = new VoronoiPartitionsCandSetIdentifier(fullDataset, new FSVoronoiPartitioningStorage(), pivotsUsedForTheVoronoi);
-        algSimRelFiltering = EvaluateVorSkeSimMain.initSimRel(querySampleCount, pcaLength, kPCA, voronoiK, pcaDataset.getDatasetName(), percentile, prefixLength, null);
+        algSimRelFiltering = EvaluateVorSkeSimMain.initSimRel(querySampleCount, pcaLength, kPCA, voronoiK, pcaDataset.getDatasetName(), percentile, prefixLength, null, tOmegaStresholdsFileNameVoluntary);
         algSketchFiltering = initSecondaryFilteringWithSketches(fullDataset, sketchesDataset, resultNamePrefix, pCum, distIntervalsForPX);
         this.k = k;
 
@@ -84,12 +84,8 @@ public class SISAPChallengeEvaluator {
         // sketching technique to transform query object to sketch
         GHPSketchingPivotPairsStoreInterface storageOfPivotPairs = new FSGHPSketchesPivotPairsStorageImpl();
 
-        List pivots = fullDataset.getPivots(-1);
-        AbstractObjectToSketchTransformator sketchingTechnique = new SketchingGHP(fullDataset.getDistanceFunction(), fullDataset.getMetricSpace(), pivots, fullDataset.getDatasetName(), 0.5f, sketchLength, storageOfPivotPairs);
-        sketchingTechnique.setPivotPairsFromStorage(storageOfPivotPairs, "laion2B-en-clip768v2-n=1M_sample.h5_GHP_50_" + SKETCH_LENGTH);
 
 //        algSimRelFiltering = initSimRel(querySampleCount, pcaLength, kPCA, voronoiK, pcaDataset.getDatasetName(), percentile, prefixLength);
-
         vorSkeSimAlg = new VorSkeSimSorting<>(
                 algVoronoi,
                 voronoiK,
@@ -97,7 +93,7 @@ public class SISAPChallengeEvaluator {
                 sketchingTechnique,
                 sketchesDataset.getMetricSpace(),
                 algSimRelFiltering,
-                kPCA, 
+                kPCA,
                 Integer.MAX_VALUE,
                 pcaOMap,
                 fullDataset.getKeyValueStorage(),
