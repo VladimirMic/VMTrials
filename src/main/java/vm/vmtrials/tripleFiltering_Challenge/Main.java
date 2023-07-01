@@ -51,7 +51,7 @@ public class Main {
 
     private static SISAPChallengeAlgBuilder algBuilder = null;
 
-    private static final Boolean makeAllSteps = true;
+    private static Boolean makeAllSteps;
 
     public static void main(String[] args) {
         long buildTime = -System.currentTimeMillis();
@@ -66,6 +66,7 @@ public class Main {
         param++;
         int datasetSize = Integer.parseInt(args[param++]);
         boolean build = args.length <= param || Boolean.parseBoolean(args[param++]);
+        makeAllSteps = build;
         int k = args.length <= param ? 10 : Integer.parseInt(args[param++]);
 
         Dataset fullDataset = createImplicitH5Dataset(dataset768DimPath, querySet768DimPath);
