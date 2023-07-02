@@ -9,10 +9,18 @@ import io.jhdf.api.Dataset;
 import io.jhdf.api.Node;
 import java.io.File;
 import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import static java.util.Locale.filter;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import vm.evaluatorsToBeUsed.GroundTruthEvaluator;
+import vm.fs.metricSpaceImpl.FSMetricSpaceImpl;
+import vm.fs.store.queryResults.FSNearestNeighboursStorageImpl;
 
 /**
  *
@@ -24,12 +32,28 @@ public class H5GroundTruthToFSGroundTruth {
 
     public static void main(String[] args) {
         String path = "c:\\Data\\Similarity_search\\Result\\ground_truth\\laion2B-en-public-gold-standard-v2-100M-F64-IEEE754.h5";
+        String datasetName = "laion2B-en-public-gold-standard-v2-100M-F64-IEEE754";
         Iterator[] it = parseH5GroundTruth(path);
-        while (it[0].hasNext() && it[1].hasNext()) {
-            AbstractMap.SimpleEntry<String, int[]> nextID = (AbstractMap.SimpleEntry<String, int[]>) it[0].next();
+        TreeSet<Map.Entry<Object, Float>>[] results = GroundTruthEvaluator.initKNNResultSets(10000);
+        List<Object> queries = new ArrayList<>();
+        for (int i = 0; it[0].hasNext() && it[1].hasNext(); i++) {
+            AbstractMap.SimpleEntry<String, int[]> nextIDs = (AbstractMap.SimpleEntry<String, int[]>) it[0].next();
             AbstractMap.SimpleEntry<String, float[]> nextDist = (AbstractMap.SimpleEntry<String, float[]>) it[1].next();
-            String s = "";
+            String qID = nextDist.getKey();
+            qID = "Q" + qID;
+            queries.add(new AbstractMap.SimpleEntry<>(qID, null));
+            int[] ids = nextIDs.getValue();
+            float[] dists = nextDist.getValue();
+            TreeSet<Map.Entry<Object, Float>> queryResult = results[i];
+            for (int j = 0; j < ids.length; j++) {
+                Integer nnID = ids[j];
+                Float dist = dists[j];
+                queryResult.add(new AbstractMap.SimpleEntry<>(nnID, dist));
+            }
         }
+        FSNearestNeighboursStorageImpl resultsStorage = new FSNearestNeighboursStorageImpl();
+        FSMetricSpaceImpl metricSpace = new FSMetricSpaceImpl();
+        resultsStorage.storeQueryResults(metricSpace, queries, results, datasetName, datasetName, "ground_truth");
     }
 
     private static Iterator[] parseH5GroundTruth(String path) {
