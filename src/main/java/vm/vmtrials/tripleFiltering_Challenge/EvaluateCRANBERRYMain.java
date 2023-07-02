@@ -48,7 +48,8 @@ public class EvaluateCRANBERRYMain {
     public static void main(String[] args) {
         int sketchLength = 512;
         // parameter for the Secondary filtering with the sketches
-        float pCum = 0.6f;
+//        vm.javatools.Tools.sleep(40);
+        float pCum = 0.65f;
         Dataset[] fullDatasets = new Dataset[]{
             new FSDatasetInstanceSingularizator.LAION_10M_Dataset(),
             new FSDatasetInstanceSingularizator.LAION_30M_Dataset(),
@@ -179,7 +180,6 @@ public class EvaluateCRANBERRYMain {
         TreeSet[] results = alg.completeKnnSearchOfQuerySet(fullMetricSpace, fullQueries, k, null, pcaDatasetMetricSpace, pcaQMap);
         overallTime += System.currentTimeMillis();
 
-        LOG.log(Level.INFO, "Overall time: {0}", overallTime);
         QueryNearestNeighboursStoreInterface storage = new FSNearestNeighboursStorageImpl();
         List<Object> queryObjectsIDs = ToolsMetricDomain.getIDsAsList(fullQueries.iterator(), fullMetricSpace);
         storage.storeQueryResults(queryObjectsIDs, results, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), "Cranberry_final_par" + CranberryAlgorithm.PARALELISM);
@@ -225,6 +225,7 @@ public class EvaluateCRANBERRYMain {
         evaluator.evaluateAndStoreRecallsOfQueries(fullDataset.getDatasetName(), fullDataset.getQuerySetName(), k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), resultName, k);
         recallStorage.saveFile();
 
+        LOG.log(Level.INFO, "Overall time: {0}", overallTime);
         sketchFiltering.shutdownThreadPool();
     }
 
