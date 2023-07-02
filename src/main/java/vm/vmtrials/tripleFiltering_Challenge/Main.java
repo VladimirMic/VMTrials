@@ -192,9 +192,6 @@ public class Main {
             createAndStoreVoronoiPartitioning(fullDataset, sizeIfDataset);
             System.gc();
         }
-//        LOG.log(Level.INFO, "\nStarting the learn of the tOmega thresholds for the simRel");
-//        storeTOmegaThresholdsForSimRel(pcaDataset, sizeIfDataset);
-//        System.gc();
         LOG.log(Level.INFO, "\nStarting the sketching transformation with the predefined sketching technique");
         AbstractObjectToSketchTransformator sketchingTechnique = createSketches(fullDataset);
         Dataset sketchesDataset = createImplicitSketchesDataset(sketchingTechnique, fullDataset.getDatasetName(), SKETCH_LENGTH, 0.5f);
