@@ -89,7 +89,7 @@ public class EvaluateCRANBERRYMain {
             0.004f
         };
 
-        for (int i = 2; i < fullDatasets.length; i++) {
+        for (int i = 1; i < fullDatasets.length; i++) {
             run(fullDatasets[i], pcaDatasets[i], sketchesDatasets[i], voronoiK[i], minKSimRel[i], maxKSimRel[i], distIntervalsForPX[i], sketchLength, pCum);
             break;
         }
@@ -172,18 +172,16 @@ public class EvaluateCRANBERRYMain {
                 fullDataset.getKeyValueStorage(),
                 fullDataset.getDistanceFunction());
 
-//        CheckingOfNearestNeighbours DEVEL = new CheckingOfNearestNeighbours(new FSNearestNeighboursStorageImpl(), fullDataset.getDatasetName(), fullDataset.getQuerySetName());
         FSQueryExecutionStatsStoreImpl statsStorage = new FSQueryExecutionStatsStoreImpl(fullDataset.getDatasetName(), fullDataset.getQuerySetName(), k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), resultName, null);
 
-
         long overallTime = -System.currentTimeMillis();
-        TreeSet[] results = alg.completeKnnSearchOfQuerySet(fullMetricSpace, fullQueries, k, null, pcaDatasetMetricSpace, pcaQMap);
+        int queryCount = LEARN_SIMREL ? querySampleCount : -1;
+        TreeSet[] results = alg.completeKnnSearchOfQuerySet(fullMetricSpace, fullQueries, k, null, pcaDatasetMetricSpace, pcaQMap, queryCount);
         overallTime += System.currentTimeMillis();
 
-        QueryNearestNeighboursStoreInterface storage = new FSNearestNeighboursStorageImpl();
-        List<Object> queryObjectsIDs = ToolsMetricDomain.getIDsAsList(fullQueries.iterator(), fullMetricSpace);
-        storage.storeQueryResults(queryObjectsIDs, results, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), "Cranberry_final_par" + CranberryAlgorithm.PARALELISM);
-
+//        QueryNearestNeighboursStoreInterface storage = new FSNearestNeighboursStorageImpl();
+//        List<Object> queryObjectsIDs = ToolsMetricDomain.getIDsAsList(fullQueries.iterator(), fullMetricSpace);
+//        storage.storeQueryResults(queryObjectsIDs, results, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), "Cranberry_final_par" + CranberryAlgorithm.PARALELISM);
 //        TreeSet[] results = new TreeSet[fullQueries.size()];
 //        for (int i = 0; i < fullQueries.size(); i++) {
 //            Object query = fullQueries.get(i);
@@ -211,7 +209,15 @@ public class EvaluateCRANBERRYMain {
 //                return;
 //            }
 //        }
-//        LOG.log(Level.INFO, "Storing statistics of queries");
+        if (LEARN_SIMREL) {
+            float[][] ret = ((SimRelEuclideanPCAForLearning) simRel).getDiffWhenWrong(FSSimRelThresholdsTOmegaStorage.PERCENTILES);
+            FSSimRelThresholdsTOmegaStorage simRelStorage = new FSSimRelThresholdsTOmegaStorage(querySampleCount, pcaLength, simRelMinAnswerSize, pivotCountForVoronoi, voronoiK);
+            simRelStorage.store(ret, pcaDataset.getDatasetName());
+            sketchFiltering.shutdownThreadPool();
+            return;
+        }
+
+        LOG.log(Level.INFO, "Storing statistics of queries");
         statsStorage.storeStatsForQueries(alg.getDistCompsPerQueries(), alg.getTimesPerQueries());
         statsStorage.saveFile();
 
