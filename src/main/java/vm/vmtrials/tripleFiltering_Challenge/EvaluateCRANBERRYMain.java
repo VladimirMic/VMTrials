@@ -50,7 +50,7 @@ public class EvaluateCRANBERRYMain {
         int sketchLength = 512;
         // parameter for the Secondary filtering with the sketches
 //        vm.javatools.Tools.sleep(35);
-        float pCum = 0.65f;
+        float pCum = 0.7f;
         Dataset[] fullDatasets = new Dataset[]{
             new FSDatasetInstanceSingularizator.LAION_10M_Dataset(),
             new FSDatasetInstanceSingularizator.LAION_30M_Dataset(),
@@ -109,7 +109,7 @@ public class EvaluateCRANBERRYMain {
         /* size of the data sample to learn t(\Omega) thresholds: SISAP: 100 000 */
         int dataSampleCount = kVoronoi;
         /* percentile - defined in the paper. Defines the precision of the simRel */
-        float percentile = 0.97f;
+        float percentile = 0.99f;
 
         SimRelInterface<float[]> simRel = initSimRel(querySampleCount, pcaLength, simRelMinAnswerSize, dataSampleCount, pcaDataset.getDatasetName(), percentile, prefixLength, pivotCountForVoronoi);
         String resultName = "CRANBERRY_COS_FINAL_PAR_" + CranberryAlgorithm.PARALELISM + "_" + MAX_DIST_COMPS + "maxDists_" + fullDataset.getDatasetName() + "_kVoronoi" + kVoronoi + "_pca" + pcaLength + "_simRelMinAns" + simRelMinAnswerSize + "simRelMaxAns" + simRelMaxAnswerSize + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__" + dataSampleCount + "o__k" + k + "_perc" + percentile + "_pCum" + pCum + "_sketches" + sketchLength + "";
