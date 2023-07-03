@@ -42,13 +42,14 @@ import vm.simRel.impl.learn.SimRelEuclideanPCAForLearning;
 public class EvaluateCRANBERRYMain {
 
     private static final Logger LOG = Logger.getLogger(EvaluateCRANBERRYMain.class.getName());
-    public static final Boolean LEARN_SIMREL = true;
+    // To learn the simRel, swith here the boolean value and make sure to use 30M dataset due to memory limitations
+    public static final Boolean LEARN_SIMREL = false;
     public static final Integer QUERY_COUNT_LIMIT = 500;
 
     public static void main(String[] args) {
         int sketchLength = 512;
         // parameter for the Secondary filtering with the sketches
-//        vm.javatools.Tools.sleep(80);
+//        vm.javatools.Tools.sleep(35);
         float pCum = 0.65f;
         Dataset[] fullDatasets = new Dataset[]{
             new FSDatasetInstanceSingularizator.LAION_10M_Dataset(),
@@ -69,7 +70,7 @@ public class EvaluateCRANBERRYMain {
 
         int[] voronoiK = new int[]{
             200000,
-            400000,
+            800000,
             1000000
         };
 
@@ -104,11 +105,11 @@ public class EvaluateCRANBERRYMain {
         /*  prefix of the shortened vectors used by the simRel */
         int pcaLength = 256;
         /* number of query objects to learn t(\Omega) thresholds. We use different objects than the queries tested. */
-        int querySampleCount = 100;
+        int querySampleCount = 200;
         /* size of the data sample to learn t(\Omega) thresholds: SISAP: 100 000 */
         int dataSampleCount = kVoronoi;
         /* percentile - defined in the paper. Defines the precision of the simRel */
-        float percentile = 0.99f;
+        float percentile = 0.97f;
 
         SimRelInterface<float[]> simRel = initSimRel(querySampleCount, pcaLength, simRelMinAnswerSize, dataSampleCount, pcaDataset.getDatasetName(), percentile, prefixLength, pivotCountForVoronoi);
         String resultName = "CRANBERRY_COS2_PAR_" + CranberryAlgorithm.PARALELISM + "_" + MAX_DIST_COMPS + "maxDists_" + fullDataset.getDatasetName() + "_kVoronoi" + kVoronoi + "_pca" + pcaLength + "_simRelMinAns" + simRelMinAnswerSize + "simRelMaxAns" + simRelMaxAnswerSize + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__" + dataSampleCount + "o__k" + k + "_perc" + percentile + "_pCum" + pCum + "_sketches" + sketchLength + "";
