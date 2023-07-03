@@ -32,6 +32,7 @@ import vm.search.impl.multiFiltering.CranberryAlgorithm;
 import static vm.search.impl.multiFiltering.CranberryAlgorithm.MAX_DIST_COMPS;
 import vm.simRel.SimRelInterface;
 import vm.simRel.impl.DumbSimRel;
+import vm.simRel.impl.SimRelEuclideanPCAImplForTesting;
 import vm.simRel.impl.learn.SimRelEuclideanPCAForLearning;
 
 /**
@@ -41,15 +42,14 @@ import vm.simRel.impl.learn.SimRelEuclideanPCAForLearning;
 public class EvaluateCRANBERRYMain {
 
     private static final Logger LOG = Logger.getLogger(EvaluateCRANBERRYMain.class.getName());
-    public static final Boolean STORE_RESULTS = true;
-    public static final Boolean LEARN_SIMREL = false;
+    public static final Boolean LEARN_SIMREL = true;
     public static final Integer QUERY_COUNT_LIMIT = 500;
 
     public static void main(String[] args) {
         int sketchLength = 512;
         // parameter for the Secondary filtering with the sketches
 //        vm.javatools.Tools.sleep(80);
-        float pCum = 0.7f;
+        float pCum = 0.6f;
         Dataset[] fullDatasets = new Dataset[]{
             new FSDatasetInstanceSingularizator.LAION_10M_Dataset(),
             new FSDatasetInstanceSingularizator.LAION_30M_Dataset(),
@@ -68,8 +68,8 @@ public class EvaluateCRANBERRYMain {
         };
 
         int[] voronoiK = new int[]{
-            500000,
-            600000,
+            200000,
+            400000,
             1000000
         };
 
@@ -111,7 +111,7 @@ public class EvaluateCRANBERRYMain {
         float percentile = 0.99f;
 
         SimRelInterface<float[]> simRel = initSimRel(querySampleCount, pcaLength, simRelMinAnswerSize, dataSampleCount, pcaDataset.getDatasetName(), percentile, prefixLength, pivotCountForVoronoi);
-        String resultName = "CRANBERRY_COS2_DUMBSIMREL_PAR_" + CranberryAlgorithm.PARALELISM + "_" + MAX_DIST_COMPS + "maxDists_" + fullDataset.getDatasetName() + "_kVoronoi" + kVoronoi + "_pca" + pcaLength + "_simRelMinAns" + simRelMinAnswerSize + "simRelMaxAns" + simRelMaxAnswerSize + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__" + dataSampleCount + "o__k" + k + "_perc" + percentile + "_pCum" + pCum + "_sketches" + sketchLength + "";
+        String resultName = "CRANBERRY_COS2_PAR_" + CranberryAlgorithm.PARALELISM + "_" + MAX_DIST_COMPS + "maxDists_" + fullDataset.getDatasetName() + "_kVoronoi" + kVoronoi + "_pca" + pcaLength + "_simRelMinAns" + simRelMinAnswerSize + "simRelMaxAns" + simRelMaxAnswerSize + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__" + dataSampleCount + "o__k" + k + "_perc" + percentile + "_pCum" + pCum + "_sketches" + sketchLength + "";
 
         testQueries(fullDataset, pcaDataset, sketchesDataset, simRel, pivotCountForVoronoi, kVoronoi, simRelMinAnswerSize, simRelMaxAnswerSize, k, prefixLength, pcaLength, resultName, sketchLength, pCum, distIntervalsForPX, querySampleCount);
     }
@@ -184,36 +184,6 @@ public class EvaluateCRANBERRYMain {
         TreeSet[] results = alg.completeKnnSearchOfQuerySet(fullMetricSpace, fullQueries, k, null, pcaDatasetMetricSpace, pcaQMap, queryCount);
         overallTime += System.currentTimeMillis();
 
-//        QueryNearestNeighboursStoreInterface storage = new FSNearestNeighboursStorageImpl();
-//        List<Object> queryObjectsIDs = ToolsMetricDomain.getIDsAsList(fullQueries.iterator(), fullMetricSpace);
-//        storage.storeQueryResults(queryObjectsIDs, results, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), "Cranberry_final_par" + CranberryAlgorithm.PARALELISM);
-//        TreeSet[] results = new TreeSet[fullQueries.size()];
-//        for (int i = 0; i < fullQueries.size(); i++) {
-//            Object query = fullQueries.get(i);
-//            Object qId = fullMetricSpace.getIDOfMetricObject(query);
-//            Object pcaQData = pcaQMap.get(qId);
-////            Set<String> ANSWER = DEVEL.getIDsOfNNForQuery(qId.toString(), k);
-//            Set<String> ANSWER = null;
-//            results[i] = alg.completeKnnSearch(fullMetricSpace, query, k, null, pcaDatasetMetricSpace, pcaQData, ANSWER);
-//
-//            long[] earlyStopsPerCoords = (long[]) alg.getSimRelStatsOfLastExecutedQuery();
-//            String earlyStopsPerCoordsString = DataTypeConvertor.longToString(earlyStopsPerCoords, ",");
-//            if (STORE_RESULTS && !LEARN_SIMREL) {
-//                statsStorage.storeStatsForQuery(qId, alg.getDistCompsForQuery(qId), alg.getTimeOfQuery(qId), earlyStopsPerCoordsString);
-//            } else {
-//                System.out.println(earlyStopsPerCoordsString);
-//            }
-//
-//            if (i == 499) {
-//                break;
-//            }
-//            if (LEARN_SIMREL && i == querySampleCount - 1) {
-//                float[][] ret = ((SimRelEuclideanPCAForLearning) simRel).getDiffWhenWrong(FSSimRelThresholdsTOmegaStorage.PERCENTILES);
-//                FSSimRelThresholdsTOmegaStorage simRelStorage = new FSSimRelThresholdsTOmegaStorage(querySampleCount, pcaLength, simRelMinAnswerSize, pivotCountForVoronoi, voronoiK);
-//                simRelStorage.store(ret, pcaDataset.getDatasetName());
-//                return;
-//            }
-//        }
         if (LEARN_SIMREL) {
             float[][] ret = ((SimRelEuclideanPCAForLearning) simRel).getDiffWhenWrong(FSSimRelThresholdsTOmegaStorage.PERCENTILES);
             FSSimRelThresholdsTOmegaStorage simRelStorage = new FSSimRelThresholdsTOmegaStorage(querySampleCount, pcaLength, simRelMinAnswerSize, pivotCountForVoronoi, voronoiK);
@@ -269,23 +239,23 @@ public class EvaluateCRANBERRYMain {
     }
 
     public static SimRelInterface<float[]> initSimRel(int querySampleCount, int pcaLength, int kPCA, int dataSampleCount, String pcaDatasetName, float percentile, int prefixLength, Integer pivotsCount, String directFileNameString) {
-        return new DumbSimRel<>();
-//        if (LEARN_SIMREL) {
-//            SimRelEuclideanPCAForLearning simRelLearn = new SimRelEuclideanPCAForLearning(pcaLength);
-//            return simRelLearn;
-//        }
-//        FSSimRelThresholdsTOmegaStorage simRelStorage = new FSSimRelThresholdsTOmegaStorage(querySampleCount, pcaLength, kPCA, pivotsCount, dataSampleCount, directFileNameString);
-//        float[][] simRelThresholds = simRelStorage.load(pcaDatasetName);
-//        int idx = FSSimRelThresholdsTOmegaStorage.percentileToArrayIdx(percentile);
-//        float[] learnedErrors = simRelThresholds[idx];
-//        for (int i = learnedErrors.length - 1; i >= 0; i--) {
-//            if (learnedErrors[i] == 0f) {
-//                learnedErrors[i] = Float.MAX_VALUE;
-//            } else {
-//                break;
-//            }
-//        }
-//        return new SimRelEuclideanPCAImplForTesting(learnedErrors, prefixLength);
+//        return new DumbSimRel<>();
+        if (LEARN_SIMREL) {
+            SimRelEuclideanPCAForLearning simRelLearn = new SimRelEuclideanPCAForLearning(pcaLength);
+            return simRelLearn;
+        }
+        FSSimRelThresholdsTOmegaStorage simRelStorage = new FSSimRelThresholdsTOmegaStorage(querySampleCount, pcaLength, kPCA, pivotsCount, dataSampleCount, directFileNameString);
+        float[][] simRelThresholds = simRelStorage.load(pcaDatasetName);
+        int idx = FSSimRelThresholdsTOmegaStorage.percentileToArrayIdx(percentile);
+        float[] learnedErrors = simRelThresholds[idx];
+        for (int i = learnedErrors.length - 1; i >= 0; i--) {
+            if (learnedErrors[i] == 0f) {
+                learnedErrors[i] = Float.MAX_VALUE;
+            } else {
+                break;
+            }
+        }
+        return new SimRelEuclideanPCAImplForTesting(learnedErrors, prefixLength);
     }
 
 }
