@@ -49,7 +49,7 @@ public class EvaluateCRANBERRYMain {
         int sketchLength = 512;
         // parameter for the Secondary filtering with the sketches
 //        vm.javatools.Tools.sleep(80);
-        float pCum = 0.6f;
+        float pCum = 0.65f;
         Dataset[] fullDatasets = new Dataset[]{
             new FSDatasetInstanceSingularizator.LAION_10M_Dataset(),
             new FSDatasetInstanceSingularizator.LAION_30M_Dataset(),
@@ -89,7 +89,7 @@ public class EvaluateCRANBERRYMain {
             0.004f
         };
 
-        for (int i = 2; i < fullDatasets.length; i++) {
+        for (int i = 1; i < fullDatasets.length; i++) {
             run(fullDatasets[i], pcaDatasets[i], sketchesDatasets[i], voronoiK[i], minKSimRel[i], maxKSimRel[i], distIntervalsForPX[i], sketchLength, pCum);
             break;
         }
@@ -193,7 +193,7 @@ public class EvaluateCRANBERRYMain {
         }
 
         LOG.log(Level.INFO, "Storing statistics of queries");
-        statsStorage.storeStatsForQueries(alg.getDistCompsPerQueries(), alg.getTimesPerQueries());
+        statsStorage.storeStatsForQueries(alg.getDistCompsPerQueries(), alg.getTimesPerQueries(), alg.getSimRelsPerQueries());
         statsStorage.saveFile();
 
         LOG.log(Level.INFO, "Storing results of queries");
