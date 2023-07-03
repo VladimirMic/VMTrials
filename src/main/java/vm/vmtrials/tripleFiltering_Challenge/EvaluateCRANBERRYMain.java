@@ -42,9 +42,9 @@ import vm.simRel.impl.learn.SimRelEuclideanPCAForLearning;
 public class EvaluateCRANBERRYMain {
 
     private static final Logger LOG = Logger.getLogger(EvaluateCRANBERRYMain.class.getName());
-    // To learn the simRel, swith here the boolean value and make sure to use 30M dataset due to memory limitations
+    // To learn the simRel, swith here the boolean value and make sure to use 30M dataset due to memory limitations. Do not have to care about the parameter QUERY_COUNT_LIMIT
     public static final Boolean LEARN_SIMREL = false;
-    public static final Integer QUERY_COUNT_LIMIT = 500;
+    public static final Integer QUERY_COUNT_LIMIT = -1;
 
     public static void main(String[] args) {
         int sketchLength = 512;
@@ -70,7 +70,7 @@ public class EvaluateCRANBERRYMain {
 
         int[] voronoiK = new int[]{
             200000,
-            800000,
+            700000,
             1000000
         };
 
@@ -90,7 +90,7 @@ public class EvaluateCRANBERRYMain {
             0.004f
         };
 
-        for (int i = 1; i < fullDatasets.length; i++) {
+        for (int i = 2; i < fullDatasets.length; i++) {
             run(fullDatasets[i], pcaDatasets[i], sketchesDatasets[i], voronoiK[i], minKSimRel[i], maxKSimRel[i], distIntervalsForPX[i], sketchLength, pCum);
             break;
         }
@@ -112,7 +112,7 @@ public class EvaluateCRANBERRYMain {
         float percentile = 0.97f;
 
         SimRelInterface<float[]> simRel = initSimRel(querySampleCount, pcaLength, simRelMinAnswerSize, dataSampleCount, pcaDataset.getDatasetName(), percentile, prefixLength, pivotCountForVoronoi);
-        String resultName = "CRANBERRY_COS2_PAR_" + CranberryAlgorithm.PARALELISM + "_" + MAX_DIST_COMPS + "maxDists_" + fullDataset.getDatasetName() + "_kVoronoi" + kVoronoi + "_pca" + pcaLength + "_simRelMinAns" + simRelMinAnswerSize + "simRelMaxAns" + simRelMaxAnswerSize + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__" + dataSampleCount + "o__k" + k + "_perc" + percentile + "_pCum" + pCum + "_sketches" + sketchLength + "";
+        String resultName = "CRANBERRY_COS_FINAL_PAR_" + CranberryAlgorithm.PARALELISM + "_" + MAX_DIST_COMPS + "maxDists_" + fullDataset.getDatasetName() + "_kVoronoi" + kVoronoi + "_pca" + pcaLength + "_simRelMinAns" + simRelMinAnswerSize + "simRelMaxAns" + simRelMaxAnswerSize + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__" + dataSampleCount + "o__k" + k + "_perc" + percentile + "_pCum" + pCum + "_sketches" + sketchLength + "";
 
         testQueries(fullDataset, pcaDataset, sketchesDataset, simRel, pivotCountForVoronoi, kVoronoi, simRelMinAnswerSize, simRelMaxAnswerSize, k, prefixLength, pcaLength, resultName, sketchLength, pCum, distIntervalsForPX, querySampleCount);
     }
