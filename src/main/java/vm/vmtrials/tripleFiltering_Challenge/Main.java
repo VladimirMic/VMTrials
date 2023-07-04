@@ -129,7 +129,7 @@ public class Main {
         int voronoiK = getVoronoiK(datasetSize);
         int kPCA = getPCAK(datasetSize);
         String fileWithTOmegaThresholds = "laion2B-en-clip768v2-n=30M.h5_PCA256_q200voronoiP20000_voronoiK600000_pcaLength256_kPCA100.csv";
-        SISAPChallengeAlgBuilder ret = new SISAPChallengeAlgBuilder(fullDataset, pcaDataset, sketchesDataset, sketchingTechnique, voronoiK, kPCA, k, pivotsUsedForTheVoronoi, "laion2B-en-clip768v2-n=100M.h5_PCA_pref24of256_q200voronoiP20000_voronoiK1000000_pcaLength256_kPCA100.csv");
+        SISAPChallengeAlgBuilder ret = new SISAPChallengeAlgBuilder(fullDataset, pcaDataset, sketchesDataset, sketchingTechnique, voronoiK, kPCA, k, pivotsUsedForTheVoronoi, fileWithTOmegaThresholds);
         Logger.getLogger(Main.class.getName()).log(Level.INFO, "Algorithm initialised");
         return ret;
     }
