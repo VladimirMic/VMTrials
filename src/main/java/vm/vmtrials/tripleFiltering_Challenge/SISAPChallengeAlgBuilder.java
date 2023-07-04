@@ -30,14 +30,14 @@ public class SISAPChallengeAlgBuilder {
         return new SecondaryFilteringWithSketches(filterNamePrefix, fullDataset.getDatasetName(), sketchesDataset, secondaryFilteringStorage, pCum, LearningSecondaryFilteringWithSketches.SKETCHES_SAMPLE_COUNT_FOR_IDIM_PX, LearningSecondaryFilteringWithSketches.DISTS_COMPS_FOR_SK_IDIM_AND_PX, distIntervalForPX);
     }
 
-    private final float pCum = 0.65f;
+    private final float pCum = 0.7f;
 
     /*  prefix of the shortened vectors used by the simRel */
     private final int prefixLength = 24;
     /*  prefix of the shortened vectors used by the simRel */
     private final int pcaLength = 256;
-    /* number of query objects to learn t(\Omega) thresholds in the simRel. We use different objects than the queries tested. */
-    private final int querySampleCount = 100;
+    /* number of query objects to learn t(\Omega) thresholds in the simRel. */
+    private final int querySampleCount = 200;
     /* percentile - defined in the paper. Defines the precision of the simRel */
     private final float percentile = 0.99f;
 
