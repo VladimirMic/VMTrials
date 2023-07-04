@@ -138,8 +138,8 @@ public class Main {
      * Init params for datasets given by their size ****
      * *************************************************
      */
-    public static int getVoronoiK(int size) {
-        switch (size) {
+    public static int getVoronoiK(int datasetSize) {
+        switch (datasetSize) {
             case 100000:
                 return 40000;
             case 300000:
@@ -155,18 +155,15 @@ public class Main {
         }
     }
 
-    private static int getPivotCount(int size) {
-        switch (size) {
-            case 100000:
-            case 300000:
-                return 100;
-            default:
-                return 20000;
+    private static int getPivotCount(int datasetSize) {
+        if (datasetSize <= 300000) {
+            return 100;
         }
+        return 20000;
     }
 
-    private static int getPCAK(int size) {
-        switch (size) {
+    private static int getPCAK(int datasetSize) {
+        switch (datasetSize) {
             case 100000:
             case 300000:
                 return 100;
@@ -186,10 +183,10 @@ public class Main {
      * Build indexes and create auxiliary files ********
      * *************************************************
      */
-    private static Dataset buildAndStoreAlgorithm(Dataset fullDataset, int sizeIfDataset, boolean makeAllSteps) {
+    private static Dataset buildAndStoreAlgorithm(Dataset fullDataset, int datasetSize, boolean makeAllSteps) {
         if (makeAllSteps) {
             LOG.log(Level.INFO, "\nStarting the Voronoi partitioning");
-            createAndStoreVoronoiPartitioning(fullDataset, sizeIfDataset);
+            createAndStoreVoronoiPartitioning(fullDataset, datasetSize);
             System.gc();
         }
         LOG.log(Level.INFO, "\nStarting the sketching transformation with the predefined sketching technique");
@@ -206,8 +203,8 @@ public class Main {
 
     }
 
-    private static void createAndStoreVoronoiPartitioning(Dataset dataset, int sizeIfDataset) {
-        int pivotCount = getPivotCount(sizeIfDataset);
+    private static void createAndStoreVoronoiPartitioning(Dataset dataset, int datasetSize) {
+        int pivotCount = getPivotCount(datasetSize);
         List<Object> pivots = dataset.getPivots(2 * pivotCount);
         VoronoiPartitioning vp = new VoronoiPartitioning(dataset.getMetricSpace(), dataset.getDistanceFunction(), pivots);
         FSVoronoiPartitioningStorage storage = new FSVoronoiPartitioningStorage();

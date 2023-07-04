@@ -43,14 +43,14 @@ public class EvaluateCRANBERRYMain {
 
     private static final Logger LOG = Logger.getLogger(EvaluateCRANBERRYMain.class.getName());
     // To learn the simRel, swith here the boolean value and make sure to use 30M dataset due to memory limitations. Do not have to care about the parameter QUERY_COUNT_LIMIT
-    public static final Boolean LEARN_SIMREL = false;
+    public static final Boolean LEARN_SIMREL = true;
     public static final Integer QUERY_COUNT_LIMIT = -1;
 
     public static void main(String[] args) {
         int sketchLength = 512;
         // parameter for the Secondary filtering with the sketches
 //        vm.javatools.Tools.sleep(35);
-        float pCum = 0.7f;
+        float pCum = 0.65f;
         Dataset[] fullDatasets = new Dataset[]{
             new FSDatasetInstanceSingularizator.LAION_10M_Dataset(),
             new FSDatasetInstanceSingularizator.LAION_30M_Dataset(),
@@ -70,7 +70,7 @@ public class EvaluateCRANBERRYMain {
 
         int[] voronoiK = new int[]{
             200000,
-            700000,
+            600000,
             1000000
         };
 
@@ -90,7 +90,7 @@ public class EvaluateCRANBERRYMain {
             0.004f
         };
 
-        for (int i = 2; i < fullDatasets.length; i++) {
+        for (int i = 0; i < fullDatasets.length; i++) {
             run(fullDatasets[i], pcaDatasets[i], sketchesDatasets[i], voronoiK[i], minKSimRel[i], maxKSimRel[i], distIntervalsForPX[i], sketchLength, pCum);
             break;
         }
