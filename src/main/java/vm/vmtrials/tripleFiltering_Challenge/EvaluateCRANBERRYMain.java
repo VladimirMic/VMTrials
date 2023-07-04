@@ -43,7 +43,7 @@ public class EvaluateCRANBERRYMain {
 
     private static final Logger LOG = Logger.getLogger(EvaluateCRANBERRYMain.class.getName());
     // To learn the simRel, swith here the boolean value and make sure to use 30M dataset due to memory limitations. Do not have to care about the parameter QUERY_COUNT_LIMIT
-    public static final Boolean LEARN_SIMREL = true;
+    public static final Boolean LEARN_SIMREL = false;
     public static final Integer QUERY_COUNT_LIMIT = -1;
 
     public static void main(String[] args) {
@@ -69,7 +69,7 @@ public class EvaluateCRANBERRYMain {
         };
 
         int[] voronoiK = new int[]{
-            200000,
+            300000,
             600000,
             1000000
         };
