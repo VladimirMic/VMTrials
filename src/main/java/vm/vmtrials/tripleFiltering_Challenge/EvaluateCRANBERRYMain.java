@@ -49,8 +49,8 @@ public class EvaluateCRANBERRYMain {
     public static void main(String[] args) {
         int sketchLength = 512;
         // parameter for the Secondary filtering with the sketches
-//        vm.javatools.Tools.sleep(400);
-        float pCum = 0.7f;
+//        vm.javatools.Tools.sleep(360);
+        float pCum = 0.75f;
         Dataset[] fullDatasets = new Dataset[]{
             new FSDatasetInstanceSingularizator.LAION_10M_Dataset(),
             new FSDatasetInstanceSingularizator.LAION_30M_Dataset(),
@@ -90,7 +90,7 @@ public class EvaluateCRANBERRYMain {
             0.004f
         };
 
-        for (int i = 1; i < fullDatasets.length; i++) {
+        for (int i = 2; i < fullDatasets.length; i++) {
             run(fullDatasets[i], pcaDatasets[i], sketchesDatasets[i], voronoiK[i], minKSimRel[i], maxKSimRel[i], distIntervalsForPX[i], sketchLength, pCum);
             break;
         }
