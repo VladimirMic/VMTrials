@@ -29,9 +29,9 @@ public class PrintStatsWhereAreNNs {
         Dataset[] datasets = new Dataset[]{
             //                        new FSDatasetInstanceSingularizator.LAION_100k_Dataset(),
             //            new FSDatasetInstanceSingularizator.LAION_300k_Dataset(),
-            //            new FSDatasetInstanceSingularizator.LAION_10M_Dataset(),
-            //            new FSDatasetInstanceSingularizator.LAION_30M_Dataset(),
-            new FSDatasetInstanceSingularizator.LAION_100M_Dataset()
+                        new FSDatasetInstanceSingularizator.LAION_10M_Dataset(),
+//                        new FSDatasetInstanceSingularizator.LAION_30M_Dataset(),
+//            new FSDatasetInstanceSingularizator.LAION_100M_Dataset()
         };
         for (Dataset dataset : datasets) {
             run(dataset);
@@ -51,7 +51,7 @@ public class PrintStatsWhereAreNNs {
         Map<String, TreeSet<Map.Entry<Object, Float>>> gt = new FSNearestNeighboursStorageImpl().getGroundTruthForDataset(dataset.getDatasetName(), dataset.getQuerySetName());
         //
         Map<Object, TreeSet<Object>> voronoiPartitioning = storage.load(dataset.getDatasetName(), pivotCount);
-        for (int limitToFind = 8; limitToFind <= 10; limitToFind++) {
+        for (int limitToFind = 10; limitToFind > 0; limitToFind--) {
             performForLimit(limitToFind, pivots, queries, gt, voronoiPartitioning, storage, dataset.getDatasetName(), pivotCount, df, k);
         }
     }
