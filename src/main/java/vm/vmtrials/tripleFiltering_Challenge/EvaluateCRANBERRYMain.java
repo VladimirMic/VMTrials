@@ -23,6 +23,7 @@ import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.Dataset;
 import vm.metricSpace.ToolsMetricDomain;
 import vm.metricSpace.distance.bounding.nopivot.impl.SecondaryFilteringWithSketches;
+import vm.metricSpace.distance.bounding.nopivot.learning.LearningSecondaryFilteringWithSketches;
 import vm.objTransforms.objectToSketchTransformators.AbstractObjectToSketchTransformator;
 import vm.objTransforms.objectToSketchTransformators.SketchingGHP;
 import vm.objTransforms.storeLearned.GHPSketchingPivotPairsStoreInterface;
@@ -50,7 +51,7 @@ public class EvaluateCRANBERRYMain {
         int sketchLength = 512;
         // parameter for the Secondary filtering with the sketches
 //        vm.javatools.Tools.sleep(360);
-        float pCum = 0.8f;
+        float pCum = LearningSecondaryFilteringWithSketches.THRESHOLDS_P_CUM[0];
         Dataset[] fullDatasets = new Dataset[]{
             new FSDatasetInstanceSingularizator.LAION_10M_Dataset(),
             new FSDatasetInstanceSingularizator.LAION_30M_Dataset(),
