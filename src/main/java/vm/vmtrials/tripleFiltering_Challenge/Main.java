@@ -97,6 +97,9 @@ public class Main {
         AbstractMetricSpace<float[]> fullMetricSpace = fullDataset.getMetricSpace();
 
         CranberryAlgorithm cranberryAlg = algBuilder.getCranberryAlg();
+        System.gc();
+        vm.javatools.Tools.sleepSeconds(5);
+
         long queryTime = -System.currentTimeMillis();
         TreeSet[] results = cranberryAlg.completeKnnSearchOfQuerySet(fullMetricSpace, fullQueries, k, null, pcaDatasetMetricSpace, pcaQMap);
 

@@ -180,6 +180,8 @@ public class EvaluateCRANBERRYMain {
 
         FSQueryExecutionStatsStoreImpl statsStorage = new FSQueryExecutionStatsStoreImpl(fullDataset.getDatasetName(), fullDataset.getQuerySetName(), k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), resultName, null);
 
+        System.gc();
+        vm.javatools.Tools.sleepSeconds(5);
         long overallTime = -System.currentTimeMillis();
         int queryCount = LEARN_SIMREL ? querySampleCount : QUERY_COUNT_LIMIT;
         TreeSet[] results = alg.completeKnnSearchOfQuerySet(fullMetricSpace, fullQueries, k, null, pcaDatasetMetricSpace, pcaQMap, queryCount);
