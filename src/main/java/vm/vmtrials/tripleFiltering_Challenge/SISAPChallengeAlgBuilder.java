@@ -30,7 +30,7 @@ public class SISAPChallengeAlgBuilder {
         return new SecondaryFilteringWithSketches(filterNamePrefix, fullDataset.getDatasetName(), sketchesDataset, secondaryFilteringStorage, pCum, LearningSecondaryFilteringWithSketches.SKETCHES_SAMPLE_COUNT_FOR_IDIM_PX, LearningSecondaryFilteringWithSketches.DISTS_COMPS_FOR_SK_IDIM_AND_PX, distIntervalForPX);
     }
 
-    private final float pCum = 0.75f;
+    private final float pCum = LearningSecondaryFilteringWithSketches.THRESHOLDS_P_CUM[0];
 
     /*  prefix of the shortened vectors used by the simRel */
     private final int prefixLength = 24;
