@@ -50,7 +50,7 @@ public class EvaluateCRANBERRYMain {
         int sketchLength = 512;
         // parameter for the Secondary filtering with the sketches
 //        vm.javatools.Tools.sleep(360);
-        float pCum = 0.75f;
+        float pCum = 0.8f;
         Dataset[] fullDatasets = new Dataset[]{
             new FSDatasetInstanceSingularizator.LAION_10M_Dataset(),
             new FSDatasetInstanceSingularizator.LAION_30M_Dataset(),
