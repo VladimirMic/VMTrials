@@ -58,8 +58,8 @@ public class EvaluateCRANBERRYMain {
             new FSDatasetInstanceSingularizator.LAION_100M_Dataset()
         };
         Dataset[] pcaDatasets = new Dataset[]{
-            new FSDatasetInstanceSingularizator.LAION_10M_PCA256Dataset(),
-            new FSDatasetInstanceSingularizator.LAION_30M_PCA256Dataset(),
+            new FSDatasetInstanceSingularizator.LAION_10M_PCA256Prefixes24Dataset(),
+            new FSDatasetInstanceSingularizator.LAION_30M_PCA256Prefixes24Dataset(),
             new FSDatasetInstanceSingularizator.LAION_100M_PCA256Prefixes24Dataset()
         };
 
@@ -91,7 +91,7 @@ public class EvaluateCRANBERRYMain {
             0.004f
         };
 
-        for (int i = 2; i < fullDatasets.length; i++) {
+        for (int i = 1; i < fullDatasets.length; i++) {
             run(fullDatasets[i], pcaDatasets[i], sketchesDatasets[i], voronoiK[i], minKSimRel[i], maxKSimRel[i], distIntervalsForPX[i], sketchLength, pCum);
             break;
         }
