@@ -69,12 +69,6 @@ public class EvaluateCRANBERRYMain {
             new FSDatasetInstanceSingularizator.LAION_100M_GHP_50_512Dataset()
         };
 
-        int[] voronoiK = new int[]{
-            200000,
-            400000,
-            1000000
-        };
-
         int[] minKSimRel = new int[]{
             100,
             100,
@@ -91,13 +85,13 @@ public class EvaluateCRANBERRYMain {
             0.004f
         };
 
-        for (int i = 2; i < fullDatasets.length; i++) {
-            run(fullDatasets[i], pcaDatasets[i], sketchesDatasets[i], voronoiK[i], minKSimRel[i], maxKSimRel[i], distIntervalsForPX[i], sketchLength, pCum);
+        for (int i = 0; i < fullDatasets.length; i++) {
+            run(fullDatasets[i], pcaDatasets[i], sketchesDatasets[i], minKSimRel[i], maxKSimRel[i], distIntervalsForPX[i], sketchLength, pCum);
             break;
         }
     }
 
-    private static void run(Dataset fullDataset, Dataset pcaDataset, Dataset sketchesDataset, int kVoronoi, int simRelMinAnswerSize, int simRelMaxAnswerSize, float distIntervalsForPX, int sketchLength, float pCum) {
+    private static void run(Dataset fullDataset, Dataset pcaDataset, Dataset sketchesDataset, int simRelMinAnswerSize, int simRelMaxAnswerSize, float distIntervalsForPX, int sketchLength, float pCum) {
         /* kNN queries - the result set size */
         int k = 10;
         /*  prefix of the PCA shortened vectors used by the simRel */
@@ -107,30 +101,23 @@ public class EvaluateCRANBERRYMain {
         int pcaLength = 256;
         /* number of query objects to learn t(\Omega) thresholds. We use different objects than the queries tested. */
         int querySampleCount = 200;
-        /* size of the data sample to learn t(\Omega) thresholds: SISAP: 100 000 */
-        int dataSampleCount = kVoronoi;
         /* percentile - defined in the paper. Defines the precision of the simRel */
         float percentile = 0.99f;
 
-        SimRelInterface<float[]> simRel = initSimRel(querySampleCount, pcaLength, simRelMinAnswerSize, dataSampleCount, pcaDataset.getDatasetName(), percentile, prefixLength, pivotCountForVoronoi, "laion2B-en-clip768v2-n=30M.h5_PCA256_q200voronoiP20000_voronoiK600000_pcaLength256_kPCA100.csv");
-        String resultName = "CRANBERRY_COS_FINAL_PAR_" + CranberryAlgorithm.QUERIES_PARALELISM + "_" + MAX_DIST_COMPS + "maxDists_" + fullDataset.getDatasetName() + "_kVoronoi" + kVoronoi + "_pca" + pcaLength + "_simRelMinAns" + simRelMinAnswerSize + "simRelMaxAns" + simRelMaxAnswerSize + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__" + dataSampleCount + "o__k" + k + "_perc" + percentile + "_pCum" + pCum + "_sketches" + sketchLength + "";
-
-        testQueries(fullDataset, pcaDataset, sketchesDataset, simRel, pivotCountForVoronoi, kVoronoi, simRelMinAnswerSize, simRelMaxAnswerSize, k, prefixLength, pcaLength, resultName, sketchLength, pCum, distIntervalsForPX, querySampleCount);
+        testQueries(fullDataset, pcaDataset, sketchesDataset, percentile, pivotCountForVoronoi, simRelMinAnswerSize, simRelMaxAnswerSize, k, prefixLength, pcaLength, sketchLength, pCum, distIntervalsForPX, querySampleCount);
     }
 
     private static void testQueries(
             Dataset fullDataset,
             Dataset pcaDataset,
             Dataset sketchesDataset,
-            SimRelInterface<float[]> simRel,
+            float percentile,
             int pivotCountForVoronoi,
-            int voronoiK,
             int simRelMinAnswerSize,
             int simRelMaxAnswerSize,
             int k,
             int prefixLength,
             int pcaLength,
-            String resultName,
             int sketchLength,
             float pCum,
             float distIntervalsForPX,
@@ -154,8 +141,13 @@ public class EvaluateCRANBERRYMain {
         // filtering algorithms and filters
         VoronoiPartitionsCandSetIdentifier algVoronoi = new VoronoiPartitionsCandSetIdentifier(fullDataset, new FSVoronoiPartitioningStorage(), pivotCountForVoronoi);
 
-        String resultNamePrefix = "Voronoi" + voronoiK + "_pCum" + pCum;
-        SecondaryFilteringWithSketches sketchFiltering = SISAPChallengeAlgBuilder.initSecondaryFilteringWithSketches(fullDataset, sketchesDataset, resultNamePrefix, pCum, distIntervalsForPX);
+        SecondaryFilteringWithSketches sketchFiltering = SISAPChallengeAlgBuilder.initSecondaryFilteringWithSketches(fullDataset, sketchesDataset, "", pCum, distIntervalsForPX);
+
+        int datasetSize = sketchFiltering.getNumberOfSketches();
+
+        int voronoiK = getVoronoiKAccordingToDatasetSize(datasetSize);
+        SimRelInterface<float[]> simRel = initSimRel(querySampleCount, pcaLength, simRelMinAnswerSize, voronoiK, pcaDataset.getDatasetName(), percentile, prefixLength, pivotCountForVoronoi, "laion2B-en-clip768v2-n=30M.h5_PCA256_q200voronoiP20000_voronoiK600000_pcaLength256_kPCA100.csv");
+        String resultName = "CRANBERRY_COS_FINAL_PAR_" + CranberryAlgorithm.QUERIES_PARALELISM + "_" + MAX_DIST_COMPS + "maxDists_" + fullDataset.getDatasetName() + "_kVoronoi" + voronoiK + "_pca" + pcaLength + "_simRelMinAns" + simRelMinAnswerSize + "simRelMaxAns" + simRelMaxAnswerSize + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__k" + k + "_perc" + percentile + "_pCum" + pCum + "_sketches" + sketchLength + "";
 
         Map pcaOMap;
         if (simRel instanceof DumbSimRel) {
@@ -177,7 +169,9 @@ public class EvaluateCRANBERRYMain {
                 simRelMaxAnswerSize,
                 pcaOMap,
                 fullDataset.getKeyValueStorage(),
-                fullDataset.getDistanceFunction());
+                datasetSize;
+        fullDataset.getDistanceFunction()
+        );
 
         FSQueryExecutionStatsStoreImpl statsStorage = new FSQueryExecutionStatsStoreImpl(fullDataset.getDatasetName(), fullDataset.getQuerySetName(), k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), resultName, null);
 
@@ -260,6 +254,22 @@ public class EvaluateCRANBERRYMain {
             }
         }
         return new SimRelEuclideanPCAImplForTesting(learnedErrors, prefixLength);
+    }
+
+    private static int getVoronoiKAccordingToDatasetSize(int datasetSize) {
+        if (datasetSize > 30338306) {
+            double deltaVoronoiK = 600000;
+            int deltaDatasetSize = 71702749;
+            double derivative = deltaVoronoiK / deltaDatasetSize;
+            return (int) (derivative * (datasetSize - 102041055) + 1000000);
+        }
+        if (datasetSize <= 30338306) {
+            double deltaVoronoiK = 200000;
+            int deltaDatasetSize = 20228346;
+            double derivative = deltaVoronoiK / deltaDatasetSize;
+            return (int) (derivative * (datasetSize - 30338306) + 400000);
+        }
+        throw new Error();
     }
 
 }
