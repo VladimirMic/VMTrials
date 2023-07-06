@@ -70,7 +70,7 @@ public class EvaluateCRANBERRYMain {
         };
 
         int[] minKSimRel = new int[]{
-            100,
+            200,
             100,
             100
         };
