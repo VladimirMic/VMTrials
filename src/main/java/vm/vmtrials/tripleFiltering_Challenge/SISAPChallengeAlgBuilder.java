@@ -89,6 +89,7 @@ public class SISAPChallengeAlgBuilder {
                 Integer.MAX_VALUE,
                 pcaOMap,
                 fullDataset.getKeyValueStorage(),
+                algSketchFiltering.getNumberOfSketches(),
                 fullDataset.getDistanceFunction());
 
     }

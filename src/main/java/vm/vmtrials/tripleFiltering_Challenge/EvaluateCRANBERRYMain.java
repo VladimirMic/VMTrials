@@ -169,8 +169,8 @@ public class EvaluateCRANBERRYMain {
                 simRelMaxAnswerSize,
                 pcaOMap,
                 fullDataset.getKeyValueStorage(),
-                datasetSize;
-        fullDataset.getDistanceFunction()
+                datasetSize,
+                fullDataset.getDistanceFunction()
         );
 
         FSQueryExecutionStatsStoreImpl statsStorage = new FSQueryExecutionStatsStoreImpl(fullDataset.getDatasetName(), fullDataset.getQuerySetName(), k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), resultName, null);
