@@ -91,7 +91,7 @@ public class EvaluateCRANBERRYMain {
             0.004f
         };
 
-        for (int i = 1; i < fullDatasets.length; i++) {
+        for (int i = 2; i < fullDatasets.length; i++) {
             run(fullDatasets[i], pcaDatasets[i], sketchesDatasets[i], voronoiK[i], minKSimRel[i], maxKSimRel[i], distIntervalsForPX[i], sketchLength, pCum);
             break;
         }
