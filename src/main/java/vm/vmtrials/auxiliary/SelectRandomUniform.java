@@ -5,7 +5,7 @@ import vm.datatools.Tools;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.Dataset;
-import vm.metricSpace.MetricSpacesStorageInterface;
+import vm.metricSpace.AbstractMetricSpacesStorage;
 import vm.metricSpace.distance.DistanceFunctionInterface;
 
 /**
@@ -32,7 +32,7 @@ public class SelectRandomUniform {
                 }
             }
         }
-        MetricSpacesStorageInterface storage = dataset.getMetricSpacesStorage();
+        AbstractMetricSpacesStorage storage = dataset.getMetricSpacesStorage();
         storage.storePivots(list, dataset.getDatasetName() + "_" + count + "pivots");
         //storage.storeObjectsToDataset(list.iterator(), -1, dataset.getDatasetName() + "_random_sample_" + count + ".gz");
     }

@@ -11,7 +11,7 @@ import java.util.Map;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.Dataset;
-import vm.metricSpace.MetricSpacesStorageInterface;
+import vm.metricSpace.AbstractMetricSpacesStorage;
 
 /**
  *
@@ -35,7 +35,7 @@ public class SelectAndStoreObjectsFromDatasetToAnotherDataset {
             objectsToStore.add(simpleEntry);
         }
 
-        MetricSpacesStorageInterface storage = dataProvider.getMetricSpacesStorage();
+        AbstractMetricSpacesStorage storage = dataProvider.getMetricSpacesStorage();
         storage.storePivots(objectsToStore, "laion2B-en-clip768v2-n=100M.h5_PCA32_20000");
 
     }

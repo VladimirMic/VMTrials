@@ -5,7 +5,7 @@ import java.util.List;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.Dataset;
-import vm.metricSpace.MetricSpacesStorageInterface;
+import vm.metricSpace.AbstractMetricSpacesStorage;
 
 /**
  *
@@ -26,7 +26,7 @@ public class RemoveSelectedObjectFromPivots {
                 System.out.println("Skipped pivot " + pID.toString());
             }
         }
-        MetricSpacesStorageInterface storage = dataset.getMetricSpacesStorage();
+        AbstractMetricSpacesStorage storage = dataset.getMetricSpacesStorage();
         storage.storePivots(newPivots, "laion2B-en-clip768v2-n=100M.h5_512pivots.gz_new");
     }
 }

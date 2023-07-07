@@ -11,7 +11,7 @@ import vm.fs.metricSpaceImpl.FSMetricSpacesStorage;
 import vm.math.Tools;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.ToolsMetricDomain;
-import vm.metricSpace.MetricSpacesStorageInterface;
+import vm.metricSpace.AbstractMetricSpacesStorage;
 import vm.metricSpace.dataToStringConvertors.impl.FloatVectorConvertor;
 
 /**
@@ -26,7 +26,7 @@ public class PrintVectorCoordinatesStats {
         System.setOut(new PrintStream(output));
 
         AbstractMetricSpace<float[]> metricSpace = new FSMetricSpaceImpl<>();
-        MetricSpacesStorageInterface metricSpacesStorage = new FSMetricSpacesStorage<>(metricSpace, new FloatVectorConvertor());
+        AbstractMetricSpacesStorage metricSpacesStorage = new FSMetricSpacesStorage<>(metricSpace, new FloatVectorConvertor());
 
         List<Object> metricObjects = metricSpacesStorage.getSampleOfDataset(datasetName, -1);
         float[][] matrix = ToolsMetricDomain.transformMetricObjectsToTransposedVectorMatrix(metricSpace, metricObjects);
