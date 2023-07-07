@@ -60,12 +60,10 @@ public class Main {
         for (int i = 0; i < args.length; i++) {
             System.err.println(i + ": " + args[i] + " ");
         }
-        int param = 0;
-        String dataset768DimPath = args[param++];
-        param++;
-        String querySet768DimPath = args[param++];
-        makeAllSteps = args.length <= param || Boolean.parseBoolean(args[param++]);
-        int k = args.length <= param ? 10 : Integer.parseInt(args[param++]);
+        String dataset768DimPath = args[0];
+        String querySet768DimPath = args[2];
+        makeAllSteps = args.length <= 5 || Boolean.parseBoolean(args[5]);
+        int k = args.length <= 6 ? 10 : Integer.parseInt(args[6]);
 
         Dataset fullDataset = createImplicitH5Dataset(dataset768DimPath, querySet768DimPath);
         Dataset pcaDataset = transformDatasetAndQueriesToPCAPreffixes(fullDataset, 256, 24);
