@@ -58,10 +58,11 @@ public class Main {
         long buildTime = -System.currentTimeMillis();
         System.err.println("Args: ");
         for (int i = 0; i < args.length; i++) {
-            System.err.println(i + ": " + args[i] + " ");
+            System.err.print(i + ": " + args[i] + " ");
             if (i == 1 || i == 3 || i == 4) {
-                System.err.println("In fact, I will igonre this parameter, sorry for confusion");
+                System.err.println(" - In fact, I will ignore this parameter, but thank you for the information. Sorry for confusion");
             }
+            System.err.println();
         }
         String dataset768DimPath = args[0];
         String querySet768DimPath = args[2];
