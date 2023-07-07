@@ -268,7 +268,7 @@ public class EvaluateCRANBERRYMain {
             return (int) (derivative * (datasetSize - 102041055) + 100);
         }
         if (datasetSize <= 30338306) {
-            double deltaVoronoiK = -2000;
+            double deltaVoronoiK = -1500;
             int deltaDatasetSize = 20228346;
             double derivative = deltaVoronoiK / deltaDatasetSize;
             return (int) (derivative * (datasetSize - 30338306) + 1000);
@@ -294,7 +294,8 @@ public class EvaluateCRANBERRYMain {
             double deltaVoronoiK = 200000;
             int deltaDatasetSize = 20228346;
             double derivative = deltaVoronoiK / deltaDatasetSize;
-            return (int) (derivative * (datasetSize - 30338306) + 400000);
+            int ret =  (int) (derivative * (datasetSize - 30338306) + 400000);
+            return (int) Math.min(ret, 0.9f * datasetSize);
         }
         throw new Error();
     }
