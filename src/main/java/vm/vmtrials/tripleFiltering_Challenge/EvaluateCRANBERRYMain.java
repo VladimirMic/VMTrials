@@ -70,8 +70,8 @@ public class EvaluateCRANBERRYMain {
         };
 
         int[] minKSimRel = new int[]{
-            200,
-            100,
+            1250,
+            1000,
             100
         };
         int[] maxKSimRel = new int[]{
@@ -173,7 +173,6 @@ public class EvaluateCRANBERRYMain {
                 fullDataset.getDistanceFunction()
         );
 
-        FSQueryExecutionStatsStoreImpl statsStorage = new FSQueryExecutionStatsStoreImpl(fullDataset.getDatasetName(), fullDataset.getQuerySetName(), k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), resultName, null);
 
         System.gc();
         vm.javatools.Tools.sleepSeconds(5);
@@ -191,6 +190,7 @@ public class EvaluateCRANBERRYMain {
         }
 
         LOG.log(Level.INFO, "Storing statistics of queries");
+        FSQueryExecutionStatsStoreImpl statsStorage = new FSQueryExecutionStatsStoreImpl(fullDataset.getDatasetName(), fullDataset.getQuerySetName(), k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), resultName, null);
         statsStorage.storeStatsForQueries(alg.getDistCompsPerQueries(), alg.getTimesPerQueries(), alg.getSimRelsPerQueries());
         statsStorage.saveFile();
 
