@@ -127,22 +127,10 @@ public class Main {
 
     private static SISAPChallengeAlgBuilder initAlgorithm(Dataset fullDataset, Dataset pcaDataset, Dataset sketchesDataset, AbstractObjectToSketchTransformator sketchingTechnique, int k) {
         LOG.log(Level.INFO, "Initializing algorithm");
-
-        int kPCA = getPCAK();
         String fileWithTOmegaThresholds = "laion2B-en-clip768v2-n=30M.h5_PCA256_q200voronoiP20000_voronoiK600000_pcaLength256_kPCA100.csv";
-        SISAPChallengeAlgBuilder ret = new SISAPChallengeAlgBuilder(fullDataset, pcaDataset, sketchesDataset, sketchingTechnique, kPCA, k, fileWithTOmegaThresholds);
+        SISAPChallengeAlgBuilder ret = new SISAPChallengeAlgBuilder(fullDataset, pcaDataset, sketchesDataset, sketchingTechnique, k, fileWithTOmegaThresholds);
         Logger.getLogger(Main.class.getName()).log(Level.INFO, "Algorithm initialised");
         return ret;
-    }
-
-    /**
-     * *************************************************
-     * Init params for datasets given by their size ****
-     * *************************************************
-     */
-
-    private static int getPCAK() {
-        return 100;
     }
 
     /**

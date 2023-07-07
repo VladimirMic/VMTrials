@@ -70,7 +70,7 @@ public class EvaluateCRANBERRYMain {
         };
 
         int[] minKSimRel = new int[]{
-            2000,
+            2500,
             1000,
             100
         };
@@ -145,7 +145,7 @@ public class EvaluateCRANBERRYMain {
 
         int datasetSize = sketchFiltering.getNumberOfSketches();
 
-        int voronoiK = getVoronoiKAccordingToDatasetSize(datasetSize);
+        int voronoiK = getVoronoiK(datasetSize);
         SimRelInterface<float[]> simRel = initSimRel(querySampleCount, pcaLength, simRelMinAnswerSize, voronoiK, pcaDataset.getDatasetName(), percentile, prefixLength, pivotCountForVoronoi, "laion2B-en-clip768v2-n=30M.h5_PCA256_q200voronoiP20000_voronoiK600000_pcaLength256_kPCA100.csv");
         String resultName = "CRANBERRY_COS_FINAL_PAR_" + CranberryAlgorithm.QUERIES_PARALELISM + "_" + MAX_DIST_COMPS + "maxDists_" + fullDataset.getDatasetName() + "_kVoronoi" + voronoiK + "_pca" + pcaLength + "_simRelMinAns" + simRelMinAnswerSize + "simRelMaxAns" + simRelMaxAnswerSize + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__k" + k + "_perc" + percentile + "_pCum" + pCum + "_sketches" + sketchLength + "";
 
@@ -255,6 +255,27 @@ public class EvaluateCRANBERRYMain {
         return new SimRelEuclideanPCAImplForTesting(learnedErrors, prefixLength);
     }
 
+    /**
+     * *************************************************
+     * Init params for datasets given by their size ****
+     * *************************************************
+     */
+    public static final int getPCAK(int datasetSize) {
+        if (datasetSize > 30338306) {
+            double deltaMinSimRelAnswer = -900;
+            int deltaDatasetSize = 71702749;
+            double derivative = deltaMinSimRelAnswer / deltaDatasetSize;
+            return (int) (derivative * (datasetSize - 102041055) + 100);
+        }
+        if (datasetSize <= 30338306) {
+            double deltaVoronoiK = -2000;
+            int deltaDatasetSize = 20228346;
+            double derivative = deltaVoronoiK / deltaDatasetSize;
+            return (int) (derivative * (datasetSize - 30338306) + 1000);
+        }
+        throw new Error();
+    }
+
     public static final int getPivotCountForVoronoi(int datasetSize) {
         if (datasetSize < 500000) {
             return 2000;
@@ -262,7 +283,7 @@ public class EvaluateCRANBERRYMain {
         return 20000;
     }
 
-    public static final int getVoronoiKAccordingToDatasetSize(int datasetSize) {
+    public static final int getVoronoiK(int datasetSize) {
         if (datasetSize > 30338306) {
             double deltaVoronoiK = 600000;
             int deltaDatasetSize = 71702749;
