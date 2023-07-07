@@ -70,7 +70,7 @@ public class EvaluateCRANBERRYMain {
         };
 
         int[] minKSimRel = new int[]{
-            1250,
+            2000,
             1000,
             100
         };
@@ -173,7 +173,6 @@ public class EvaluateCRANBERRYMain {
                 fullDataset.getDistanceFunction()
         );
 
-
         System.gc();
         vm.javatools.Tools.sleepSeconds(5);
         long overallTime = -System.currentTimeMillis();
@@ -254,6 +253,13 @@ public class EvaluateCRANBERRYMain {
             }
         }
         return new SimRelEuclideanPCAImplForTesting(learnedErrors, prefixLength);
+    }
+
+    public static final int getPivotCountForVoronoi(int datasetSize) {
+        if (datasetSize < 500000) {
+            return 5000;
+        }
+        return 20000;
     }
 
     public static final int getVoronoiKAccordingToDatasetSize(int datasetSize) {

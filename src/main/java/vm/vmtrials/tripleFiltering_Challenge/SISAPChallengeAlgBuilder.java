@@ -58,19 +58,18 @@ public class SISAPChallengeAlgBuilder {
      * @param fullDataset
      * @param pcaDataset
      * @param sketchesDataset
-     * @param sketchingTechnique
-     * for 100M dataset
+     * @param sketchingTechnique for 100M dataset
      * @param kPCA set 300 for 10M dataset, 500 otherwise
      * @param k set 10 for the sisap challenge
-     * @param pivotsUsedForTheVoronoi
      * @param tOmegaStresholdsFileNameVoluntary if the file has a specific name
      * different from the automatically derived
      */
-    public SISAPChallengeAlgBuilder(Dataset fullDataset, Dataset pcaDataset, Dataset sketchesDataset, AbstractObjectToSketchTransformator sketchingTechnique, int kPCA, int k, int pivotsUsedForTheVoronoi, String tOmegaStresholdsFileNameVoluntary) {
-        algVoronoi = new VoronoiPartitionsCandSetIdentifier(fullDataset, new FSVoronoiPartitioningStorage(), pivotsUsedForTheVoronoi);
+    public SISAPChallengeAlgBuilder(Dataset fullDataset, Dataset pcaDataset, Dataset sketchesDataset, AbstractObjectToSketchTransformator sketchingTechnique, int kPCA, int k, String tOmegaStresholdsFileNameVoluntary) {
         algSketchFiltering = initSecondaryFilteringWithSketches(fullDataset, sketchesDataset, "", pCum, distIntervalsForPX);
         int datasetSize = algSketchFiltering.getNumberOfSketches();
-        int voronoiK  = EvaluateCRANBERRYMain.getVoronoiKAccordingToDatasetSize(datasetSize);
+        int pivotsUsedForTheVoronoi = EvaluateCRANBERRYMain.getPivotCountForVoronoi(datasetSize);
+        algVoronoi = new VoronoiPartitionsCandSetIdentifier(fullDataset, new FSVoronoiPartitioningStorage(), pivotsUsedForTheVoronoi);
+        int voronoiK = EvaluateCRANBERRYMain.getVoronoiKAccordingToDatasetSize(datasetSize);
         algSimRelFiltering = EvaluateCRANBERRYMain.initSimRel(querySampleCount, pcaLength, kPCA, voronoiK, pcaDataset.getDatasetName(), percentile, prefixLength, null, tOmegaStresholdsFileNameVoluntary);
         this.k = k;
 

@@ -127,10 +127,9 @@ public class Main {
     private static SISAPChallengeAlgBuilder initAlgorithm(Dataset fullDataset, Dataset pcaDataset, Dataset sketchesDataset, AbstractObjectToSketchTransformator sketchingTechnique, int k) {
         LOG.log(Level.INFO, "Initializing algorithm");
 
-        int pivotsUsedForTheVoronoi = getPivotCount();
         int kPCA = getPCAK();
         String fileWithTOmegaThresholds = "laion2B-en-clip768v2-n=30M.h5_PCA256_q200voronoiP20000_voronoiK600000_pcaLength256_kPCA100.csv";
-        SISAPChallengeAlgBuilder ret = new SISAPChallengeAlgBuilder(fullDataset, pcaDataset, sketchesDataset, sketchingTechnique, kPCA, k, pivotsUsedForTheVoronoi, fileWithTOmegaThresholds);
+        SISAPChallengeAlgBuilder ret = new SISAPChallengeAlgBuilder(fullDataset, pcaDataset, sketchesDataset, sketchingTechnique, kPCA, k, fileWithTOmegaThresholds);
         Logger.getLogger(Main.class.getName()).log(Level.INFO, "Algorithm initialised");
         return ret;
     }
@@ -140,9 +139,6 @@ public class Main {
      * Init params for datasets given by their size ****
      * *************************************************
      */
-    private static int getPivotCount() {
-        return 20000;
-    }
 
     private static int getPCAK() {
         return 100;
@@ -154,11 +150,6 @@ public class Main {
      * *************************************************
      */
     private static Dataset buildAndStoreAlgorithm(Dataset fullDataset, boolean makeAllSteps) {
-        if (makeAllSteps) {
-            LOG.log(Level.INFO, "\nStarting the Voronoi partitioning");
-            createAndStoreVoronoiPartitioning(fullDataset);
-            System.gc();
-        }
         LOG.log(Level.INFO, "\nStarting the sketching transformation with the predefined sketching technique");
         MainMemoryDatasetChache sketchesDataset = new MainMemoryDatasetChache(new FSMetricSpaceImpl());
         AbstractObjectToSketchTransformator sketchingTechnique = createSketches(fullDataset, sketchesDataset);
@@ -170,13 +161,19 @@ public class Main {
             learnSketchMapping(fullDataset, sketchesDataset, 0.004f, SKETCH_LENGTH, 2f);
         }
         System.gc();
+        if (makeAllSteps) {
+            LOG.log(Level.INFO, "\nStarting the Voronoi partitioning");
+            createAndStoreVoronoiPartitioning(fullDataset, sketchesDataset.getDatasetSize());
+            System.gc();
+        }
+        System.gc();
         LOG.log(Level.INFO, "\nBuild finished");
         return sketchesDataset;
 
     }
 
-    private static void createAndStoreVoronoiPartitioning(Dataset dataset) {
-        int pivotCount = getPivotCount();
+    private static void createAndStoreVoronoiPartitioning(Dataset dataset, int datasetSize) {
+        int pivotCount = EvaluateCRANBERRYMain.getPivotCountForVoronoi(datasetSize);
         List<Object> pivots = dataset.getPivots(2 * pivotCount);
         VoronoiPartitioning vp = new VoronoiPartitioning(dataset.getMetricSpace(), dataset.getDistanceFunction(), pivots);
         FSVoronoiPartitioningStorage storage = new FSVoronoiPartitioningStorage();
