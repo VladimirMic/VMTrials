@@ -256,7 +256,7 @@ public class EvaluateCRANBERRYMain {
         return new SimRelEuclideanPCAImplForTesting(learnedErrors, prefixLength);
     }
 
-    private static int getVoronoiKAccordingToDatasetSize(int datasetSize) {
+    public static final int getVoronoiKAccordingToDatasetSize(int datasetSize) {
         if (datasetSize > 30338306) {
             double deltaVoronoiK = 600000;
             int deltaDatasetSize = 71702749;

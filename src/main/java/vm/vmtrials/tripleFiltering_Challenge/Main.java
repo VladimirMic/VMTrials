@@ -64,8 +64,6 @@ public class Main {
         String dataset768DimPath = args[param++];
         param++;
         String querySet768DimPath = args[param++];
-        param++;
-        int datasetSize = Integer.parseInt(args[param++]);
         makeAllSteps = args.length <= param || Boolean.parseBoolean(args[param++]);
         int k = args.length <= param ? 10 : Integer.parseInt(args[param++]);
 
@@ -75,7 +73,7 @@ public class Main {
         Dataset sketchesDataset;
         AbstractObjectToSketchTransformator sketchingTechnique;
         if (makeAllSteps) {
-            sketchesDataset = buildAndStoreAlgorithm(fullDataset, datasetSize, makeAllSteps);
+            sketchesDataset = buildAndStoreAlgorithm(fullDataset, makeAllSteps);
             sketchingTechnique = getSketchingTechnique(fullDataset);
         } else {
             sketchingTechnique = getSketchingTechnique(fullDataset);
@@ -83,7 +81,7 @@ public class Main {
         }
 
         if (algBuilder == null) {
-            algBuilder = initAlgorithm(fullDataset, pcaDataset, sketchesDataset, sketchingTechnique, datasetSize, k);
+            algBuilder = initAlgorithm(fullDataset, pcaDataset, sketchesDataset, sketchingTechnique, k);
         }
         buildTime += System.currentTimeMillis();
         List fullQueries = fullDataset.getMetricQueryObjects();
@@ -125,14 +123,13 @@ public class Main {
         }
     }
 
-    private static SISAPChallengeAlgBuilder initAlgorithm(Dataset fullDataset, Dataset pcaDataset, Dataset sketchesDataset, AbstractObjectToSketchTransformator sketchingTechnique, int datasetSize, int k) {
+    private static SISAPChallengeAlgBuilder initAlgorithm(Dataset fullDataset, Dataset pcaDataset, Dataset sketchesDataset, AbstractObjectToSketchTransformator sketchingTechnique, int k) {
         LOG.log(Level.INFO, "Initializing algorithm");
 
-        int pivotsUsedForTheVoronoi = getPivotCount(datasetSize);
-        int voronoiK = getVoronoiK(datasetSize);
-        int kPCA = getPCAK(datasetSize);
+        int pivotsUsedForTheVoronoi = getPivotCount();
+        int kPCA = getPCAK();
         String fileWithTOmegaThresholds = "laion2B-en-clip768v2-n=30M.h5_PCA256_q200voronoiP20000_voronoiK600000_pcaLength256_kPCA100.csv";
-        SISAPChallengeAlgBuilder ret = new SISAPChallengeAlgBuilder(fullDataset, pcaDataset, sketchesDataset, sketchingTechnique, voronoiK, kPCA, k, pivotsUsedForTheVoronoi, fileWithTOmegaThresholds);
+        SISAPChallengeAlgBuilder ret = new SISAPChallengeAlgBuilder(fullDataset, pcaDataset, sketchesDataset, sketchingTechnique, kPCA, k, pivotsUsedForTheVoronoi, fileWithTOmegaThresholds);
         Logger.getLogger(Main.class.getName()).log(Level.INFO, "Algorithm initialised");
         return ret;
     }
@@ -142,44 +139,12 @@ public class Main {
      * Init params for datasets given by their size ****
      * *************************************************
      */
-    public static int getVoronoiK(int datasetSize) {
-        switch (datasetSize) {
-            case 100000:
-                return 40000;
-            case 300000:
-                return 150000;
-            case 10000000:
-                return 400000;
-            case 30000000:
-                return 900000;
-            case 100000000:
-                return 1000000;
-            default:
-                throw new AssertionError();
-        }
-    }
-
-    private static int getPivotCount(int datasetSize) {
-        if (datasetSize <= 300000) {
-            return 100;
-        }
+    private static int getPivotCount() {
         return 20000;
     }
 
-    private static int getPCAK(int datasetSize) {
-        switch (datasetSize) {
-            case 100000:
-            case 300000:
-                return 100;
-            case 10000000:
-                return 100;
-            case 30000000:
-                return 100;
-            case 100000000:
-                return 100;
-            default:
-                throw new AssertionError();
-        }
+    private static int getPCAK() {
+        return 100;
     }
 
     /**
@@ -187,10 +152,10 @@ public class Main {
      * Build indexes and create auxiliary files ********
      * *************************************************
      */
-    private static Dataset buildAndStoreAlgorithm(Dataset fullDataset, int datasetSize, boolean makeAllSteps) {
+    private static Dataset buildAndStoreAlgorithm(Dataset fullDataset, boolean makeAllSteps) {
         if (makeAllSteps) {
             LOG.log(Level.INFO, "\nStarting the Voronoi partitioning");
-            createAndStoreVoronoiPartitioning(fullDataset, datasetSize);
+            createAndStoreVoronoiPartitioning(fullDataset);
             System.gc();
         }
         LOG.log(Level.INFO, "\nStarting the sketching transformation with the predefined sketching technique");
@@ -209,8 +174,8 @@ public class Main {
 
     }
 
-    private static void createAndStoreVoronoiPartitioning(Dataset dataset, int datasetSize) {
-        int pivotCount = getPivotCount(datasetSize);
+    private static void createAndStoreVoronoiPartitioning(Dataset dataset) {
+        int pivotCount = getPivotCount();
         List<Object> pivots = dataset.getPivots(2 * pivotCount);
         VoronoiPartitioning vp = new VoronoiPartitioning(dataset.getMetricSpace(), dataset.getDistanceFunction(), pivots);
         FSVoronoiPartitioningStorage storage = new FSVoronoiPartitioningStorage();
