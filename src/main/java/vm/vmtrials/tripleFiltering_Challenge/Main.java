@@ -40,6 +40,8 @@ import vm.objTransforms.perform.PCAPrefixMetricObjectTransformer;
 import vm.objTransforms.perform.TransformDataToGHPSketches;
 import vm.objTransforms.storeLearned.GHPSketchingPivotPairsStoreInterface;
 import vm.search.impl.multiFiltering.CranberryAlgorithm;
+import static vm.vmtrials.tripleFiltering_Challenge.SISAPChallengeAlgBuilder.MAX_DATASET_SIZE_TO_CACHE;
+import static vm.vmtrials.tripleFiltering_Challenge.SISAPChallengeAlgBuilder.MIN_DATASET_SIZE_TO_CACHE;
 
 /**
  *
@@ -60,7 +62,7 @@ public class Main {
         for (int i = 0; i < args.length; i++) {
             System.err.print(i + ": " + args[i] + " ");
             if (i == 1 || i == 3 || i == 4) {
-                System.err.println(" - In fact, I will ignore this parameter, but thank you for the information. Sorry for confusion");
+                System.err.print(" - In fact, I will ignore this parameter, but thank you for the information");
             }
             System.err.println();
         }
@@ -163,7 +165,7 @@ public class Main {
 
     private static void createAndStoreVoronoiPartitioning(Dataset dataset, int datasetSize) {
         int pivotCount = EvaluateCRANBERRYMain.getPivotCountForVoronoi(datasetSize);
-        List<Object> pivots = dataset.getPivots(2 * pivotCount);
+        List<Object> pivots = dataset.getPivots(pivotCount);
         VoronoiPartitioning vp = new VoronoiPartitioning(dataset.getMetricSpace(), dataset.getDistanceFunction(), pivots);
         FSVoronoiPartitioningStorage storage = new FSVoronoiPartitioningStorage();
         vp.splitByVoronoi(dataset.getMetricObjectsFromDataset(), dataset.getDatasetName(), pivotCount, storage);
@@ -224,6 +226,11 @@ public class Main {
             FSApplyPCAMain.transformDataset(dataset.getMetricObjectsFromDataset(), parallelTransformerImpl, "Dataset with name \"" + datasetUsedToLearnSVD + "\" transformed by VT matrix of svd " + sampleSetSize + " to the length " + pcaLength, cachedDataset);
             LOG.log(Level.INFO, "\nTransform to the prefixes of PCA finished");
         }
+        int datasetSize = cachedDataset.getDatasetSize();
+        if (datasetSize >= MIN_DATASET_SIZE_TO_CACHE && datasetSize <= MAX_DATASET_SIZE_TO_CACHE && dataset instanceof ImplicitH5Dataset) {
+            ImplicitH5Dataset h5Dataset = (ImplicitH5Dataset) dataset;
+            h5Dataset.loadAllDataObjetsToRam();
+        }
         return cachedDataset;
     }
 
@@ -239,7 +246,7 @@ public class Main {
             querySetName = new File(querySetPath).getName();
             this.datasetFile = FSGlobal.checkFileExistence(new File(datasetPath), false);
             this.querySetFile = FSGlobal.checkFileExistence(new File(querySetPath), false);
-            cache = new MainMemoryDatasetChache(metricSpace);
+            cache = new MainMemoryDatasetChache(metricSpace, datasetName, metricSpacesStorage);
             cache.addPivots(getPivots(-1));
             cache.addQueries(getMetricQueryObjects());
         }
@@ -261,6 +268,9 @@ public class Main {
 
         @Override
         public Iterator<Object> getMetricObjectsFromDataset(Object... params) {
+            if (cache.dataLoaded()) {
+                return cache.getMetricObjectsFromDataset(params);
+            }
             FSMetricSpacesStorage storage = (FSMetricSpacesStorage) metricSpacesStorage;
             params = Tools.concatArrays(params, new Object[]{""});
             Iterator it = storage.getIteratorOfObjects(datasetFile, params);
@@ -268,9 +278,17 @@ public class Main {
         }
 
         @Override
+        public Map<Object, Object> getKeyValueStorage() {
+            if (cache.dataLoaded()) {
+                return cache.getKeyValueStorage();
+            }
+            return super.getKeyValueStorage();
+        }
+
+        @Override
         public final List<Object> getPivots(int objLoadedCount) {
             if (cache.pivotsLoaded()) {
-                return cache.getPivots();
+                return cache.getPivots(objLoadedCount);
             }
             return metricSpacesStorage.getPivots("laion2B-en-clip768v2-n=100M.h5_20000pivots.gz", objLoadedCount);
         }
@@ -279,6 +297,10 @@ public class Main {
         public List<Object> getSampleOfDataset(int objCount) {
             Iterator<Object> it = getMetricObjectsFromDataset();
             return Tools.getObjectsFromIterator(it, objCount);
+        }
+
+        public void loadAllDataObjetsToRam() {
+            cache.loadAllDataObjets();
         }
 
     }

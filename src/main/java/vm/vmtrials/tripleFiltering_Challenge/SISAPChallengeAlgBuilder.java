@@ -24,6 +24,9 @@ import vm.simRel.SimRelInterface;
  * @author Vlada
  */
 public class SISAPChallengeAlgBuilder {
+    
+    public static final Integer MIN_DATASET_SIZE_TO_CACHE = 1000000; // milion
+    public static final Integer MAX_DATASET_SIZE_TO_CACHE = 50000000; // 50 millions
 
     public static SecondaryFilteringWithSketches initSecondaryFilteringWithSketches(Dataset fullDataset, Dataset sketchesDataset, String filterNamePrefix, float pCum, float distIntervalForPX) {
         SecondaryFilteringWithSketchesStoreInterface secondaryFilteringStorage = new FSSecondaryFilteringWithSketchesStorage();

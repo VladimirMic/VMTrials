@@ -278,9 +278,9 @@ public class EvaluateCRANBERRYMain {
 
     public static final int getPivotCountForVoronoi(int datasetSize) {
         if (datasetSize < 500000) {
-            return 1000;
+            return 2000;
         }
-        return 20000;
+        return 20020;
     }
 
     public static final int getVoronoiK(int datasetSize) {
