@@ -59,6 +59,9 @@ public class Main {
         System.err.println("Args: ");
         for (int i = 0; i < args.length; i++) {
             System.err.println(i + ": " + args[i] + " ");
+            if (i == 1 || i == 3 || i == 4) {
+                System.err.println("In fact, I will igonre this parameter, sorry for confusion");
+            }
         }
         String dataset768DimPath = args[0];
         String querySet768DimPath = args[2];
