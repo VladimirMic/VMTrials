@@ -103,6 +103,8 @@ public class Main {
 
         CranberryAlgorithm cranberryAlg = algBuilder.getCranberryAlg();
         fullDataset.unloadPivots();
+        fullDataset.unloadQueries();
+        fullDataset.unloadDataObjets();
 
         System.gc();
         vm.javatools.Tools.sleepSeconds(5);
