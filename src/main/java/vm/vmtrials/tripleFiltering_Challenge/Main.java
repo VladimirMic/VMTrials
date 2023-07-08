@@ -105,10 +105,12 @@ public class Main {
         fullDataset.unloadPivots();
         pcaDataset.unloadPivots();
         pcaDataset.unloadQueries();
+        pcaDataset.unloadDataObjets();
         if (sketchesDataset instanceof MainMemoryDatasetCache) {
             MainMemoryDatasetCache m = (MainMemoryDatasetCache) sketchesDataset;
             m.unloadPivots();
             m.unloadQueries();
+            m.unloadDataObjets();
         }
         System.gc();
         vm.javatools.Tools.sleepSeconds(5);
