@@ -74,7 +74,7 @@ public class Main {
         int k = args.length <= 6 ? 10 : Integer.parseInt(args[6]);
 
         ImplicitH5Dataset fullDataset = createImplicitH5Dataset(dataset768DimPath, querySet768DimPath);
-        Dataset pcaDataset = transformDatasetAndQueriesToPCAPreffixes(fullDataset, 256, 24);
+        MainMemoryDatasetCache pcaDataset = transformDatasetAndQueriesToPCAPreffixes(fullDataset, 256, 24);
 
         Dataset sketchesDataset;
         AbstractObjectToSketchTransformator sketchingTechnique;
@@ -103,7 +103,13 @@ public class Main {
 
         CranberryAlgorithm cranberryAlg = algBuilder.getCranberryAlg();
         fullDataset.unloadPivots();
-
+        pcaDataset.unloadPivots();
+        pcaDataset.unloadQueries();
+        if (sketchesDataset instanceof MainMemoryDatasetCache) {
+            MainMemoryDatasetCache m = (MainMemoryDatasetCache) sketchesDataset;
+            m.unloadPivots();
+            m.unloadQueries();
+        }
         System.gc();
         vm.javatools.Tools.sleepSeconds(5);
 
@@ -220,7 +226,7 @@ public class Main {
         return dataset;
     }
 
-    private static Dataset transformDatasetAndQueriesToPCAPreffixes(Dataset dataset, int pcaLength, int storedPrefix) {
+    private static MainMemoryDatasetCache transformDatasetAndQueriesToPCAPreffixes(Dataset dataset, int pcaLength, int storedPrefix) {
         String datasetUsedToLearnSVD = "laion2B-en-clip768v2-n=100M.h5";
         AbstractMetricSpace<float[]> metricSpace = dataset.getMetricSpace();
         AbstractMetricSpacesStorage metricSpacesStorage = dataset.getMetricSpacesStorage();
