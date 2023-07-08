@@ -69,29 +69,14 @@ public class EvaluateCRANBERRYMain {
             new FSDatasetInstanceSingularizator.LAION_100M_GHP_50_512Dataset()
         };
 
-        int[] minKSimRel = new int[]{
-            2500,
-            1000,
-            100
-        };
-        int[] maxKSimRel = new int[]{
-            1000000,
-            1000000,
-            1000000
-        };
-        float[] distIntervalsForPX = new float[]{
-            0.004f,
-            0.004f,
-            0.004f
-        };
-
-        for (int i = 0; i < fullDatasets.length; i++) {
-            run(fullDatasets[i], pcaDatasets[i], sketchesDatasets[i], minKSimRel[i], maxKSimRel[i], distIntervalsForPX[i], sketchLength, pCum);
+        float distIntervalForPX = 0.004f;
+        for (int i = 2; i < fullDatasets.length; i++) {
+            run(fullDatasets[i], pcaDatasets[i], sketchesDatasets[i], distIntervalForPX, sketchLength, pCum);
             break;
         }
     }
 
-    private static void run(Dataset fullDataset, Dataset pcaDataset, Dataset sketchesDataset, int simRelMinAnswerSize, int simRelMaxAnswerSize, float distIntervalsForPX, int sketchLength, float pCum) {
+    private static void run(Dataset fullDataset, Dataset pcaDataset, Dataset sketchesDataset, float distIntervalsForPX, int sketchLength, float pCum) {
         /* kNN queries - the result set size */
         int k = 10;
         /*  prefix of the PCA shortened vectors used by the simRel */
@@ -104,7 +89,7 @@ public class EvaluateCRANBERRYMain {
         /* percentile - defined in the paper. Defines the precision of the simRel */
         float percentile = 0.99f;
 
-        testQueries(fullDataset, pcaDataset, sketchesDataset, percentile, pivotCountForVoronoi, simRelMinAnswerSize, simRelMaxAnswerSize, k, prefixLength, pcaLength, sketchLength, pCum, distIntervalsForPX, querySampleCount);
+        testQueries(fullDataset, pcaDataset, sketchesDataset, percentile, pivotCountForVoronoi, k, prefixLength, pcaLength, sketchLength, pCum, distIntervalsForPX, querySampleCount);
     }
 
     private static void testQueries(
@@ -113,8 +98,6 @@ public class EvaluateCRANBERRYMain {
             Dataset sketchesDataset,
             float percentile,
             int pivotCountForVoronoi,
-            int simRelMinAnswerSize,
-            int simRelMaxAnswerSize,
             int k,
             int prefixLength,
             int pcaLength,
@@ -146,8 +129,9 @@ public class EvaluateCRANBERRYMain {
         int datasetSize = sketchFiltering.getNumberOfSketches();
 
         int voronoiK = getVoronoiK(datasetSize);
+        int simRelMinAnswerSize = getPCAK(datasetSize);
         SimRelInterface<float[]> simRel = initSimRel(querySampleCount, pcaLength, simRelMinAnswerSize, voronoiK, pcaDataset.getDatasetName(), percentile, prefixLength, pivotCountForVoronoi, "laion2B-en-clip768v2-n=30M.h5_PCA256_q200voronoiP20000_voronoiK600000_pcaLength256_kPCA100.csv");
-        String resultName = "CRANBERRY_COS_FINAL_PAR_" + CranberryAlgorithm.QUERIES_PARALELISM + "_" + MAX_DIST_COMPS + "maxDists_" + fullDataset.getDatasetName() + "_kVoronoi" + voronoiK + "_pca" + pcaLength + "_simRelMinAns" + simRelMinAnswerSize + "simRelMaxAns" + simRelMaxAnswerSize + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__k" + k + "_perc" + percentile + "_pCum" + pCum + "_sketches" + sketchLength + "";
+        String resultName = "CRANBERRY_CHALLENGE_PAR_" + CranberryAlgorithm.QUERIES_PARALELISM + "_" + MAX_DIST_COMPS + "maxDists_" + fullDataset.getDatasetName() + "_kVoronoi" + voronoiK + "_pca" + pcaLength + "_simRelMinAns" + simRelMinAnswerSize + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__k" + k + "_perc" + percentile + "_pCum" + pCum + "_sketches" + sketchLength + "";
 
         Map pcaOMap;
         if (simRel instanceof DumbSimRel) {
@@ -166,7 +150,6 @@ public class EvaluateCRANBERRYMain {
                 sketchesDataset.getMetricSpace(),
                 simRel,
                 simRelMinAnswerSize,
-                simRelMaxAnswerSize,
                 pcaOMap,
                 fullDataset.getKeyValueStorage(),
                 datasetSize,
@@ -294,7 +277,7 @@ public class EvaluateCRANBERRYMain {
             double deltaVoronoiK = 200000;
             int deltaDatasetSize = 20228346;
             double derivative = deltaVoronoiK / deltaDatasetSize;
-            int ret =  (int) (derivative * (datasetSize - 30338306) + 400000);
+            int ret = (int) (derivative * (datasetSize - 30338306) + 400000);
             return (int) Math.min(ret, 0.9f * datasetSize);
         }
         throw new Error();
