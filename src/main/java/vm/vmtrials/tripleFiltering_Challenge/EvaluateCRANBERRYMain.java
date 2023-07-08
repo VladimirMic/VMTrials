@@ -244,20 +244,20 @@ public class EvaluateCRANBERRYMain {
      * *************************************************
      */
     public static final int getPCAK(int datasetSize) {
-        if (datasetSize > 30338306) {
-            double deltaMinSimRelAnswer = -900;
-            int deltaDatasetSize = 71702749;
-            double derivative = deltaMinSimRelAnswer / deltaDatasetSize;
-            return (int) (derivative * (datasetSize - 102041055) + 100);
-        }
         if (datasetSize <= 300000) {
-            return 1000;
+            return 500;
         }
         if (datasetSize <= 30338306) {
             double deltaVoronoiK = -1500;
             int deltaDatasetSize = 20228346;
             double derivative = deltaVoronoiK / deltaDatasetSize;
             return (int) (derivative * (datasetSize - 30338306) + 1000);
+        }
+        if (datasetSize > 30338306) {
+            double deltaMinSimRelAnswer = -900;
+            int deltaDatasetSize = 71702749;
+            double derivative = deltaMinSimRelAnswer / deltaDatasetSize;
+            return (int) (derivative * (datasetSize - 102041055) + 100);
         }
         throw new Error();
     }
@@ -270,13 +270,7 @@ public class EvaluateCRANBERRYMain {
     }
 
     public static final int getVoronoiK(int datasetSize) {
-        if (datasetSize > 30338306) {
-            double deltaVoronoiK = 600000;
-            int deltaDatasetSize = 71702749;
-            double derivative = deltaVoronoiK / deltaDatasetSize;
-            return (int) (derivative * (datasetSize - 102041055) + 1000000);
-        }
-        if(datasetSize <= 300000){
+        if (datasetSize <= 300000) {
             return (int) (0.1f * datasetSize);
         }
         if (datasetSize <= 30338306) {
@@ -285,6 +279,12 @@ public class EvaluateCRANBERRYMain {
             double derivative = deltaVoronoiK / deltaDatasetSize;
             int ret = (int) (derivative * (datasetSize - 30338306) + 400000);
             return (int) Math.min(ret, 0.9f * datasetSize);
+        }
+        if (datasetSize > 30338306) {
+            double deltaVoronoiK = 600000;
+            int deltaDatasetSize = 71702749;
+            double derivative = deltaVoronoiK / deltaDatasetSize;
+            return (int) (derivative * (datasetSize - 102041055) + 1000000);
         }
         throw new Error();
     }
