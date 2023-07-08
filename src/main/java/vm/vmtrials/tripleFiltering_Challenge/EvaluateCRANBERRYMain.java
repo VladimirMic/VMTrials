@@ -274,7 +274,7 @@ public class EvaluateCRANBERRYMain {
             return (int) (derivative * (datasetSize - 102041055) + 1000000);
         }
         if(datasetSize <= 300000){
-            return (int) (0.3f * datasetSize);
+            return (int) (0.1f * datasetSize);
         }
         if (datasetSize <= 30338306) {
             double deltaVoronoiK = 200000;
