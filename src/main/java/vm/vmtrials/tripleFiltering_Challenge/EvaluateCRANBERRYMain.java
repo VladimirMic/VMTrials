@@ -128,7 +128,7 @@ public class EvaluateCRANBERRYMain {
         int datasetSize = sketchFiltering.getNumberOfSketches();
 
         int voronoiK = getVoronoiK(datasetSize);
-        int simRelMinAnswerSize = getPCAK(datasetSize);
+        int simRelMinAnswerSize = getMinSimRelAnswerSize(datasetSize);
         SimRelInterface<float[]> simRel = initSimRel(querySampleCount, pcaLength, simRelMinAnswerSize, voronoiK, pcaDataset.getDatasetName(), percentile, prefixLength, pivotCountForVoronoi, "laion2B-en-clip768v2-n=30M.h5_PCA256_q200voronoiP20000_voronoiK600000_pcaLength256_kPCA100.csv");
 
         Map pcaOMap;
@@ -242,9 +242,9 @@ public class EvaluateCRANBERRYMain {
      * Init params for datasets given by their size ****
      * *************************************************
      */
-    public static final int getPCAK(int datasetSize) {
+    public static final int getMinSimRelAnswerSize(int datasetSize) {
         if (datasetSize <= 300000) {
-            return 500;
+            return 1000;
         }
         if (datasetSize <= 30338306) {
             double deltaVoronoiK = -1500;
@@ -262,8 +262,8 @@ public class EvaluateCRANBERRYMain {
     }
 
     public static final int getPivotCountForVoronoi(int datasetSize) {
-        if (datasetSize < 500000) {
-            return 200;
+        if (datasetSize <= 300000) {
+            return 1000;
         }
         return 20020;
     }

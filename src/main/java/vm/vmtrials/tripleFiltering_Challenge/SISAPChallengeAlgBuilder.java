@@ -73,7 +73,7 @@ public class SISAPChallengeAlgBuilder {
         System.gc();
         algVoronoi = new VoronoiPartitionsCandSetIdentifier(fullDataset, new FSVoronoiPartitioningStorage(), pivotsUsedForTheVoronoi);
         int voronoiK = EvaluateCRANBERRYMain.getVoronoiK(datasetSize);
-        int kPCA = EvaluateCRANBERRYMain.getPCAK(datasetSize);
+        int kPCA = EvaluateCRANBERRYMain.getMinSimRelAnswerSize(datasetSize);
         System.gc();
         algSimRelFiltering = EvaluateCRANBERRYMain.initSimRel(querySampleCount, pcaLength, kPCA, voronoiK, pcaDataset.getDatasetName(), percentile, prefixLength, null, tOmegaStresholdsFileNameVoluntary);
         this.k = k;
