@@ -250,6 +250,9 @@ public class EvaluateCRANBERRYMain {
             double derivative = deltaMinSimRelAnswer / deltaDatasetSize;
             return (int) (derivative * (datasetSize - 102041055) + 100);
         }
+        if (datasetSize <= 300000) {
+            return 1000;
+        }
         if (datasetSize <= 30338306) {
             double deltaVoronoiK = -1500;
             int deltaDatasetSize = 20228346;
