@@ -30,7 +30,6 @@ import vm.objTransforms.storeLearned.GHPSketchingPivotPairsStoreInterface;
 import vm.queryResults.recallEvaluation.RecallOfCandsSetsEvaluator;
 import vm.search.impl.VoronoiPartitionsCandSetIdentifier;
 import vm.search.impl.multiFiltering.CranberryAlgorithm;
-import static vm.search.impl.multiFiltering.CranberryAlgorithm.MAX_DIST_COMPS;
 import vm.simRel.SimRelInterface;
 import vm.simRel.impl.DumbSimRel;
 import vm.simRel.impl.SimRelEuclideanPCAImplForTesting;
@@ -131,7 +130,6 @@ public class EvaluateCRANBERRYMain {
         int voronoiK = getVoronoiK(datasetSize);
         int simRelMinAnswerSize = getPCAK(datasetSize);
         SimRelInterface<float[]> simRel = initSimRel(querySampleCount, pcaLength, simRelMinAnswerSize, voronoiK, pcaDataset.getDatasetName(), percentile, prefixLength, pivotCountForVoronoi, "laion2B-en-clip768v2-n=30M.h5_PCA256_q200voronoiP20000_voronoiK600000_pcaLength256_kPCA100.csv");
-        String resultName = "CRANBERRY_CHALLENGE_PAR_" + CranberryAlgorithm.QUERIES_PARALELISM + "_" + MAX_DIST_COMPS + "maxDists_" + fullDataset.getDatasetName() + "_kVoronoi" + voronoiK + "_pca" + pcaLength + "_simRelMinAns" + simRelMinAnswerSize + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__k" + k + "_perc" + percentile + "_pCum" + pCum + "_sketches" + sketchLength + "";
 
         Map pcaOMap;
         if (simRel instanceof DumbSimRel) {
@@ -156,6 +154,7 @@ public class EvaluateCRANBERRYMain {
                 fullDataset.getDistanceFunction()
         );
 
+        String resultName = "CRANBERRY_CHALLENGE_PAR_" + CranberryAlgorithm.QUERIES_PARALELISM + "_" + alg.getMaxDistComps()  + "maxDists_" + fullDataset.getDatasetName() + "_kVoronoi" + voronoiK + "_pca" + pcaLength + "_simRelMinAns" + simRelMinAnswerSize + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__k" + k + "_perc" + percentile + "_pCum" + pCum + "_sketches" + sketchLength + "";
         System.gc();
         vm.javatools.Tools.sleepSeconds(5);
         long overallTime = -System.currentTimeMillis();
@@ -271,7 +270,7 @@ public class EvaluateCRANBERRYMain {
 
     public static final int getVoronoiK(int datasetSize) {
         if (datasetSize <= 300000) {
-            return (int) (0.1f * datasetSize);
+            return (int) (0.3f * datasetSize);
         }
         if (datasetSize <= 30338306) {
             double deltaVoronoiK = 200000;

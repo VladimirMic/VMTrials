@@ -41,7 +41,6 @@ import vm.objTransforms.perform.PCAPrefixMetricObjectTransformer;
 import vm.objTransforms.perform.TransformDataToGHPSketches;
 import vm.objTransforms.storeLearned.GHPSketchingPivotPairsStoreInterface;
 import vm.search.impl.multiFiltering.CranberryAlgorithm;
-import static vm.search.impl.multiFiltering.CranberryAlgorithm.MAX_DIST_COMPS;
 import static vm.vmtrials.tripleFiltering_Challenge.SISAPChallengeAlgBuilder.MAX_DATASET_SIZE_TO_CACHE;
 import static vm.vmtrials.tripleFiltering_Challenge.SISAPChallengeAlgBuilder.MIN_DATASET_SIZE_TO_CACHE;
 
@@ -140,7 +139,7 @@ public class Main {
         }
 
         LOG.log(Level.INFO, "Storing statistics of queries");
-        String resultName = "CRANBERRY_COS_FINAL_PAR_" + CranberryAlgorithm.QUERIES_PARALELISM + "_" + MAX_DIST_COMPS + "maxDists_" + fullDataset.getDatasetName();
+        String resultName = "CRANBERRY_COS_FINAL_PAR_" + CranberryAlgorithm.QUERIES_PARALELISM + "_" + cranberryAlg.getMaxDistComps() + "maxDists_" + fullDataset.getDatasetName();
         FSQueryExecutionStatsStoreImpl statsStorage = new FSQueryExecutionStatsStoreImpl(fullDataset.getDatasetName(), fullDataset.getQuerySetName(), k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), resultName, null);
         statsStorage.storeStatsForQueries(cranberryAlg.getDistCompsPerQueries(), cranberryAlg.getTimesPerQueries(), cranberryAlg.getSimRelsPerQueries());
         statsStorage.saveFile();
