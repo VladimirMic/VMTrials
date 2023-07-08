@@ -24,6 +24,7 @@ import vm.fs.metricSpaceImpl.FSMetricSpacesStorage;
 import vm.fs.store.dataTransforms.FSGHPSketchesPivotPairsStorageImpl;
 import vm.fs.store.dataTransforms.FSSVDStorageImpl;
 import vm.fs.store.queryResults.FSNearestNeighboursStorageImpl;
+import vm.fs.store.queryResults.FSQueryExecutionStatsStoreImpl;
 import vm.fs.store.voronoiPartitioning.FSVoronoiPartitioningStorage;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.Dataset;
@@ -40,6 +41,7 @@ import vm.objTransforms.perform.PCAPrefixMetricObjectTransformer;
 import vm.objTransforms.perform.TransformDataToGHPSketches;
 import vm.objTransforms.storeLearned.GHPSketchingPivotPairsStoreInterface;
 import vm.search.impl.multiFiltering.CranberryAlgorithm;
+import static vm.search.impl.multiFiltering.CranberryAlgorithm.MAX_DIST_COMPS;
 import static vm.vmtrials.tripleFiltering_Challenge.SISAPChallengeAlgBuilder.MAX_DATASET_SIZE_TO_CACHE;
 import static vm.vmtrials.tripleFiltering_Challenge.SISAPChallengeAlgBuilder.MIN_DATASET_SIZE_TO_CACHE;
 
@@ -127,6 +129,16 @@ public class Main {
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+        LOG.log(Level.INFO, "Storing statistics of queries");
+        String resultName = "CRANBERRY_COS_FINAL_PAR_" + CranberryAlgorithm.QUERIES_PARALELISM + "_" + MAX_DIST_COMPS + "maxDists_" + fullDataset.getDatasetName();
+        FSQueryExecutionStatsStoreImpl statsStorage = new FSQueryExecutionStatsStoreImpl(fullDataset.getDatasetName(), fullDataset.getQuerySetName(), k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), resultName, null);
+        statsStorage.storeStatsForQueries(cranberryAlg.getDistCompsPerQueries(), cranberryAlg.getTimesPerQueries(), cranberryAlg.getSimRelsPerQueries());
+        statsStorage.saveFile();
+
+        LOG.log(Level.INFO, "Storing results of queries");
+        FSNearestNeighboursStorageImpl resultsStorageGZ = new FSNearestNeighboursStorageImpl();
+        resultsStorageGZ.storeQueryResults(fullMetricSpace, fullQueries, results, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), resultName);
     }
 
     private static SISAPChallengeAlgBuilder initAlgorithm(Dataset fullDataset, Dataset pcaDataset, Dataset sketchesDataset, AbstractObjectToSketchTransformator sketchingTechnique, int k) {
