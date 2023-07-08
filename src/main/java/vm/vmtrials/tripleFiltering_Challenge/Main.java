@@ -73,7 +73,7 @@ public class Main {
         makeAllSteps = args.length <= 5 || Boolean.parseBoolean(args[5]);
         int k = args.length <= 6 ? 10 : Integer.parseInt(args[6]);
 
-        Dataset fullDataset = createImplicitH5Dataset(dataset768DimPath, querySet768DimPath);
+        ImplicitH5Dataset fullDataset = createImplicitH5Dataset(dataset768DimPath, querySet768DimPath);
         Dataset pcaDataset = transformDatasetAndQueriesToPCAPreffixes(fullDataset, 256, 24);
 
         Dataset sketchesDataset;
@@ -102,6 +102,8 @@ public class Main {
         AbstractMetricSpace<float[]> fullMetricSpace = fullDataset.getMetricSpace();
 
         CranberryAlgorithm cranberryAlg = algBuilder.getCranberryAlg();
+        fullDataset.unloadPivots();
+
         System.gc();
         vm.javatools.Tools.sleepSeconds(5);
         System.gc();
@@ -206,7 +208,7 @@ public class Main {
      * Create implicit datasets - full and PCA dataset *
      * *************************************************
      */
-    private static Dataset createImplicitH5Dataset(String datasetPath, String querySetPath) {
+    private static ImplicitH5Dataset createImplicitH5Dataset(String datasetPath, String querySetPath) {
         return new Main.ImplicitH5Dataset(datasetPath, querySetPath);
     }
 
@@ -316,6 +318,18 @@ public class Main {
 
         public void loadAllDataObjetsToRam() {
             cache.loadAllDataObjets();
+        }
+
+        public void unloadPivots() {
+            cache.unloadPivots();
+        }
+
+        public void unloadQueries() {
+            cache.unloadQueries();
+        }
+
+        public void unloadDataObjets() {
+            cache.unloadDataObjets();
         }
 
     }
