@@ -85,11 +85,12 @@ public class Main {
             sketchingTechnique = getSketchingTechnique(fullDataset);
             sketchesDataset = createImplicitSketchesDataset(sketchingTechnique, fullDataset.getDatasetName(), SKETCH_LENGTH, 0.5f);
         }
-
+        System.gc();
         if (algBuilder == null) {
             algBuilder = initAlgorithm(fullDataset, pcaDataset, sketchesDataset, sketchingTechnique, k);
         }
         buildTime += System.currentTimeMillis();
+        System.gc();
         List fullQueries = fullDataset.getMetricQueryObjects();
         List pcaQueries = pcaDataset.getMetricQueryObjects();
 

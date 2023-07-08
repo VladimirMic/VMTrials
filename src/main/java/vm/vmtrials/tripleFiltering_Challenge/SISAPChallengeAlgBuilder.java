@@ -24,7 +24,7 @@ import vm.simRel.SimRelInterface;
  * @author Vlada
  */
 public class SISAPChallengeAlgBuilder {
-    
+
     public static final Integer MIN_DATASET_SIZE_TO_CACHE = 1000000; // milion
     public static final Integer MAX_DATASET_SIZE_TO_CACHE = 110000000; // 50 millions
 
@@ -70,14 +70,17 @@ public class SISAPChallengeAlgBuilder {
         algSketchFiltering = initSecondaryFilteringWithSketches(fullDataset, sketchesDataset, "", pCum, distIntervalsForPX);
         int datasetSize = algSketchFiltering.getNumberOfSketches();
         int pivotsUsedForTheVoronoi = EvaluateCRANBERRYMain.getPivotCountForVoronoi(datasetSize);
+        System.gc();
         algVoronoi = new VoronoiPartitionsCandSetIdentifier(fullDataset, new FSVoronoiPartitioningStorage(), pivotsUsedForTheVoronoi);
         int voronoiK = EvaluateCRANBERRYMain.getVoronoiK(datasetSize);
         int kPCA = EvaluateCRANBERRYMain.getPCAK(datasetSize);
+        System.gc();
         algSimRelFiltering = EvaluateCRANBERRYMain.initSimRel(querySampleCount, pcaLength, kPCA, voronoiK, pcaDataset.getDatasetName(), percentile, prefixLength, null, tOmegaStresholdsFileNameVoluntary);
         this.k = k;
 
         fullMetricSpace = fullDataset.getMetricSpace();
         pcaDatasetMetricSpace = pcaDataset.getMetricSpace();
+        System.gc();
         Map pcaOMap = EvaluateCRANBERRYMain.getMapOfPrefixes(pcaDatasetMetricSpace, pcaDataset.getMetricObjectsFromDataset(), prefixLength);
 
         cranberryAlg = new CranberryAlgorithm<>(
@@ -92,8 +95,9 @@ public class SISAPChallengeAlgBuilder {
                 pcaOMap,
                 fullDataset.getKeyValueStorage(),
                 algSketchFiltering.getNumberOfSketches(),
-                fullDataset.getDistanceFunction());
-
+                fullDataset.getDistanceFunction()
+        );
+        System.gc();
     }
 
     protected TreeSet<Map.Entry<Object, Float>> evaluatekNNQuery(String queryObjID, float[] qVectorData, float[] pcaQDataPreffixOrFull) {
