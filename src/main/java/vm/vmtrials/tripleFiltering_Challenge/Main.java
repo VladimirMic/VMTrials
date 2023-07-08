@@ -113,7 +113,7 @@ public class Main {
             m.unloadDataObjets();
         }
         System.gc();
-        vm.javatools.Tools.sleepSeconds(5);
+        vm.javatools.Tools.sleepSeconds(10);
 
         long queryTime = -System.currentTimeMillis();
         TreeSet[] results = cranberryAlg.completeKnnSearchOfQuerySet(fullMetricSpace, fullQueries, k, null, pcaDatasetMetricSpace, pcaQMap);
