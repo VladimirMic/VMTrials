@@ -42,7 +42,9 @@ import vm.simRel.impl.learn.SimRelEuclideanPCAForLearning;
 public class EvaluateCRANBERRYMain {
 
     private static final Logger LOG = Logger.getLogger(EvaluateCRANBERRYMain.class.getName());
-    // To learn the simRel, swith here the boolean value and make sure to use 30M dataset due to memory limitations. Do not have to care about the parameter QUERY_COUNT_LIMIT
+    // To learn the simRel, switch here the boolean value and make sure to max 30M dataset due to memory limitations.
+    //Then provide full 256 dim PCA dataset, and decrease the paralelisation to 1. 
+    //Do not have to care about the parameter QUERY_COUNT_LIMIT
     public static final Boolean LEARN_SIMREL = false;
     public static final Integer QUERY_COUNT_LIMIT = -1;
 
@@ -51,14 +53,16 @@ public class EvaluateCRANBERRYMain {
         // parameter for the Secondary filtering with the sketches
 //        vm.javatools.Tools.sleep(360);
         float pCum = LearningSecondaryFilteringWithSketches.THRESHOLDS_P_CUM[0];
+//        String tOmegaThresholdsFile = "laion2B-en-clip768v2-n=30M.h5_PCA256_q200voronoiP20000_voronoiK600000_pcaLength256_kPCA100.csv";
+        String tOmegaThresholdsFile = "laion2B-en-clip768v2-n=10M.h5_PCA256_q100voronoiP20000_voronoiK200101_pcaLength256_kPCA750.csv";
         Dataset[] fullDatasets = new Dataset[]{
             new FSDatasetInstanceSingularizator.LAION_10M_Dataset(),
             new FSDatasetInstanceSingularizator.LAION_30M_Dataset(),
             new FSDatasetInstanceSingularizator.LAION_100M_Dataset()
         };
         Dataset[] pcaDatasets = new Dataset[]{
-            new FSDatasetInstanceSingularizator.LAION_10M_PCA256Prefixes24Dataset(),
-            new FSDatasetInstanceSingularizator.LAION_30M_PCA256Prefixes24Dataset(),
+            new FSDatasetInstanceSingularizator.LAION_10M_PCA256Dataset(),
+            new FSDatasetInstanceSingularizator.LAION_30M_PCA256Dataset(),
             new FSDatasetInstanceSingularizator.LAION_100M_PCA256Prefixes24Dataset()
         };
 
@@ -70,17 +74,17 @@ public class EvaluateCRANBERRYMain {
 
         float distIntervalForPX = 0.004f;
         for (int i = 2; i < fullDatasets.length; i++) {
-            run(fullDatasets[i], pcaDatasets[i], sketchesDatasets[i], distIntervalForPX, sketchLength, pCum);
+            run(fullDatasets[i], pcaDatasets[i], sketchesDatasets[i], distIntervalForPX, sketchLength, pCum, tOmegaThresholdsFile);
             break;
         }
     }
 
-    private static void run(Dataset fullDataset, Dataset pcaDataset, Dataset sketchesDataset, float distIntervalsForPX, int sketchLength, float pCum) {
+    private static void run(Dataset fullDataset, Dataset pcaDataset, Dataset sketchesDataset, float distIntervalsForPX, int sketchLength, float pCum, String tOmegaThresholdsFile) {
         /* kNN queries - the result set size */
         int k = 10;
         /*  prefix of the PCA shortened vectors used by the simRel */
         int prefixLength = 24;
-        int pivotCountForVoronoi = 20000;
+        int pivotCountForVoronoi = 20020;
         /*  prefix of the shortened vectors used by the simRel */
         int pcaLength = 256;
         /* number of query objects to learn t(\Omega) thresholds. We use different objects than the queries tested. */
@@ -88,7 +92,7 @@ public class EvaluateCRANBERRYMain {
         /* percentile - defined in the paper. Defines the precision of the simRel */
         float percentile = 0.99f;
 
-        testQueries(fullDataset, pcaDataset, sketchesDataset, percentile, pivotCountForVoronoi, k, prefixLength, pcaLength, sketchLength, pCum, distIntervalsForPX, querySampleCount);
+        testQueries(fullDataset, pcaDataset, sketchesDataset, percentile, pivotCountForVoronoi, k, prefixLength, pcaLength, sketchLength, pCum, distIntervalsForPX, querySampleCount, tOmegaThresholdsFile);
     }
 
     private static void testQueries(
@@ -103,7 +107,8 @@ public class EvaluateCRANBERRYMain {
             int sketchLength,
             float pCum,
             float distIntervalsForPX,
-            int querySampleCount
+            int querySampleCount,
+            String tOmegaThresholdsFile
     ) {
 
         //queries
@@ -129,7 +134,7 @@ public class EvaluateCRANBERRYMain {
 
         int voronoiK = getVoronoiK(datasetSize);
         int simRelMinAnswerSize = getMinSimRelAnswerSize(datasetSize);
-        SimRelInterface<float[]> simRel = initSimRel(querySampleCount, pcaLength, simRelMinAnswerSize, voronoiK, pcaDataset.getDatasetName(), percentile, prefixLength, pivotCountForVoronoi, "laion2B-en-clip768v2-n=30M.h5_PCA256_q200voronoiP20000_voronoiK600000_pcaLength256_kPCA100.csv");
+        SimRelInterface<float[]> simRel = initSimRel(querySampleCount, pcaLength, simRelMinAnswerSize, voronoiK, pcaDataset.getDatasetName(), percentile, prefixLength, pivotCountForVoronoi, tOmegaThresholdsFile);
 
         Map pcaOMap;
         if (simRel instanceof DumbSimRel) {
@@ -154,7 +159,7 @@ public class EvaluateCRANBERRYMain {
                 fullDataset.getDistanceFunction()
         );
 
-        String resultName = "CRANBERRY_CHALLENGE_PAR_" + CranberryAlgorithm.QUERIES_PARALELISM + "_" + alg.getMaxDistComps()  + "maxDists_" + fullDataset.getDatasetName() + "_kVoronoi" + voronoiK + "_pca" + pcaLength + "_simRelMinAns" + simRelMinAnswerSize + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__k" + k + "_perc" + percentile + "_pCum" + pCum + "_sketches" + sketchLength + "";
+        String resultName = "CRANBERRY_CHALLENGE_10MtOmega01_PAR_" + CranberryAlgorithm.QUERIES_PARALELISM + "_" + alg.getMaxDistComps() + "maxDists_" + fullDataset.getDatasetName() + "_kVoronoi" + voronoiK + "_pca" + pcaLength + "_simRelMinAns" + simRelMinAnswerSize + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__k" + k + "_perc" + percentile + "_pCum" + pCum + "_sketches" + sketchLength + "";
         System.gc();
         vm.javatools.Tools.sleepSeconds(5);
         long overallTime = -System.currentTimeMillis();
@@ -243,6 +248,9 @@ public class EvaluateCRANBERRYMain {
      * *************************************************
      */
     public static final int getMinSimRelAnswerSize(int datasetSize) {
+        if (LEARN_SIMREL) {
+            return 300;
+        }
         if (datasetSize <= 300000) {
             return 1000;
         }

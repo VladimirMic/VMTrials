@@ -52,6 +52,7 @@ public class Main {
 
     public static final Logger LOG = Logger.getLogger(Main.class.getName());
     public static final Integer SKETCH_LENGTH = 512;
+    public static final String FILE_WITH_T_OMEGA_THRESHOLDS = "laion2B-en-clip768v2-n=30M.h5_PCA256_q200voronoiP20000_voronoiK600000_pcaLength256_kPCA100.csv";
 
     private static SISAPChallengeAlgBuilder algBuilder = null;
 
@@ -151,8 +152,7 @@ public class Main {
 
     private static SISAPChallengeAlgBuilder initAlgorithm(Dataset fullDataset, Dataset pcaDataset, Dataset sketchesDataset, AbstractObjectToSketchTransformator sketchingTechnique, int k) {
         LOG.log(Level.INFO, "Initializing algorithm");
-        String fileWithTOmegaThresholds = "laion2B-en-clip768v2-n=30M.h5_PCA256_q200voronoiP20000_voronoiK600000_pcaLength256_kPCA100.csv";
-        SISAPChallengeAlgBuilder ret = new SISAPChallengeAlgBuilder(fullDataset, pcaDataset, sketchesDataset, sketchingTechnique, k, fileWithTOmegaThresholds);
+        SISAPChallengeAlgBuilder ret = new SISAPChallengeAlgBuilder(fullDataset, pcaDataset, sketchesDataset, sketchingTechnique, k, FILE_WITH_T_OMEGA_THRESHOLDS);
         Logger.getLogger(Main.class.getName()).log(Level.INFO, "Algorithm initialised");
         return ret;
     }

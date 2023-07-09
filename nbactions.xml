@@ -12,7 +12,6 @@
             <properties>
                 <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
                 <exec.executable>java</exec.executable>
-                <exec.mainClass>vm.vmtrials.tripleFiltering_Challenge.Main</exec.mainClass>
                 <exec.vmArgs>-Xmx500g</exec.vmArgs>
                 <exec.appArgs>c:\Data\Similarity_search\Dataset\Dataset\laion2B-en-clip768v2-n=100k.h5 x c:\Data\Similarity_search\Dataset\Query\public-queries-10k-clip768v2.h5 y 100000 true 10</exec.appArgs>
             </properties>
