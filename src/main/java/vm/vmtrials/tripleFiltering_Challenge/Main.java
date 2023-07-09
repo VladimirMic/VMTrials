@@ -52,7 +52,7 @@ public class Main {
 
     public static final Logger LOG = Logger.getLogger(Main.class.getName());
     public static final Integer SKETCH_LENGTH = 512;
-    public static final String FILE_WITH_T_OMEGA_THRESHOLDS = "laion2B-en-clip768v2-n=30M.h5_PCA256_q200voronoiP20000_voronoiK600000_pcaLength256_kPCA100.csv";
+    public static final String FILE_WITH_T_OMEGA_THRESHOLDS = "laion2B-en-clip768v2-n=10M.h5_PCA256_q100voronoiP20000_voronoiK200101_pcaLength256_kPCA750.csv";
 
     private static SISAPChallengeAlgBuilder algBuilder = null;
 

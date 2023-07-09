@@ -53,7 +53,6 @@ public class EvaluateCRANBERRYMain {
         // parameter for the Secondary filtering with the sketches
 //        vm.javatools.Tools.sleep(360);
         float pCum = LearningSecondaryFilteringWithSketches.THRESHOLDS_P_CUM[0];
-//        String tOmegaThresholdsFile = "laion2B-en-clip768v2-n=30M.h5_PCA256_q200voronoiP20000_voronoiK600000_pcaLength256_kPCA100.csv";
         String tOmegaThresholdsFile = "laion2B-en-clip768v2-n=10M.h5_PCA256_q100voronoiP20000_voronoiK200101_pcaLength256_kPCA750.csv";
         Dataset[] fullDatasets = new Dataset[]{
             new FSDatasetInstanceSingularizator.LAION_10M_Dataset(),
