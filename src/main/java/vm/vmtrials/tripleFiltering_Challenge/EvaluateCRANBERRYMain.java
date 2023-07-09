@@ -161,8 +161,8 @@ public class EvaluateCRANBERRYMain {
         String resultName = "CRANBERRY_CHALLENGE_10MtOmega01_PAR_" + CranberryAlgorithm.QUERIES_PARALELISM + "_" + alg.getMaxDistComps() + "maxDists_" + fullDataset.getDatasetName() + "_kVoronoi" + voronoiK + "_pca" + pcaLength + "_simRelMinAns" + simRelMinAnswerSize + "_prefix" + prefixLength + "_learntOmegaOn_" + querySampleCount + "q__k" + k + "_perc" + percentile + "_pCum" + pCum + "_sketches" + sketchLength + "";
         System.gc();
         vm.javatools.Tools.sleepSeconds(5);
-        long overallTime = -System.currentTimeMillis();
         int queryCount = LEARN_SIMREL ? querySampleCount : QUERY_COUNT_LIMIT;
+        long overallTime = -System.currentTimeMillis();
         TreeSet[] results = alg.completeKnnSearchOfQuerySet(fullMetricSpace, fullQueries, k, null, pcaDatasetMetricSpace, pcaQMap, queryCount);
         overallTime += System.currentTimeMillis();
 

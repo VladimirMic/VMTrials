@@ -64,7 +64,7 @@ public class DeleteTrialWithVoronoiFilteringPlusLimitedAngles<T> extends Searchi
      * @return
      */
     @Override
-    public List<Object> candSetKnnSearch(AbstractMetricSpace<T> metricSpace, Object fullQueryObj, int k, Iterator<Object> objects) {
+    public List<Object> candSetKnnSearch(AbstractMetricSpace<T> metricSpace, Object fullQueryObj, int k, Iterator<Object> objects, Object ... additionalParams) {
         T qData = metricSpace.getDataOfMetricObject(fullQueryObj);
         TreeSet<Map.Entry<Object, Float>> pivotPerm = ToolsMetricDomain.getPivotIDsPermutationWithDists(df, pivotsMap, qData, -1);
         Iterator<Map.Entry<Object, Float>> it = pivotPerm.iterator();

@@ -32,7 +32,7 @@ public class GradualFilteringWithSeveralAlgorithms<T> extends SearchingAlgorithm
     }
 
     @Override
-    public List<Object> candSetKnnSearch(AbstractMetricSpace<T> metricSpace, Object queryObject, int k, Iterator<Object> objects) {
+    public List<Object> candSetKnnSearch(AbstractMetricSpace<T> metricSpace, Object queryObject, int k, Iterator<Object> objects, Object ... additionalParams) {
         Iterator<Object> cands = objects;
         List<Object> candSetKnnSearch = null;
         for (SearchingAlgorithm<T> alg : algs) {

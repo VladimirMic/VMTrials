@@ -88,7 +88,7 @@ public class PrintStatsWhereAreNNs {
         for (Map.Entry<String, TreeSet<Map.Entry<Object, Float>>> gtForQuery : gt.entrySet()) {
             String qID = gtForQuery.getKey();
             Object qData = queries.get(qID);
-            Object[] pivotPermutation = ToolsMetricDomain.getPivotIDsPermutation(df, pivots, qData, -1);
+            Object[] pivotPermutation = ToolsMetricDomain.getPivotIDsPermutation(df, pivots, qData, -1, null);
             TreeSet<Map.Entry<Object, Float>> gtQueryResult = gtForQuery.getValue();
             // go cells by cell until all kNN are found
             int cellsCount = 0;
