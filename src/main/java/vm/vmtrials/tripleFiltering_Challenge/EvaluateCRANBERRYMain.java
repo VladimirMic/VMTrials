@@ -253,19 +253,23 @@ public class EvaluateCRANBERRYMain {
         if (datasetSize <= 300000) {
             return 1000;
         }
-        if (datasetSize <= 30338306) {
-            double deltaVoronoiK = -1500;
-            int deltaDatasetSize = 20228346;
-            double derivative = deltaVoronoiK / deltaDatasetSize;
-            return (int) (derivative * (datasetSize - 30338306) + 1000);
-        }
-        if (datasetSize > 30338306) {
-            double deltaMinSimRelAnswer = -900;
-            int deltaDatasetSize = 71702749;
-            double derivative = deltaMinSimRelAnswer / deltaDatasetSize;
-            return (int) (derivative * (datasetSize - 102041055) + 100);
-        }
-        throw new Error();
+        return 100;
+//        int smallSize = 10109960;
+//        int midSize = 30369256;
+//        int bigSize = 102041055;
+//        if (datasetSize <= midSize) {
+//            double deltaVoronoiK = -2300;
+//            int deltaDatasetSize = midSize - smallSize;
+//            double derivative = deltaVoronoiK / deltaDatasetSize;
+//            return (int) (derivative * (datasetSize - midSize) + 100);
+//        }
+//        if (datasetSize > midSize) {
+//            double deltaMinSimRelAnswer = -100;
+//            int deltaDatasetSize = bigSize - midSize;
+//            double derivative = deltaMinSimRelAnswer / deltaDatasetSize;
+//            return (int) (derivative * (datasetSize - bigSize) + 100);
+//        }
+//        throw new Error();
     }
 
     public static final int getPivotCountForVoronoi(int datasetSize) {
@@ -279,18 +283,21 @@ public class EvaluateCRANBERRYMain {
         if (datasetSize <= 300000) {
             return (int) (0.3f * datasetSize);
         }
-        if (datasetSize <= 30338306) {
+        int smallSize = 10109960;
+        int midSize = 30369256;
+        int bigSize = 102041055;
+        if (datasetSize <= midSize) {
             double deltaVoronoiK = 200000;
-            int deltaDatasetSize = 20228346;
+            int deltaDatasetSize = midSize - smallSize;
             double derivative = deltaVoronoiK / deltaDatasetSize;
-            int ret = (int) (derivative * (datasetSize - 30338306) + 400000);
+            int ret = (int) (derivative * (datasetSize - midSize) + 400000);
             return (int) Math.min(ret, 0.9f * datasetSize);
         }
-        if (datasetSize > 30338306) {
+        if (datasetSize > midSize) {
             double deltaVoronoiK = 600000;
-            int deltaDatasetSize = 71702749;
+            int deltaDatasetSize = bigSize - midSize;
             double derivative = deltaVoronoiK / deltaDatasetSize;
-            return (int) (derivative * (datasetSize - 102041055) + 1000000);
+            return (int) (derivative * (datasetSize - bigSize) + 1000000);
         }
         throw new Error();
     }
