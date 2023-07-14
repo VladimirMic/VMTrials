@@ -72,7 +72,7 @@ public class EvaluateCRANBERRYMain {
         };
 
         float distIntervalForPX = 0.004f;
-        for (int i = 2; i < fullDatasets.length; i++) {
+        for (int i = 0; i < fullDatasets.length; i++) {
             run(fullDatasets[i], pcaDatasets[i], sketchesDatasets[i], distIntervalForPX, sketchLength, pCum, tOmegaThresholdsFile);
             break;
         }
