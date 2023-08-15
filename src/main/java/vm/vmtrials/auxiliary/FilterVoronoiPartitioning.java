@@ -21,9 +21,9 @@ import vm.metricSpace.ToolsMetricDomain;
  *
  * @author Vlada
  */
-public class FilterForonoiPartitioning {
+public class FilterVoronoiPartitioning {
 
-    private static final Logger LOG = Logger.getLogger(FilterForonoiPartitioning.class.getName());
+    private static final Logger LOG = Logger.getLogger(FilterVoronoiPartitioning.class.getName());
 
     public static void main(String[] args) {
         Dataset partitioninedDataset = new FSDatasetInstanceSingularizator.LAION_100M_Dataset();
