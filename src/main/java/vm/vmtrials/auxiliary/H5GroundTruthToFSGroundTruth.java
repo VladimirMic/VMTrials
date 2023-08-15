@@ -12,7 +12,6 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import static java.util.Locale.filter;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.TreeSet;
@@ -31,8 +30,8 @@ public class H5GroundTruthToFSGroundTruth {
     public static final Logger LOG = Logger.getLogger(H5GroundTruthToFSGroundTruth.class.getName());
 
     public static void main(String[] args) {
-        String path = "c:\\Data\\Similarity_search\\Result\\ground_truth\\laion2B-en-public-gold-standard-v2-100M-F64-IEEE754.h5";
-        String datasetName = "laion2B-en-public-gold-standard-v2-100M-F64-IEEE754";
+        String datasetName = "laion2B-en-public-gold-standard-v2-30M-F64-IEEE754";
+        String path = "h:\\Similarity_search\\Result\\ground_truth\\" + datasetName + ".h5";
         Iterator[] it = parseH5GroundTruth(path);
         TreeSet<Map.Entry<Object, Float>>[] results = GroundTruthEvaluator.initKNNResultSets(10000);
         List<Object> queries = new ArrayList<>();

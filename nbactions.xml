@@ -12,8 +12,9 @@
             <properties>
                 <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
                 <exec.executable>java</exec.executable>
-                <exec.vmArgs>-Xmx500g</exec.vmArgs>
-                <exec.appArgs>c:\Data\Similarity_search\Dataset\Dataset\laion2B-en-clip768v2-n=100k.h5 x c:\Data\Similarity_search\Dataset\Query\public-queries-10k-clip768v2.h5 y 100000 true 10</exec.appArgs>
+                <exec.mainClass>vm.vmtrials.tripleFiltering_Challenge.EvaluateCRANBERRYMain</exec.mainClass>
+                <exec.vmArgs>-Xmx96g</exec.vmArgs>
+                <exec.appArgs>h:\Similarity_search\Dataset\Dataset\laion2B-en-clip768v2-n=100k.h5 x h:\Similarity_search\Dataset\Query\public-queries-10k-clip768v2.h5 y Z true 10</exec.appArgs>
             </properties>
         </action>
         <action>
@@ -29,9 +30,9 @@
                 <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
                 <exec.executable>java</exec.executable>
                 <jpda.listen>true</jpda.listen>
-                <exec.mainClass>vm.vmtrials.tripleFiltering_Challenge.Main</exec.mainClass>
-                <exec.vmArgs>-Xmx500g -agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address}</exec.vmArgs>
-                <exec.appArgs>c:\Data\Similarity_search\Dataset\Dataset\laion2B-en-clip768v2-n=100k.h5 x c:\Data\Similarity_search\Dataset\Query\public-queries-10k-clip768v2.h5 y 100000 true 10</exec.appArgs>
+                <exec.mainClass>vm.vmtrials.tripleFiltering_Challenge.EvaluateCRANBERRYMain</exec.mainClass>
+                <exec.vmArgs>-Xmx96g -agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address}</exec.vmArgs>
+                <exec.appArgs>h:\Similarity_search\Dataset\Dataset\laion2B-en-clip768v2-n=100k.h5 x h:\Similarity_search\Dataset\Query\public-queries-10k-clip768v2.h5 y Z true 10</exec.appArgs>
             </properties>
         </action>
         <action>
@@ -46,9 +47,9 @@
             <properties>
                 <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
                 <exec.executable>java</exec.executable>
-                <exec.mainClass>vm.vmtrials.tripleFiltering_Challenge.Main</exec.mainClass>
-                <exec.vmArgs>-Xmx500g</exec.vmArgs>
-                <exec.appArgs>c:\Data\Similarity_search\Dataset\Dataset\laion2B-en-clip768v2-n=100k.h5 x c:\Data\Similarity_search\Dataset\Query\public-queries-10k-clip768v2.h5 y 100000 true 10</exec.appArgs>
+                <exec.mainClass>vm.vmtrials.tripleFiltering_Challenge.EvaluateCRANBERRYMain</exec.mainClass>
+                <exec.vmArgs>-Xmx96g</exec.vmArgs>
+                <exec.appArgs>h:\Similarity_search\Dataset\Dataset\laion2B-en-clip768v2-n=100k.h5 x h:\Similarity_search\Dataset\Query\public-queries-10k-clip768v2.h5 y Z true 10</exec.appArgs>
             </properties>
         </action>
     </actions>

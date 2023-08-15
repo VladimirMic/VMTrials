@@ -27,6 +27,7 @@ import vm.metricSpace.distance.bounding.nopivot.learning.LearningSecondaryFilter
 import vm.objTransforms.objectToSketchTransformators.AbstractObjectToSketchTransformator;
 import vm.objTransforms.objectToSketchTransformators.SketchingGHP;
 import vm.objTransforms.storeLearned.GHPSketchingPivotPairsStoreInterface;
+import vm.queryResults.errorOnDistEvaluation.ErrorOnDistEvaluator;
 import vm.queryResults.recallEvaluation.RecallOfCandsSetsEvaluator;
 import vm.search.impl.VoronoiPartitionsCandSetIdentifier;
 import vm.search.impl.multiFiltering.CranberryAlgorithm;
@@ -60,8 +61,8 @@ public class EvaluateCRANBERRYMain {
             new FSDatasetInstanceSingularizator.LAION_100M_Dataset()
         };
         Dataset[] pcaDatasets = new Dataset[]{
-            new FSDatasetInstanceSingularizator.LAION_10M_PCA256Dataset(),
-            new FSDatasetInstanceSingularizator.LAION_30M_PCA256Dataset(),
+            new FSDatasetInstanceSingularizator.LAION_10M_PCA256Prefixes24Dataset(),
+            new FSDatasetInstanceSingularizator.LAION_30M_PCA256Prefixes24Dataset(),
             new FSDatasetInstanceSingularizator.LAION_100M_PCA256Prefixes24Dataset()
         };
 
@@ -72,7 +73,7 @@ public class EvaluateCRANBERRYMain {
         };
 
         float distIntervalForPX = 0.004f;
-        for (int i = 0; i < fullDatasets.length; i++) {
+        for (int i = 2; i < fullDatasets.length; i++) {
             run(fullDatasets[i], pcaDatasets[i], sketchesDatasets[i], distIntervalForPX, sketchLength, pCum, tOmegaThresholdsFile);
             break;
         }
@@ -188,6 +189,10 @@ public class EvaluateCRANBERRYMain {
         RecallOfCandsSetsEvaluator evaluator = new RecallOfCandsSetsEvaluator(new FSNearestNeighboursStorageImpl(), recallStorage);
         evaluator.evaluateAndStoreRecallsOfQueries(fullDataset.getDatasetName(), fullDataset.getQuerySetName(), k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), resultName, k);
         recallStorage.saveFile();
+        LOG.log(Level.INFO, "Evaluating error on distance");
+        ErrorOnDistEvaluator eodEvaluator = new ErrorOnDistEvaluator(resultsStorage, recallStorage);
+        eodEvaluator.evaluateAndStoreErrorsOnDist(fullDataset.getDatasetName(), fullDataset.getQuerySetName(), k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), resultName);
+        recallStorage.saveFile();
 
         LOG.log(Level.INFO, "Overall time: {0}", overallTime);
         sketchFiltering.shutdownThreadPool();
@@ -280,26 +285,27 @@ public class EvaluateCRANBERRYMain {
     }
 
     public static final int getVoronoiK(int datasetSize) {
-        if (datasetSize <= 300000) {
-            return (int) (0.3f * datasetSize);
-        }
-        int smallSize = 10109960;
-        int midSize = 30369256;
-        int bigSize = 102041055;
-        if (datasetSize <= midSize) {
-            double deltaVoronoiK = 200000;
-            int deltaDatasetSize = midSize - smallSize;
-            double derivative = deltaVoronoiK / deltaDatasetSize;
-            int ret = (int) (derivative * (datasetSize - midSize) + 400000);
-            return (int) Math.min(ret, 0.9f * datasetSize);
-        }
-        if (datasetSize > midSize) {
-            double deltaVoronoiK = 600000;
-            int deltaDatasetSize = bigSize - midSize;
-            double derivative = deltaVoronoiK / deltaDatasetSize;
-            return (int) (derivative * (datasetSize - bigSize) + 1000000);
-        }
-        throw new Error();
+        return 800000;
+//        if (datasetSize <= 300000) {
+//            return (int) (0.3f * datasetSize);
+//        }
+//        int smallSize = 10109960;
+//        int midSize = 30369256;
+//        int bigSize = 102041055;
+//        if (datasetSize <= midSize) {
+//            double deltaVoronoiK = 200000;
+//            int deltaDatasetSize = midSize - smallSize;
+//            double derivative = deltaVoronoiK / deltaDatasetSize;
+//            int ret = (int) (derivative * (datasetSize - midSize) + 400000);
+//            return (int) Math.min(ret, 0.9f * datasetSize);
+//        }
+//        if (datasetSize > midSize) {
+//            double deltaVoronoiK = 600000;
+//            int deltaDatasetSize = bigSize - midSize;
+//            double derivative = deltaVoronoiK / deltaDatasetSize;
+//            return (int) (derivative * (datasetSize - bigSize) + 1000000);
+//        }
+//        throw new Error();
     }
 
 }
