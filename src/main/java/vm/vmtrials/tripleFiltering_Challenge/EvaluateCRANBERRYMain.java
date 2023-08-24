@@ -285,7 +285,7 @@ public class EvaluateCRANBERRYMain {
     }
 
     public static final int getVoronoiK(int datasetSize) {
-        return 500000;
+        return 550000;
 //        if (datasetSize <= 300000) {
 //            return (int) (0.3f * datasetSize);
 //        }
