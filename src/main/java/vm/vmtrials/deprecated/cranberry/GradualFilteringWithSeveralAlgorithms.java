@@ -1,4 +1,4 @@
-package vm.vmtrials.deprecated;
+package vm.vmtrials.deprecated.cranberry;
 
 import java.util.Iterator;
 import java.util.List;

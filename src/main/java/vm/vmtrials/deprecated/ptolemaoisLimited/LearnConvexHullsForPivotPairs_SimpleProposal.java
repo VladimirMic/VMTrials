@@ -1,4 +1,4 @@
-package vm.vmtrials.ptolemaios;
+package vm.vmtrials.deprecated.ptolemaoisLimited;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.datatools.Tools;
-import vm.distEstimation.limitedAngles.foursome.ToolsPtolemaionsLikeCoefs;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
 import vm.fs.store.auxiliaryForDistBounding.FSPtolemyInequalityWithLimitedAnglesHullsStorageImpl;
 import vm.metricSpace.AbstractMetricSpace;
@@ -20,6 +19,7 @@ import vm.structures.ConvexHull2DEuclid;
  *
  * @author Vlada
  */
+@Deprecated
 public class LearnConvexHullsForPivotPairs_SimpleProposal {
 
     public static final Float RATIO_OF_OUTLIERS_TO_CUT = 0f; // in total, i.e., half if this number is cut from each side on the x axis
@@ -59,7 +59,7 @@ public class LearnConvexHullsForPivotPairs_SimpleProposal {
                 fourObjects[2] = twoObjects[0];
                 fourObjects[3] = twoObjects[1];
                 Object[] fourObjectsData = ToolsMetricDomain.getData(fourObjects, metricSpace);
-                float[] sixDists = ToolsPtolemaionsLikeCoefs.getPairwiseDistsOfFourObjects(df, true, fourObjectsData);
+                float[] sixDists = ToolsMetricDomain.getPairwiseDistsOfFourObjects(df, true, fourObjectsData);
                 if (sixDists == null) {
                     i--;
                     continue;

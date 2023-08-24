@@ -28,7 +28,7 @@ import vm.queryResults.recallEvaluation.RecallOfCandsSetsEvaluator;
 import vm.search.impl.VoronoiPartitionsCandSetIdentifier;
 import vm.simRel.impl.SimRelEuclideanPCAImpl;
 import vm.simRel.impl.SimRelEuclideanPCAImplForTesting;
-import vm.vmtrials.deprecated.SimRelInstantRefinement;
+import vm.vmtrials.deprecated.simrel.SimRelInstantRefinement;
 import vm.vmtrials.tripleFiltering_Challenge.EvaluateCRANBERRYMain;
 
 /**

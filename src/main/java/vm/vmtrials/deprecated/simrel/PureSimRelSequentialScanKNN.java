@@ -1,4 +1,4 @@
-package vm.vmtrials.deprecated;
+package vm.vmtrials.deprecated.simrel;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;

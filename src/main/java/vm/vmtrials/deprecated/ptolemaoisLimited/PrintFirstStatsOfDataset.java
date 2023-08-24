@@ -1,4 +1,4 @@
-package vm.vmtrials.ptolemaios;
+package vm.vmtrials.deprecated.ptolemaoisLimited;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
 import vm.datatools.Tools;
-import vm.distEstimation.limitedAngles.foursome.ToolsPtolemaionsLikeCoefs;
 import vm.fs.FSGlobal;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
 import vm.fs.metricSpaceImpl.FSMetricSpaceImpl;
@@ -19,6 +18,8 @@ import vm.metricSpace.distance.DistanceFunctionInterface;
  *
  * @author Vlada
  */
+@Deprecated
+
 public class PrintFirstStatsOfDataset {
 
     public static final Integer NUMBER_OF_TETRAHEDRONS = 10000;
@@ -58,7 +59,7 @@ public class PrintFirstStatsOfDataset {
                 fourObjects[2] = twoObjects[0];
                 fourObjects[3] = twoObjects[1];
                 Object[] fourObjectsData = ToolsMetricDomain.getData(fourObjects, metricSpace);
-                float[] sixDists = ToolsPtolemaionsLikeCoefs.getPairwiseDistsOfFourObjects(df, true, fourObjectsData);
+                float[] sixDists = ToolsMetricDomain.getPairwiseDistsOfFourObjects(df, true, fourObjectsData);
                 if (sixDists == null) {
                     i--;
                     continue;
@@ -76,7 +77,7 @@ public class PrintFirstStatsOfDataset {
                 Tools.printArray(sixDists, false);
 
                 // print 8 angles 0: beta1, 1: delta2, 2: gamma2, 3: alphao, 4: deltao, 5: betaq, 6: alphaq, 7: gamma1
-                float[] anglesRad = ToolsPtolemaionsLikeCoefs.get8Angles(sixDists, false);
+                float[] anglesRad = Tools.get8Angles(sixDists, false);
                 float[] anglesDeg = vm.math.Tools.radsToDeg(anglesRad);
                 Tools.printArray(anglesDeg, false);
 
