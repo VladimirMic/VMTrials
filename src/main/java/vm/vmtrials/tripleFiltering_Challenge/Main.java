@@ -32,7 +32,7 @@ import vm.metricSpace.AbstractMetricSpacesStorage;
 import vm.metricSpace.MainMemoryDatasetCache;
 import vm.metricSpace.ToolsMetricDomain;
 import vm.metricSpace.dataToStringConvertors.SingularisedConvertors;
-import vm.metricSpace.voronoiPartitioning.VoronoiPartitioning;
+import vm.metricSpace.datasetPartitioning.impl.VoronoiPartitioning;
 import vm.objTransforms.MetricObjectTransformerInterface;
 import vm.objTransforms.MetricObjectsParallelTransformerImpl;
 import vm.objTransforms.objectToSketchTransformators.AbstractObjectToSketchTransformator;
@@ -190,7 +190,7 @@ public class Main {
         List<Object> pivots = dataset.getPivots(pivotCount);
         VoronoiPartitioning vp = new VoronoiPartitioning(dataset.getMetricSpace(), dataset.getDistanceFunction(), pivots);
         FSVoronoiPartitioningStorage storage = new FSVoronoiPartitioningStorage();
-        vp.splitByVoronoi(dataset.getMetricObjectsFromDataset(), dataset.getDatasetName(), pivotCount, storage);
+        vp.splitByVoronoi(dataset.getMetricObjectsFromDataset(), dataset.getDatasetName(), storage, pivotCount);
     }
 
     private static AbstractObjectToSketchTransformator createSketches(Dataset fullDataset, MainMemoryDatasetCache resultsDataset) {

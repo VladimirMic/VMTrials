@@ -8,7 +8,7 @@ import java.util.TreeSet;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
 import vm.fs.store.voronoiPartitioning.FSVoronoiPartitioningStorage;
 import vm.metricSpace.Dataset;
-import vm.metricSpace.voronoiPartitioning.StorageLearnedVoronoiPartitioningInterface;
+import vm.metricSpace.datasetPartitioning.StorageDatasetPartitionsInterface;
 
 /**
  *
@@ -29,7 +29,7 @@ public class ChangePivotIDsInVoronoiCells {
     }
 
     private static void run(Dataset dataset, int length) {
-        StorageLearnedVoronoiPartitioningInterface storage = new FSVoronoiPartitioningStorage();
+        StorageDatasetPartitionsInterface storage = new FSVoronoiPartitioningStorage();
         Map<Object, TreeSet<Object>> load = storage.load(dataset.getDatasetName(), length);
         Map<Object, SortedSet<Object>> updated = new HashMap<>();
         Set<Map.Entry<Object, TreeSet<Object>>> entrySet = load.entrySet();
