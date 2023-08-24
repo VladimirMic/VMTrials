@@ -78,7 +78,7 @@ public class PrintStatsWhereAreNNs {
 
     private static void performForLimit(int limitToFind, Map<Object, Object> pivots, Map<Object, Object> queries, Map<String, TreeSet<Map.Entry<Object, Float>>> gt, Map<Object, TreeSet<Object>> voronoiPartitioning, FSVoronoiPartitioningStorage storage, String datasetName, int pivotCount, DistanceFunctionInterface df, int k) {
         LOG.log(Level.INFO, "Evaluation for limit {0}", limitToFind);
-        File file = storage.getFileForFSVoronoiStorage(datasetName, pivotCount, false);
+        File file = storage.getFile(datasetName, pivotCount, false);
         String name = file.getName() + "whereAre" + limitToFind + "outOf" + k + "closest.csv";
         try {
             System.setOut(new PrintStream(new File(file.getParentFile(), name)));

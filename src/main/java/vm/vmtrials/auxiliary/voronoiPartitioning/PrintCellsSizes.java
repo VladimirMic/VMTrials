@@ -34,7 +34,7 @@ public class PrintCellsSizes {
         int pivotCount = 20000;
         FSVoronoiPartitioningStorage storage = new FSVoronoiPartitioningStorage();
         Map<Object, TreeSet<Object>> vp = storage.load(dataset.getDatasetName(), pivotCount);
-        File file = storage.getFileForFSVoronoiStorage(dataset.getDatasetName(), pivotCount, false);
+        File file = storage.getFile(dataset.getDatasetName(), pivotCount, false);
         String name = file.getName() + "cells_stats.csv";
         try {
             System.setOut(new PrintStream(new File(file.getParentFile(), name)));
