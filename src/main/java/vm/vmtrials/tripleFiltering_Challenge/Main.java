@@ -190,7 +190,7 @@ public class Main {
         List<Object> pivots = dataset.getPivots(pivotCount);
         VoronoiPartitioning vp = new VoronoiPartitioning(dataset.getMetricSpace(), dataset.getDistanceFunction(), pivots);
         FSVoronoiPartitioningStorage storage = new FSVoronoiPartitioningStorage();
-        vp.splitByVoronoi(dataset.getMetricObjectsFromDataset(), dataset.getDatasetName(), storage, pivotCount);
+        vp.partitionObjects(dataset.getMetricObjectsFromDataset(), dataset.getDatasetName(), storage, pivotCount);
     }
 
     private static AbstractObjectToSketchTransformator createSketches(Dataset fullDataset, MainMemoryDatasetCache resultsDataset) {
