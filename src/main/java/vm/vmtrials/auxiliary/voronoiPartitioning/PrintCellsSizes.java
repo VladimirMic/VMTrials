@@ -8,6 +8,7 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
+import vm.fs.store.voronoiPartitioning.FSGRAPPLEPartitioningStorage;
 import vm.fs.store.voronoiPartitioning.FSVoronoiPartitioningStorage;
 import vm.metricSpace.Dataset;
 
@@ -19,11 +20,14 @@ public class PrintCellsSizes {
 
     public static void main(String[] args) {
         Dataset[] datasets = new Dataset[]{
-//            new FSDatasetInstanceSingularizator.LAION_100k_Dataset(),
-//            new FSDatasetInstanceSingularizator.LAION_300k_Dataset(),
-//            new FSDatasetInstanceSingularizator.LAION_10M_Dataset(),
+            new FSDatasetInstanceSingularizator.DeCAFDataset(),
+            new FSDatasetInstanceSingularizator.MPEG7dataset(),
+            new FSDatasetInstanceSingularizator.SIFTdataset()
+        //            new FSDatasetInstanceSingularizator.LAION_100k_Dataset(),
+        //            new FSDatasetInstanceSingularizator.LAION_300k_Dataset(),
+//new FSDatasetInstanceSingularizator.LAION_10M_Dataset()
 //            new FSDatasetInstanceSingularizator.LAION_30M_Dataset(),
-            new FSDatasetInstanceSingularizator.LAION_100M_Dataset()
+//            new FSDatasetInstanceSingularizator.LAION_100M_Dataset()
         };
         for (Dataset dataset : datasets) {
             run(dataset);
@@ -31,8 +35,8 @@ public class PrintCellsSizes {
     }
 
     private static void run(Dataset dataset) {
-        int pivotCount = 20000;
-        FSVoronoiPartitioningStorage storage = new FSVoronoiPartitioningStorage();
+        int pivotCount = 256;
+        FSVoronoiPartitioningStorage storage = new FSGRAPPLEPartitioningStorage();
         Map<Object, TreeSet<Object>> vp = storage.load(dataset.getDatasetName(), pivotCount);
         File file = storage.getFile(dataset.getDatasetName(), pivotCount, false);
         String name = file.getName() + "cells_stats.csv";
