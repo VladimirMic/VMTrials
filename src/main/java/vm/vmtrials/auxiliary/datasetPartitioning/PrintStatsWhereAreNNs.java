@@ -97,13 +97,13 @@ public class PrintStatsWhereAreNNs {
             counter++;
             String qID = gtForQuery.getKey();
             Object qData = queries.get(qID);
-            Object[] prioriryQueue = identifier.evaluateKeyOrdering(df, pivots, qData);
+            Object[] priorityQueue = identifier.evaluateKeyOrdering(df, pivots, qData);
             TreeSet<Map.Entry<Object, Float>> gtQueryResult = gtForQuery.getValue();
             // go cells by cell until all kNN are found
             int cellsCount = 0;
             int cellsTotalSize = 0;
             Map<Object, Boolean> mapOfCoveredNNs = createMapOfBooleaValues(gtQueryResult, k, false);
-            for (Object cellID : prioriryQueue) {
+            for (Object cellID : priorityQueue) {
                 TreeSet<Object> cell = voronoiPartitioning.get(cellID);
                 if (cell == null) {
                     continue;
