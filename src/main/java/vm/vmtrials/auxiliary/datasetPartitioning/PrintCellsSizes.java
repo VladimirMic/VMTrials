@@ -22,10 +22,10 @@ public class PrintCellsSizes {
         Dataset[] datasets = new Dataset[]{
             new FSDatasetInstanceSingularizator.DeCAFDataset(),
             new FSDatasetInstanceSingularizator.MPEG7dataset(),
-            new FSDatasetInstanceSingularizator.SIFTdataset()
-        //            new FSDatasetInstanceSingularizator.LAION_100k_Dataset(),
-        //            new FSDatasetInstanceSingularizator.LAION_300k_Dataset(),
-//new FSDatasetInstanceSingularizator.LAION_10M_Dataset()
+            new FSDatasetInstanceSingularizator.SIFTdataset(),
+            //            new FSDatasetInstanceSingularizator.LAION_100k_Dataset(),
+            //            new FSDatasetInstanceSingularizator.LAION_300k_Dataset(),
+            new FSDatasetInstanceSingularizator.LAION_10M_Dataset()
 //            new FSDatasetInstanceSingularizator.LAION_30M_Dataset(),
 //            new FSDatasetInstanceSingularizator.LAION_100M_Dataset()
         };
