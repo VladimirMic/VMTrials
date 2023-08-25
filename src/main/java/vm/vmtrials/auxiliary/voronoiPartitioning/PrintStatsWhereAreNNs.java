@@ -11,11 +11,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
 import vm.fs.store.queryResults.FSNearestNeighboursStorageImpl;
+import vm.fs.store.voronoiPartitioning.FSGRAPPLEPartitioningStorage;
 import vm.fs.store.voronoiPartitioning.FSVoronoiPartitioningStorage;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.Dataset;
 import vm.metricSpace.ToolsMetricDomain;
 import vm.metricSpace.distance.DistanceFunctionInterface;
+import vm.search.impl.GRAPPLEPartitionsCandSetIdentifier;
+import vm.search.impl.VoronoiPartitionsCandSetIdentifier;
 
 /**
  *
@@ -27,9 +30,13 @@ public class PrintStatsWhereAreNNs {
 
     public static void main(String[] args) {
         Dataset[] datasets = new Dataset[]{
-            //                        new FSDatasetInstanceSingularizator.LAION_100k_Dataset(),
-            //            new FSDatasetInstanceSingularizator.LAION_300k_Dataset(),
-            new FSDatasetInstanceSingularizator.LAION_10M_Dataset(), //                        new FSDatasetInstanceSingularizator.LAION_30M_Dataset(),
+            new FSDatasetInstanceSingularizator.DeCAFDataset(),
+            new FSDatasetInstanceSingularizator.MPEG7dataset(),
+            new FSDatasetInstanceSingularizator.SIFTdataset()
+//                        new FSDatasetInstanceSingularizator.LAION_100k_Dataset(),
+        //            new FSDatasetInstanceSingularizator.LAION_300k_Dataset(),
+        //            new FSDatasetInstanceSingularizator.LAION_10M_Dataset(),
+        //                        new FSDatasetInstanceSingularizator.LAION_30M_Dataset(),
         //            new FSDatasetInstanceSingularizator.LAION_100M_Dataset()
         };
         for (Dataset dataset : datasets) {
@@ -39,8 +46,8 @@ public class PrintStatsWhereAreNNs {
 
     private static void run(Dataset dataset) {
         int k = 10;
-        int pivotCount = 20000;
-        FSVoronoiPartitioningStorage storage = new FSVoronoiPartitioningStorage();
+        int pivotCount = 256;
+        FSVoronoiPartitioningStorage storage = new FSGRAPPLEPartitioningStorage();
 
         AbstractMetricSpace metricSpace = dataset.getMetricSpace();
         DistanceFunctionInterface df = dataset.getDistanceFunction();
@@ -49,9 +56,10 @@ public class PrintStatsWhereAreNNs {
         Map<Object, Object> queries = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(metricSpace, dataset.getMetricQueryObjects(), true);
         Map<String, TreeSet<Map.Entry<Object, Float>>> gt = new FSNearestNeighboursStorageImpl().getGroundTruthForDataset(dataset.getDatasetName(), dataset.getQuerySetName());
         //
-        Map<Object, TreeSet<Object>> voronoiPartitioning = storage.load(dataset.getDatasetName(), pivotCount);
+        Map<Object, TreeSet<Object>> partitioning = storage.load(dataset.getDatasetName(), pivotCount);
+        VoronoiPartitionsCandSetIdentifier identifier = new GRAPPLEPartitionsCandSetIdentifier(dataset, storage, pivotCount);
         for (int limitToFind = 10; limitToFind > 0; limitToFind--) {
-            performForLimit(limitToFind, pivots, queries, gt, voronoiPartitioning, storage, dataset.getDatasetName(), pivotCount, df, k);
+            performForLimit(limitToFind, pivots, queries, gt, partitioning, storage, identifier, dataset.getDatasetName(), pivotCount, df, k);
         }
     }
 
@@ -75,7 +83,7 @@ public class PrintStatsWhereAreNNs {
         return count >= limit;
     }
 
-    private static void performForLimit(int limitToFind, Map<Object, Object> pivots, Map<Object, Object> queries, Map<String, TreeSet<Map.Entry<Object, Float>>> gt, Map<Object, TreeSet<Object>> voronoiPartitioning, FSVoronoiPartitioningStorage storage, String datasetName, int pivotCount, DistanceFunctionInterface df, int k) {
+    private static void performForLimit(int limitToFind, Map<Object, Object> pivots, Map<Object, Object> queries, Map<String, TreeSet<Map.Entry<Object, Float>>> gt, Map<Object, TreeSet<Object>> voronoiPartitioning, FSVoronoiPartitioningStorage storage, VoronoiPartitionsCandSetIdentifier identifier, String datasetName, int pivotCount, DistanceFunctionInterface df, int k) {
         LOG.log(Level.INFO, "Evaluation for limit {0}", limitToFind);
         File file = storage.getFile(datasetName, pivotCount, false);
         String name = file.getName() + "whereAre" + limitToFind + "outOf" + k + "closest.csv";
@@ -87,13 +95,13 @@ public class PrintStatsWhereAreNNs {
         for (Map.Entry<String, TreeSet<Map.Entry<Object, Float>>> gtForQuery : gt.entrySet()) {
             String qID = gtForQuery.getKey();
             Object qData = queries.get(qID);
-            Object[] pivotPermutation = ToolsMetricDomain.getPivotIDsPermutation(df, pivots, qData, -1, null);
+            Object[] prioriryQueue = identifier.evaluateKeyOrdering(df, pivots, qData);
             TreeSet<Map.Entry<Object, Float>> gtQueryResult = gtForQuery.getValue();
             // go cells by cell until all kNN are found
             int cellsCount = 0;
             int cellsTotalSize = 0;
             Map<Object, Boolean> mapOfCoveredNNs = createMapOfBooleaValues(gtQueryResult, k, false);
-            for (Object idOfClosestPivotToQ : pivotPermutation) {
+            for (Object idOfClosestPivotToQ : prioriryQueue) {
                 TreeSet<Object> cell = voronoiPartitioning.get(idOfClosestPivotToQ);
                 if (cell == null) {
                     LOG.log(Level.WARNING, "Empty Voronoi cell for pivot {0}", idOfClosestPivotToQ);
@@ -115,7 +123,7 @@ public class PrintStatsWhereAreNNs {
             System.out.print("qID;" + qID + ";cellsCount;" + cellsCount + ";cellsTotalSize;" + cellsTotalSize + ";pivotPermutation;");
 
             for (int i = 0; i < cellsCount; i++) {
-                System.out.print(pivotPermutation[i].toString() + ";");
+                System.out.print(prioriryQueue[i].toString() + ";");
             }
             System.out.println();
         }
