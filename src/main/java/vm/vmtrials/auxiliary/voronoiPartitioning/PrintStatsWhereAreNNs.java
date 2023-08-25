@@ -92,7 +92,9 @@ public class PrintStatsWhereAreNNs {
         } catch (FileNotFoundException ex) {
             Logger.getLogger(PrintCellsSizes.class.getName()).log(Level.SEVERE, null, ex);
         }
+        int counter = 0;
         for (Map.Entry<String, TreeSet<Map.Entry<Object, Float>>> gtForQuery : gt.entrySet()) {
+            counter++;
             String qID = gtForQuery.getKey();
             Object qData = queries.get(qID);
             Object[] prioriryQueue = identifier.evaluateKeyOrdering(df, pivots, qData);
@@ -101,10 +103,9 @@ public class PrintStatsWhereAreNNs {
             int cellsCount = 0;
             int cellsTotalSize = 0;
             Map<Object, Boolean> mapOfCoveredNNs = createMapOfBooleaValues(gtQueryResult, k, false);
-            for (Object idOfClosestPivotToQ : prioriryQueue) {
-                TreeSet<Object> cell = voronoiPartitioning.get(idOfClosestPivotToQ);
+            for (Object cellID : prioriryQueue) {
+                TreeSet<Object> cell = voronoiPartitioning.get(cellID);
                 if (cell == null) {
-                    LOG.log(Level.WARNING, "Empty Voronoi cell for pivot {0}", idOfClosestPivotToQ);
                     continue;
                 }
                 cellsCount++;
@@ -120,12 +121,8 @@ public class PrintStatsWhereAreNNs {
                     break;
                 }
             }
-            System.out.print("qID;" + qID + ";cellsCount;" + cellsCount + ";cellsTotalSize;" + cellsTotalSize + ";pivotPermutation;");
-
-            for (int i = 0; i < cellsCount; i++) {
-                System.out.print(prioriryQueue[i].toString() + ";");
-            }
-            System.out.println();
+            System.out.println(counter + ";qID;" + qID + ";cellsCount;" + cellsCount + ";cellsTotalSize;" + cellsTotalSize);
+            System.err.println(counter + ";qID;" + qID + ";cellsCount;" + cellsCount + ";cellsTotalSize;" + cellsTotalSize);
         }
     }
 
