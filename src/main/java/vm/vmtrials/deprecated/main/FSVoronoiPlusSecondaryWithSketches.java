@@ -26,9 +26,9 @@ import vm.objTransforms.objectToSketchTransformators.AbstractObjectToSketchTrans
 import vm.objTransforms.objectToSketchTransformators.SketchingGHP;
 import vm.objTransforms.storeLearned.GHPSketchingPivotPairsStoreInterface;
 import vm.queryResults.recallEvaluation.RecallOfCandsSetsEvaluator;
-import vm.search.SearchingAlgorithm;
-import vm.search.impl.KNNSearchWithSketchSecondaryFiltering;
-import vm.search.impl.VoronoiPartitionsCandSetIdentifier;
+import vm.search.algorithm.SearchingAlgorithm;
+import vm.search.algorithm.impl.KNNSearchWithSketchSecondaryFiltering;
+import vm.search.algorithm.impl.VoronoiPartitionsCandSetIdentifier;
 import vm.metricSpace.datasetPartitioning.StorageDatasetPartitionsInterface;
 
 /**
@@ -102,7 +102,7 @@ public class FSVoronoiPlusSecondaryWithSketches {
         LOG.log(Level.INFO, "Storing statistics of queries");
         FSQueryExecutionStatsStoreImpl statsStorage = new FSQueryExecutionStatsStoreImpl(fullDataset.getDatasetName(), fullDataset.getQuerySetName(), k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), filter.getTechFullName(), null);
         statsStorage.storeStatsForQueries(secondaryWithSketches.getDistCompsPerQueries(), secondaryWithSketches.getTimesPerQueries());
-        statsStorage.saveFile();
+        statsStorage.save();
 
         LOG.log(Level.INFO, "Storing results of queries");
         FSNearestNeighboursStorageImpl resultsStorage = new FSNearestNeighboursStorageImpl();
@@ -112,7 +112,7 @@ public class FSVoronoiPlusSecondaryWithSketches {
         FSRecallOfCandidateSetsStorageImpl recallStorage = new FSRecallOfCandidateSetsStorageImpl(fullDataset.getDatasetName(), fullDataset.getQuerySetName(), k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), filter.getTechFullName(), null);
         RecallOfCandsSetsEvaluator evaluator = new RecallOfCandsSetsEvaluator(new FSNearestNeighboursStorageImpl(), recallStorage);
         evaluator.evaluateAndStoreRecallsOfQueries(fullDataset.getDatasetName(), fullDataset.getQuerySetName(), k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), filter.getTechFullName(), k);
-        recallStorage.saveFile();
+        recallStorage.save();
     }
 
 }

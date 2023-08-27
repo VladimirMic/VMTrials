@@ -19,9 +19,9 @@ import vm.metricSpace.ToolsMetricDomain;
 import vm.objTransforms.storeLearned.SVDStoreInterface;
 import vm.queryResults.QueryNearestNeighboursStoreInterface;
 import vm.queryResults.recallEvaluation.RecallOfCandsSetsEvaluator;
-import vm.search.SearchingAlgorithm;
-import vm.search.impl.RefineCandidateSetWithPCASimRel;
-import vm.search.impl.SimRelSeqScanKNNCandSet;
+import vm.search.algorithm.SearchingAlgorithm;
+import vm.search.algorithm.impl.RefineCandidateSetWithPCASimRel;
+import vm.search.algorithm.impl.SimRelSeqScanKNNCandSet;
 import vm.simRel.SimRelInterface;
 import vm.simRel.impl.SimRelEuclideanPCAImpl;
 import vm.simRel.impl.SimRelEuclideanPCAImplForTesting;
@@ -129,13 +129,13 @@ public class EvaluateSimRelInfSysKNN {
                 System.out.println(earlyStopsPerCoordsString);
             }
         }
-        statsStorage.saveFile();
+        statsStorage.save();
 
         LOG.log(Level.INFO, "Evaluating accuracy of queries");
         FSRecallOfCandidateSetsStorageImpl recallStorage = new FSRecallOfCandidateSetsStorageImpl(fileNameDataForRecallStorage);
         RecallOfCandsSetsEvaluator evaluator = new RecallOfCandsSetsEvaluator(resultsStorage, recallStorage);
         evaluator.evaluateAndStoreRecallsOfQueries(fullDataset.getDatasetName(), fullDataset.getDatasetName(), k, fullDataset.getDatasetName(), fullDataset.getDatasetName(), resultName, k);
-        recallStorage.saveFile();
+        recallStorage.save();
     }
 
     public static Object getSimRelStatsOfLastExecutedQuery(SimRelInterface simRelFunc) {

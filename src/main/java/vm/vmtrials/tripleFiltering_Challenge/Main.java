@@ -40,7 +40,7 @@ import vm.objTransforms.objectToSketchTransformators.SketchingGHP;
 import vm.objTransforms.perform.PCAPrefixMetricObjectTransformer;
 import vm.objTransforms.perform.TransformDataToGHPSketches;
 import vm.objTransforms.storeLearned.GHPSketchingPivotPairsStoreInterface;
-import vm.search.impl.multiFiltering.CranberryAlgorithm;
+import vm.search.algorithm.impl.multiFiltering.CranberryAlgorithm;
 import static vm.vmtrials.tripleFiltering_Challenge.SISAPChallengeAlgBuilder.MAX_DATASET_SIZE_TO_CACHE;
 import static vm.vmtrials.tripleFiltering_Challenge.SISAPChallengeAlgBuilder.MIN_DATASET_SIZE_TO_CACHE;
 
@@ -143,7 +143,7 @@ public class Main {
         String resultName = "CRANBERRY_COS_FINAL_PAR_" + CranberryAlgorithm.QUERIES_PARALELISM + "_" + cranberryAlg.getMaxDistComps() + "maxDists_" + fullDataset.getDatasetName();
         FSQueryExecutionStatsStoreImpl statsStorage = new FSQueryExecutionStatsStoreImpl(fullDataset.getDatasetName(), fullDataset.getQuerySetName(), k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), resultName, null);
         statsStorage.storeStatsForQueries(cranberryAlg.getDistCompsPerQueries(), cranberryAlg.getTimesPerQueries(), cranberryAlg.getSimRelsPerQueries());
-        statsStorage.saveFile();
+        statsStorage.save();
 
         LOG.log(Level.INFO, "Storing results of queries");
         FSNearestNeighboursStorageImpl resultsStorageGZ = new FSNearestNeighboursStorageImpl();

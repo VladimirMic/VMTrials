@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.TreeSet;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.Dataset;
-import vm.search.SearchingAlgorithm;
+import vm.search.algorithm.SearchingAlgorithm;
 
 /**
  *

@@ -17,8 +17,8 @@ import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.Dataset;
 import vm.metricSpace.ToolsMetricDomain;
 import vm.metricSpace.distance.DistanceFunctionInterface;
-import vm.search.impl.GRAPPLEPartitionsCandSetIdentifier;
-import vm.search.impl.VoronoiPartitionsCandSetIdentifier;
+import vm.search.algorithm.impl.GRAPPLEPartitionsCandSetIdentifier;
+import vm.search.algorithm.impl.VoronoiPartitionsCandSetIdentifier;
 
 /**
  *

@@ -29,8 +29,8 @@ import vm.objTransforms.objectToSketchTransformators.SketchingGHP;
 import vm.objTransforms.storeLearned.GHPSketchingPivotPairsStoreInterface;
 import vm.queryResults.errorOnDistEvaluation.ErrorOnDistEvaluator;
 import vm.queryResults.recallEvaluation.RecallOfCandsSetsEvaluator;
-import vm.search.impl.VoronoiPartitionsCandSetIdentifier;
-import vm.search.impl.multiFiltering.CranberryAlgorithm;
+import vm.search.algorithm.impl.VoronoiPartitionsCandSetIdentifier;
+import vm.search.algorithm.impl.multiFiltering.CranberryAlgorithm;
 import vm.simRel.SimRelInterface;
 import vm.simRel.impl.DumbSimRel;
 import vm.simRel.impl.SimRelEuclideanPCAImplForTesting;
@@ -178,7 +178,7 @@ public class EvaluateCRANBERRYMain {
         LOG.log(Level.INFO, "Storing statistics of queries");
         FSQueryExecutionStatsStoreImpl statsStorage = new FSQueryExecutionStatsStoreImpl(fullDataset.getDatasetName(), fullDataset.getQuerySetName(), k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), resultName, null);
         statsStorage.storeStatsForQueries(alg.getDistCompsPerQueries(), alg.getTimesPerQueries(), alg.getSimRelsPerQueries());
-        statsStorage.saveFile();
+        statsStorage.save();
 
         LOG.log(Level.INFO, "Storing results of queries");
         FSNearestNeighboursStorageImpl resultsStorage = new FSNearestNeighboursStorageImpl();
@@ -188,11 +188,11 @@ public class EvaluateCRANBERRYMain {
         FSRecallOfCandidateSetsStorageImpl recallStorage = new FSRecallOfCandidateSetsStorageImpl(fullDataset.getDatasetName(), fullDataset.getQuerySetName(), k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), resultName, null);
         RecallOfCandsSetsEvaluator evaluator = new RecallOfCandsSetsEvaluator(new FSNearestNeighboursStorageImpl(), recallStorage);
         evaluator.evaluateAndStoreRecallsOfQueries(fullDataset.getDatasetName(), fullDataset.getQuerySetName(), k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), resultName, k);
-        recallStorage.saveFile();
+        recallStorage.save();
         LOG.log(Level.INFO, "Evaluating error on distance");
         ErrorOnDistEvaluator eodEvaluator = new ErrorOnDistEvaluator(resultsStorage, recallStorage);
         eodEvaluator.evaluateAndStoreErrorsOnDist(fullDataset.getDatasetName(), fullDataset.getQuerySetName(), k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), resultName);
-        recallStorage.saveFile();
+        recallStorage.save();
 
         LOG.log(Level.INFO, "Overall time: {0}", overallTime);
         sketchFiltering.shutdownThreadPool();

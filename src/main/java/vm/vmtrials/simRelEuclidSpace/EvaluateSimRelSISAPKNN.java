@@ -22,8 +22,8 @@ import vm.objTransforms.storeLearned.SVDStoreInterface;
 import vm.queryResults.QueryNearestNeighboursStoreInterface;
 import vm.queryResults.errorOnDistEvaluation.ErrorOnDistEvaluator;
 import vm.queryResults.recallEvaluation.RecallOfCandsSetsEvaluator;
-import vm.search.SearchingAlgorithm;
-import vm.search.impl.SimRelSeqScanKNNCandSet;
+import vm.search.algorithm.SearchingAlgorithm;
+import vm.search.algorithm.impl.SimRelSeqScanKNNCandSet;
 import vm.simRel.impl.SimRelEuclideanPCAImplForTesting;
 import vm.simRel.impl.learn.SimRelEuclideanPCAForLearning;
 
@@ -147,16 +147,16 @@ public class EvaluateSimRelSISAPKNN {
             LOG.log(Level.INFO, "Processed query {0}", new Object[]{i + 1});
         }
         if (STORE_RESULTS) {
-            statsStorage.saveFile();
+            statsStorage.save();
             LOG.log(Level.INFO, "Evaluating accuracy of queries");
             FSRecallOfCandidateSetsStorageImpl recallStorage = new FSRecallOfCandidateSetsStorageImpl(fileNameDataForRecallStorage);
             RecallOfCandsSetsEvaluator recallEvaluator = new RecallOfCandsSetsEvaluator(resultsStorage, recallStorage);
             recallEvaluator.evaluateAndStoreRecallsOfQueries(fullDataset.getDatasetName(), fullDataset.getQuerySetName(), k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), resultName, k);
-            recallStorage.saveFile();
+            recallStorage.save();
             LOG.log(Level.INFO, "Evaluating error on distance");
             ErrorOnDistEvaluator eodEvaluator = new ErrorOnDistEvaluator(resultsStorage, recallStorage);
             eodEvaluator.evaluateAndStoreErrorsOnDist(fullDataset.getDatasetName(), fullDataset.getQuerySetName(), k, pcaDataset.getDatasetName(), pcaDataset.getQuerySetName(), resultName);
-            recallStorage.saveFile();
+            recallStorage.save();
         }
     }
 

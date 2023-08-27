@@ -15,8 +15,8 @@ import vm.metricSpace.distance.bounding.nopivot.impl.SecondaryFilteringWithSketc
 import vm.metricSpace.distance.bounding.nopivot.learning.LearningSecondaryFilteringWithSketches;
 import vm.metricSpace.distance.bounding.nopivot.storeLearned.SecondaryFilteringWithSketchesStoreInterface;
 import vm.objTransforms.objectToSketchTransformators.AbstractObjectToSketchTransformator;
-import vm.search.impl.VoronoiPartitionsCandSetIdentifier;
-import vm.search.impl.multiFiltering.CranberryAlgorithm;
+import vm.search.algorithm.impl.VoronoiPartitionsCandSetIdentifier;
+import vm.search.algorithm.impl.multiFiltering.CranberryAlgorithm;
 import vm.simRel.SimRelInterface;
 
 /**
