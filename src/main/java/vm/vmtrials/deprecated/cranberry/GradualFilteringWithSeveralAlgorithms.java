@@ -42,4 +42,9 @@ public class GradualFilteringWithSeveralAlgorithms<T> extends SearchingAlgorithm
         return candSetKnnSearch;
     }
 
+    @Override
+    public String getResultName() {
+        return "Deprecated";
+    }
+
 }

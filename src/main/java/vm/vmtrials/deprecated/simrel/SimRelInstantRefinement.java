@@ -168,7 +168,7 @@ public class SimRelInstantRefinement<T> extends SearchingAlgorithm<T> {
     }
 
     @Override
-    public List<Object> candSetKnnSearch(AbstractMetricSpace<T> metricSpace, Object queryObject, int k, Iterator<Object> objects, Object ... additionalParams) {
+    public List<Object> candSetKnnSearch(AbstractMetricSpace<T> metricSpace, Object queryObject, int k, Iterator<Object> objects, Object... additionalParams) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -180,4 +180,8 @@ public class SimRelInstantRefinement<T> extends SearchingAlgorithm<T> {
         throw new RuntimeException("No simRel stats for the last query");
     }
 
+    @Override
+    public String getResultName() {
+        return "Deprecated";
+    }
 }
