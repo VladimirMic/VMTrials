@@ -164,7 +164,7 @@ public class EvaluateCRANBERRYMain {
         vm.javatools.Tools.sleepSeconds(5);
         int queryCount = LEARN_SIMREL ? querySampleCount : QUERY_COUNT_LIMIT;
         long overallTime = -System.currentTimeMillis();
-        TreeSet[] results = alg.completeKnnSearchOfQuerySet(fullMetricSpace, fullQueries, k, null, pcaDatasetMetricSpace, pcaQMap, queryCount);
+        TreeSet[] results = alg.completeKnnFilteringWithQuerySet(fullMetricSpace, fullQueries, k, null, pcaDatasetMetricSpace, pcaQMap, queryCount);
         overallTime += System.currentTimeMillis();
 
         if (LEARN_SIMREL) {

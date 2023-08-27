@@ -116,7 +116,7 @@ public class Main {
         vm.javatools.Tools.sleepSeconds(10);
 
         long queryTime = -System.currentTimeMillis();
-        TreeSet[] results = cranberryAlg.completeKnnSearchOfQuerySet(fullMetricSpace, fullQueries, k, null, pcaDatasetMetricSpace, pcaQMap);
+        TreeSet[] results = cranberryAlg.completeKnnFilteringWithQuerySet(fullMetricSpace, fullQueries, k, null, pcaDatasetMetricSpace, pcaQMap);
 
         queryTime += System.currentTimeMillis();
         algBuilder.shutDownThreadPool();
