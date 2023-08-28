@@ -8,7 +8,7 @@ import java.util.AbstractMap;
 import java.util.Map;
 import java.util.TreeSet;
 import vm.fs.store.filtering.FSSecondaryFilteringWithSketchesStorage;
-import vm.fs.store.voronoiPartitioning.FSVoronoiPartitioningStorage;
+import vm.fs.store.partitioning.FSVoronoiPartitioningStorage;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.Dataset;
 import vm.metricSpace.distance.bounding.nopivot.impl.SecondaryFilteringWithSketches;

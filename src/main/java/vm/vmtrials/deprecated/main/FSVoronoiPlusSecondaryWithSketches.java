@@ -15,7 +15,7 @@ import vm.fs.store.filtering.FSSecondaryFilteringWithSketchesStorage;
 import vm.fs.store.queryResults.FSNearestNeighboursStorageImpl;
 import vm.fs.store.queryResults.FSQueryExecutionStatsStoreImpl;
 import vm.fs.store.queryResults.recallEvaluation.FSRecallOfCandidateSetsStorageImpl;
-import vm.fs.store.voronoiPartitioning.FSVoronoiPartitioningStorage;
+import vm.fs.store.partitioning.FSVoronoiPartitioningStorage;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.Dataset;
 import vm.metricSpace.distance.DistanceFunctionInterface;

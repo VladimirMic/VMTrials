@@ -8,8 +8,8 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
-import vm.fs.store.voronoiPartitioning.FSGRAPPLEPartitioningStorage;
-import vm.fs.store.voronoiPartitioning.FSVoronoiPartitioningStorage;
+import vm.fs.store.partitioning.FSGRAPPLEPartitioningStorage;
+import vm.fs.store.partitioning.FSVoronoiPartitioningStorage;
 import vm.metricSpace.Dataset;
 
 /**

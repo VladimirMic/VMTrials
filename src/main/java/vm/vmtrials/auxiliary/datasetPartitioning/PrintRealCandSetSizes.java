@@ -16,7 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
 import vm.fs.store.queryResults.FSNearestNeighboursStorageImpl;
-import vm.fs.store.voronoiPartitioning.FSVoronoiPartitioningStorage;
+import vm.fs.store.partitioning.FSVoronoiPartitioningStorage;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.Dataset;
 import vm.metricSpace.ToolsMetricDomain;

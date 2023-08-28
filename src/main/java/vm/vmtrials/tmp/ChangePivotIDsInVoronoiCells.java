@@ -6,7 +6,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
-import vm.fs.store.voronoiPartitioning.FSVoronoiPartitioningStorage;
+import vm.fs.store.partitioning.FSVoronoiPartitioningStorage;
 import vm.metricSpace.Dataset;
 import vm.metricSpace.datasetPartitioning.StorageDatasetPartitionsInterface;
 
