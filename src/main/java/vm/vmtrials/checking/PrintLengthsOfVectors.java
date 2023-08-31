@@ -13,8 +13,8 @@ import vm.metricSpace.Dataset;
 public class PrintLengthsOfVectors {
 
     public static void main(String[] args) {
-        int count = 4;
-        Dataset dataset = new FSDatasetInstanceSingularizator.LAION_100M_PCA32Dataset();
+        int count = 100;
+        Dataset dataset = new FSDatasetInstanceSingularizator.DeCAFDataset();
         AbstractMetricSpace<float[]> metricSpace = dataset.getMetricSpace();
         List objs = dataset.getSampleOfDataset(count);
         for (Object obj : objs) {
