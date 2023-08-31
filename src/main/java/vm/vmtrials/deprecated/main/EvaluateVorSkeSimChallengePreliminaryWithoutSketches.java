@@ -25,7 +25,7 @@ import vm.search.algorithm.impl.SimRelSeqScanKNNCandSet;
 import vm.search.algorithm.impl.VoronoiPartitionsCandSetIdentifier;
 import vm.simRel.impl.SimRelEuclideanPCAImpl;
 import vm.simRel.impl.SimRelEuclideanPCAImplForTesting;
-import vm.vmtrials.simRelEuclidSpace.EvaluateSimRelSISAPKNN;
+import vm.fs.main.search.filtering.perform.FSKNNQueriesSeqScanWithSimRelMain;
 import vm.vmtrials.tripleFiltering_Challenge.EvaluateCRANBERRYMain;
 
 /**
@@ -35,7 +35,7 @@ import vm.vmtrials.tripleFiltering_Challenge.EvaluateCRANBERRYMain;
 @Deprecated // does not use the Secondary filtering with sketches
 public class EvaluateVorSkeSimChallengePreliminaryWithoutSketches {
 
-    private static final Logger LOG = Logger.getLogger(EvaluateSimRelSISAPKNN.class.getName());
+    private static final Logger LOG = Logger.getLogger(FSKNNQueriesSeqScanWithSimRelMain.class.getName());
 
     public static final Boolean STORE_RESULTS = true;
     public static final Boolean FULL_RERANK = true;
