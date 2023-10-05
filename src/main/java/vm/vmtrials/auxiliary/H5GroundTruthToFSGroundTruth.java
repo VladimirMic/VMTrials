@@ -30,8 +30,8 @@ public class H5GroundTruthToFSGroundTruth {
     public static final Logger LOG = Logger.getLogger(H5GroundTruthToFSGroundTruth.class.getName());
 
     public static void main(String[] args) {
-        String datasetName = "laion2B-en-public-gold-standard-v2-30M-F64-IEEE754";
-        String path = "h:\\Similarity_search\\Result\\ground_truth\\" + datasetName + ".h5";
+        String groundTruthName = "laion2B-en-private-gold-standard-v2-30M-F64-IEEE754";
+        String path = "h:\\Similarity_search\\Result\\ground_truth\\" + groundTruthName + ".h5";
         Iterator[] it = parseH5GroundTruth(path);
         TreeSet<Map.Entry<Object, Float>>[] results = GroundTruthEvaluator.initKNNResultSets(10000);
         List<Object> queries = new ArrayList<>();
@@ -52,7 +52,7 @@ public class H5GroundTruthToFSGroundTruth {
         }
         FSNearestNeighboursStorageImpl resultsStorage = new FSNearestNeighboursStorageImpl();
         FSMetricSpaceImpl metricSpace = new FSMetricSpaceImpl();
-        resultsStorage.storeQueryResults(metricSpace, queries, results, datasetName, datasetName, "ground_truth");
+        resultsStorage.storeQueryResults(metricSpace, queries, results, groundTruthName, groundTruthName, "ground_truth");
     }
 
     private static Iterator[] parseH5GroundTruth(String path) {
