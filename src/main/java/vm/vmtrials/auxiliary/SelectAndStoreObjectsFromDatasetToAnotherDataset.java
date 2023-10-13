@@ -20,7 +20,7 @@ import vm.metricSpace.AbstractMetricSpacesStorage;
 public class SelectAndStoreObjectsFromDatasetToAnotherDataset {
 
     public static void main(String[] args) {
-        Dataset idsProvider = new FSDatasetInstanceSingularizator.LAION_100M_Dataset();
+        Dataset idsProvider = new FSDatasetInstanceSingularizator.LAION_100M_Dataset(true);
         List pivots = idsProvider.getPivots(-1);
         AbstractMetricSpace providersMetricSpace = idsProvider.getMetricSpace();
 

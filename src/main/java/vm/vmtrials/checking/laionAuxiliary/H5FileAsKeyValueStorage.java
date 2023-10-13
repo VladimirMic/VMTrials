@@ -15,7 +15,7 @@ import vm.metricSpace.Dataset;
 public class H5FileAsKeyValueStorage {
 
     public static void main(String[] args) {
-        Dataset dataset = new FSDatasetInstanceSingularizator.LAION_100M_Dataset();
+        Dataset dataset = new FSDatasetInstanceSingularizator.LAION_100M_Dataset(true);
         Map map = dataset.getKeyValueStorage();
         Iterator it = dataset.getMetricObjectsFromDataset();
         AbstractMetricSpace metricSpace = dataset.getMetricSpace();

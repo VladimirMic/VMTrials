@@ -26,8 +26,8 @@ public class FilterVoronoiPartitioning {
     private static final Logger LOG = Logger.getLogger(FilterVoronoiPartitioning.class.getName());
 
     public static void main(String[] args) {
-        Dataset partitioninedDataset = new FSDatasetInstanceSingularizator.LAION_100M_Dataset();
-        Dataset targetDataset = new FSDatasetInstanceSingularizator.LAION_10M_Dataset();
+        Dataset partitioninedDataset = new FSDatasetInstanceSingularizator.LAION_100M_Dataset(true);
+        Dataset targetDataset = new FSDatasetInstanceSingularizator.LAION_10M_Dataset(true);
         int pivotCount = 20000;
         String newDatasetName = targetDataset.getDatasetName();
 

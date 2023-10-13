@@ -14,7 +14,7 @@ import vm.metricSpace.AbstractMetricSpacesStorage;
 public class RemoveSelectedObjectFromPivots {
 
     public static void main(String[] args) {
-        Dataset dataset = new FSDatasetInstanceSingularizator.LAION_100M_Dataset();
+        Dataset dataset = new FSDatasetInstanceSingularizator.LAION_100M_Dataset(true);
         AbstractMetricSpace metricSpace = dataset.getMetricSpace();
         List pivots = dataset.getPivots(-1);
         List newPivots = new ArrayList();

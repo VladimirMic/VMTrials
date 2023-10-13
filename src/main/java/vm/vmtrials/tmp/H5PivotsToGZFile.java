@@ -23,7 +23,7 @@ public class H5PivotsToGZFile {
             new FSDatasetInstanceSingularizator.LAION_100M_PCA32Dataset()
         };
 
-        Dataset fullDataset = new FSDatasetInstanceSingularizator.LAION_100M_Dataset();
+        Dataset fullDataset = new FSDatasetInstanceSingularizator.LAION_100M_Dataset(true);
         for (Dataset pcaDataset : datasets) {
             run(fullDataset, pcaDataset);
         }

@@ -18,7 +18,7 @@ public class ChangePivotIDsInVoronoiCells {
 
     public static void main(String[] args) {
         Dataset[] datasets = new Dataset[]{
-            new FSDatasetInstanceSingularizator.LAION_100M_Dataset()
+            new FSDatasetInstanceSingularizator.LAION_100M_Dataset(true)
         };
         int[] lengths = new int[]{256, 512, 768, 1024, 1536, 2048};
         for (Dataset dataset : datasets) {

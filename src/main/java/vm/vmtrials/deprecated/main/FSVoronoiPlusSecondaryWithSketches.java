@@ -45,14 +45,14 @@ public class FSVoronoiPlusSecondaryWithSketches {
         int sketchLength = 256;
         int pivotCount = 2048;
         Dataset[] fullDatasets = new Dataset[]{
-            new FSDatasetInstanceSingularizator.LAION_10M_Dataset(),
-            new FSDatasetInstanceSingularizator.LAION_30M_Dataset(),
-            new FSDatasetInstanceSingularizator.LAION_100M_Dataset()
+            new FSDatasetInstanceSingularizator.LAION_10M_Dataset(true),
+            new FSDatasetInstanceSingularizator.LAION_30M_Dataset(true),
+            new FSDatasetInstanceSingularizator.LAION_100M_Dataset(true)
         };
         Dataset[] sketchesDatasets = new Dataset[]{
-            new FSDatasetInstanceSingularizator.LAION_10M_GHP_50_256Dataset(),
-            new FSDatasetInstanceSingularizator.LAION_30M_GHP_50_256Dataset(),
-            new FSDatasetInstanceSingularizator.LAION_100M_GHP_50_256Dataset()
+            new FSDatasetInstanceSingularizator.LAION_10M_GHP_50_256Dataset(true),
+            new FSDatasetInstanceSingularizator.LAION_30M_GHP_50_256Dataset(true),
+            new FSDatasetInstanceSingularizator.LAION_100M_GHP_50_256Dataset(true)
         };
         float[] distIntervalsForPX = new float[]{
             0.004f,

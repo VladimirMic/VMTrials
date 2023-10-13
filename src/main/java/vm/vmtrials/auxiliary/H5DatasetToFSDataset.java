@@ -24,7 +24,7 @@ public class H5DatasetToFSDataset {
     public static final Logger LOG = Logger.getLogger(H5DatasetToFSDataset.class.getName());
 
     public static void main(String[] args) {
-        Dataset dataset = new FSDatasetInstanceSingularizator.LAION_30M_Dataset();
+        Dataset dataset = new FSDatasetInstanceSingularizator.LAION_30M_Dataset(true);
         AbstractMetricSpacesStorage metricSpacesStorage = dataset.getMetricSpacesStorage();
         Iterator it = dataset.getPivots(-1).iterator();
         processData(it, OBJECT_TYPE.PIVOT_OBJECT, dataset.getPivotSetName(), metricSpacesStorage);

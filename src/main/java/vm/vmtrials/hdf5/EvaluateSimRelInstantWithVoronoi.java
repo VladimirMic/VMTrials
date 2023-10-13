@@ -44,9 +44,9 @@ public class EvaluateSimRelInstantWithVoronoi {
 
     public static void main(String[] args) {
         Dataset[] fullDatasets = new Dataset[]{
-            new FSDatasetInstanceSingularizator.LAION_10M_Dataset(),
-            new FSDatasetInstanceSingularizator.LAION_30M_Dataset(),
-            new FSDatasetInstanceSingularizator.LAION_100M_Dataset()
+            new FSDatasetInstanceSingularizator.LAION_10M_Dataset(true),
+            new FSDatasetInstanceSingularizator.LAION_30M_Dataset(true),
+            new FSDatasetInstanceSingularizator.LAION_100M_Dataset(true)
         };
         Dataset[] pcaDatasets = new Dataset[]{
             new FSDatasetInstanceSingularizator.LAION_10M_PCA96Dataset(),

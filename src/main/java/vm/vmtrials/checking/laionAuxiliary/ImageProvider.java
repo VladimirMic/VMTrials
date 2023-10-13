@@ -17,7 +17,7 @@ import vm.metricSpace.Dataset;
 public class ImageProvider {
 
     public static void main(String[] args) {
-        Dataset dataset = new FSDatasetInstanceSingularizator.LAION_10M_Dataset();
+        Dataset dataset = new FSDatasetInstanceSingularizator.LAION_10M_Dataset(true);
         ImageProvider imageProvider = new ImageProvider(dataset);
         String url = imageProvider.getURLForImage("10");
         System.out.println(url);

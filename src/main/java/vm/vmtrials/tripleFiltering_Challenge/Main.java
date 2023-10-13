@@ -242,7 +242,8 @@ public class Main {
         MainMemoryDatasetCache cachedDataset = new MainMemoryDatasetCache(metricSpace, newName);
         if (makeAllSteps) {
             LOG.log(Level.INFO, "\nTransform to the prefixes of PCA start");
-            MetricObjectsParallelTransformerImpl parallelTransformerImpl = new MetricObjectsParallelTransformerImpl(pca, metricSpacesStorage, pca.getNameOfTransformedSetOfObjects(dataset.getDatasetName(), false));
+            String newDatasetName = pca.getNameOfTransformedSetOfObjects(dataset.getDatasetName(), false);
+            MetricObjectsParallelTransformerImpl parallelTransformerImpl = new MetricObjectsParallelTransformerImpl(pca, metricSpacesStorage, newDatasetName, newDatasetName, newDatasetName);
             FSApplyPCAMain.transformPivots(dataset.getPivots(-1).iterator(), parallelTransformerImpl, "Pivot set with name \"" + datasetUsedToLearnSVD + "\" transformed by VT matrix of svd " + sampleSetSize + " to the length " + pcaLength, cachedDataset);
             FSApplyPCAMain.transformQueryObjects(dataset.getMetricQueryObjects().iterator(), parallelTransformerImpl, "Query set with name \"" + datasetUsedToLearnSVD + "\" transformed by VT matrix of svd " + sampleSetSize + " to the length " + pcaLength, cachedDataset);
             FSApplyPCAMain.transformDataset(dataset.getMetricObjectsFromDataset(), parallelTransformerImpl, "Dataset with name \"" + datasetUsedToLearnSVD + "\" transformed by VT matrix of svd " + sampleSetSize + " to the length " + pcaLength, cachedDataset);

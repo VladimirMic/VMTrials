@@ -4,18 +4,10 @@
  */
 package vm.vmtrials.auxiliary.datasetPartitioning;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintStream;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
-import vm.fs.store.queryResults.FSNearestNeighboursStorageImpl;
 import vm.fs.store.partitioning.FSVoronoiPartitioningStorage;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.Dataset;
@@ -32,7 +24,7 @@ public class PrintRealCandSetSizes {
 
     public static void main(String[] args) {
         Dataset[] datasets = new Dataset[]{
-            new FSDatasetInstanceSingularizator.LAION_100M_Dataset()
+            new FSDatasetInstanceSingularizator.LAION_100M_Dataset(true)
         };
         for (Dataset dataset : datasets) {
             run(dataset);

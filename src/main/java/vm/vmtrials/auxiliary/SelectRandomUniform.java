@@ -15,7 +15,7 @@ import vm.metricSpace.distance.DistanceFunctionInterface;
 public class SelectRandomUniform {
 
     public static void main(String[] args) {
-        Dataset dataset = new FSDatasetInstanceSingularizator.LAION_100M_Dataset();
+        Dataset dataset = new FSDatasetInstanceSingularizator.LAION_100M_Dataset(true);
         int count = 5000;
         List list = Tools.randomUniform(dataset.getMetricObjectsFromDataset(), 102050000, count);
         DistanceFunctionInterface df = dataset.getDistanceFunction();
