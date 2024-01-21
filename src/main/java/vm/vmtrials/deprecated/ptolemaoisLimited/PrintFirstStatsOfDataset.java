@@ -18,24 +18,17 @@ import vm.metricSpace.distance.DistanceFunctionInterface;
  *
  * @author Vlada
  */
-@Deprecated
-
 public class PrintFirstStatsOfDataset {
 
-    public static final Integer NUMBER_OF_TETRAHEDRONS = 10000;
-    public static final Integer SAMPLE_SET_SIZE = 100000;
-    public static final Integer PIVOT_PAIRS = 1;
+    public static final Integer NUMBER_OF_TETRAHEDRONS_FOR_EACH_PIVOT_PAIR = 1;
+    public static final Integer SAMPLE_SET_SIZE = 2;
+    public static final Integer PIVOT_PAIRS = 256;
 
     public static void main(String[] args) throws IOException {
-        Dataset dataset;
-        dataset = new FSDatasetInstanceSingularizator.DeCAFDataset();
-        run(dataset);
-        dataset = new FSDatasetInstanceSingularizator.SIFTdataset();
-        run(dataset);
-        dataset = new FSDatasetInstanceSingularizator.RandomDataset20Uniform();
-        run(dataset);
-        dataset = new FSDatasetInstanceSingularizator.MPEG7dataset();
-        run(dataset);
+        run(new FSDatasetInstanceSingularizator.DeCAFDataset());
+        run(new FSDatasetInstanceSingularizator.SIFTdataset());
+        run(new FSDatasetInstanceSingularizator.RandomDataset20Uniform());
+        run(new FSDatasetInstanceSingularizator.MPEG7dataset());
     }
 
     public static void run(Dataset dataset) throws FileNotFoundException {
@@ -44,17 +37,17 @@ public class PrintFirstStatsOfDataset {
         DistanceFunctionInterface df = dataset.getDistanceFunction();
 
         File folder = new File(FSGlobal.TRIALS_FOLDER + "Ptolemaions_limited\\EFgetBD\\" + dataset.getDatasetName());
-        File file = new File(folder.getAbsolutePath() + "\\Stats_per_pairs_oriented_" + NUMBER_OF_TETRAHEDRONS + "_" + PIVOT_PAIRS + ".csv");
+        File file = new File(folder.getAbsolutePath() + "\\Stats_per_pairs_oriented2024_" + NUMBER_OF_TETRAHEDRONS_FOR_EACH_PIVOT_PAIR + "_" + PIVOT_PAIRS + ".csv");
         file = FSGlobal.checkFileExistence(file, true);
         System.setErr(new PrintStream(file));
 
         List<Object> metricObjects = dataset.getSampleOfDataset(SAMPLE_SET_SIZE);
         List<Object> pivots = dataset.getPivots(-1);
-        for (int p = 0; p < 2 * PIVOT_PAIRS; p += 2) {
+        for (int p = 0; p < PIVOT_PAIRS; p += 1) {
             Object[] fourObjects = new Object[4];
             fourObjects[0] = pivots.get(p);
             fourObjects[1] = pivots.get(p + 1);
-            for (int i = 0; i < NUMBER_OF_TETRAHEDRONS; i++) {
+            for (int i = 0; i < NUMBER_OF_TETRAHEDRONS_FOR_EACH_PIVOT_PAIR; i++) {
                 Object[] twoObjects = Tools.randomUniqueObjects(metricObjects, 2);
                 fourObjects[2] = twoObjects[0];
                 fourObjects[3] = twoObjects[1];
