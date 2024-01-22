@@ -123,7 +123,7 @@ public class EvaluateVorSkeSimChallengePreliminaryWithoutSketches {
             Object queryObjId = metricSpaceOfFullDataset.getIDOfMetricObject(fullQueryObj);
 
             List candidatesIDs = algVoronoi.candSetKnnSearch(metricSpaceOfFullDataset, fullQueryObj, kVoronoi, null);
-            List<Object> pcaOfCandidates = Tools.filterMap(pcaOMap, candidatesIDs);
+            List<Object> pcaOfCandidates = Tools.filterMapValues(pcaOMap, candidatesIDs);
             AbstractMap.SimpleEntry<Object, float[]> pcaQueryObj = (AbstractMap.SimpleEntry<Object, float[]>) pcaQueriesMap.get(queryObjId);
 
             List<Object> candSetObjIDs = algSimRel.candSetKnnSearch(pcaDatasetMetricSpace, pcaQueryObj, kPCA, pcaOfCandidates.iterator());
