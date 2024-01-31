@@ -118,7 +118,7 @@ public class EvaluateSimRelInfSysKNN {
             Object queryObjId = metricSpace.getIDOfMetricObject(fullQueryObj);
             TreeSet<Map.Entry<Object, Float>> completeKnnSearch = alg.completeKnnSearch(metricSpace, fullQueryObj, k, mapOfAllFullObjects, kPCA, involveObjWithUnknownRelation);
             if (STORE_RESULTS) {
-                resultsStorage.storeQueryResult(queryObjId, completeKnnSearch, fullDataset.getDatasetName(), fullDataset.getDatasetName(), resultName);
+                resultsStorage.storeQueryResult(queryObjId, completeKnnSearch, k, fullDataset.getDatasetName(), fullDataset.getDatasetName(), resultName);
             }
             int[] earlyStopsPerCoords = (int[]) getSimRelStatsOfLastExecutedQuery(simRel);
             String earlyStopsPerCoordsString = DataTypeConvertor.intsToString(earlyStopsPerCoords, ",");

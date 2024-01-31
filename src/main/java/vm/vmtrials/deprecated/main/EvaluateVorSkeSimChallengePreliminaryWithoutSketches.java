@@ -131,7 +131,7 @@ public class EvaluateVorSkeSimChallengePreliminaryWithoutSketches {
             time += System.currentTimeMillis();
             algSimRel.incTime(queryObjId, time);
             if (STORE_RESULTS) {
-                resultsStorage.storeQueryResult(queryObjId, rerankCandidateSet, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), resultName);
+                resultsStorage.storeQueryResult(queryObjId, rerankCandidateSet, k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), resultName);
             }
             long[] earlyStopsPerCoords = (long[]) algSimRel.getSimRelStatsOfLastExecutedQuery();
             String earlyStopsPerCoordsString = DataTypeConvertor.longToString(earlyStopsPerCoords, ",");
@@ -151,7 +151,7 @@ public class EvaluateVorSkeSimChallengePreliminaryWithoutSketches {
             recallStorage.save();
             LOG.log(Level.INFO, "Evaluating error on distance");
             ErrorOnDistEvaluator eodEvaluator = new ErrorOnDistEvaluator(resultsStorage, recallStorage);
-            eodEvaluator.evaluateAndStoreErrorsOnDist(fullDataset.getDatasetName(), fullDataset.getQuerySetName(), k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), resultName);
+            eodEvaluator.evaluateAndStoreErrorsOnDist(fullDataset.getDatasetName(), fullDataset.getQuerySetName(), k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), resultName, k);
             recallStorage.save();
         }
     }

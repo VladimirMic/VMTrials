@@ -11,7 +11,7 @@ import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.Dataset;
 import vm.metricSpace.ToolsMetricDomain;
 import vm.metricSpace.distance.DistanceFunctionInterface;
-import vm.metricSpace.distance.bounding.onepivot.OnePivotFilter;
+import vm.metricSpace.distance.bounding.onepivot.AbstractOnePivotFilter;
 import vm.search.algorithm.SearchingAlgorithm;
 import vm.metricSpace.datasetPartitioning.StorageDatasetPartitionsInterface;
 
@@ -33,14 +33,14 @@ public class DeleteTrialWithVoronoiFilteringPlusLimitedAngles<T> extends Searchi
     private final DistanceFunctionInterface<T> df;
     private final Map<Object, TreeSet<Object>> voronoiPartitioning;
 
-    private final OnePivotFilter filter;
+    private final AbstractOnePivotFilter filter;
     private final Map delete;
 
     public DeleteTrialWithVoronoiFilteringPlusLimitedAngles(Dataset dataset, StorageDatasetPartitionsInterface voronoiPartitioningStorage, int pivotCountUsedForTheVoronoiPartitioning) {
         this(dataset, voronoiPartitioningStorage, 0, null);
     }
 
-    public DeleteTrialWithVoronoiFilteringPlusLimitedAngles(Dataset dataset, StorageDatasetPartitionsInterface voronoiPartitioningStorage, int pivotCountUsedForTheVoronoiPartitioning, OnePivotFilter filter) {
+    public DeleteTrialWithVoronoiFilteringPlusLimitedAngles(Dataset dataset, StorageDatasetPartitionsInterface voronoiPartitioningStorage, int pivotCountUsedForTheVoronoiPartitioning, AbstractOnePivotFilter filter) {
         List pivots = dataset.getPivots(-1);
         pivotsMap = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(dataset.getMetricSpace(), pivots, true);
         df = dataset.getDistanceFunction();

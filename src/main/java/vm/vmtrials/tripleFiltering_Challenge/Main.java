@@ -123,7 +123,7 @@ public class Main {
 
         LOG.log(Level.INFO, "Storing results of queries: buildtime: {0}, querytime: {1}", new Object[]{buildTime, queryTime});
         FSNearestNeighboursStorageImpl resultsStorage = new FSNearestNeighboursStorageImpl(false);
-        resultsStorage.storeQueryResults(pcaDatasetMetricSpace, fullQueries, results, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), "");
+        resultsStorage.storeQueryResults(pcaDatasetMetricSpace, fullQueries, results, k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), "");
         Map<String, Object> ret = new HashMap<>();
         ret.put("buildtime", buildTime / 1000f);
         ret.put("querytime", queryTime / 1000f);
@@ -147,7 +147,7 @@ public class Main {
 
         LOG.log(Level.INFO, "Storing results of queries");
         FSNearestNeighboursStorageImpl resultsStorageGZ = new FSNearestNeighboursStorageImpl();
-        resultsStorageGZ.storeQueryResults(fullMetricSpace, fullQueries, results, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), resultName);
+        resultsStorageGZ.storeQueryResults(fullMetricSpace, fullQueries, results, k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), resultName);
     }
 
     private static SISAPChallengeAlgBuilder initAlgorithm(Dataset fullDataset, Dataset pcaDataset, Dataset sketchesDataset, AbstractObjectToSketchTransformator sketchingTechnique, int k) {

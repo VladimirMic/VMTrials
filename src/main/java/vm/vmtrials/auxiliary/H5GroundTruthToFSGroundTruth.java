@@ -52,7 +52,7 @@ public class H5GroundTruthToFSGroundTruth {
         }
         FSNearestNeighboursStorageImpl resultsStorage = new FSNearestNeighboursStorageImpl();
         FSMetricSpaceImpl metricSpace = new FSMetricSpaceImpl();
-        resultsStorage.storeQueryResults(metricSpace, queries, results, groundTruthName, groundTruthName, "ground_truth");
+        resultsStorage.storeQueryResults(metricSpace, queries, results, null, groundTruthName, groundTruthName, "ground_truth");
     }
 
     private static Iterator[] parseH5GroundTruth(String path) {

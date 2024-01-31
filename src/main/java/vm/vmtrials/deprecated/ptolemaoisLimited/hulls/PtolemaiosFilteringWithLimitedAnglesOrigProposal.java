@@ -1,12 +1,12 @@
 package vm.vmtrials.deprecated.ptolemaoisLimited.hulls;
 
-import vm.metricSpace.distance.bounding.twopivots.TwoPivotsFilter;
+import vm.metricSpace.distance.bounding.twopivots.AbstractTwoPivotsFilter;
 
 /**
  *
  * @author Vlada
  */
-public class PtolemaiosFilteringWithLimitedAnglesOrigProposal { //extends TwoPivotsFilter {
+public class PtolemaiosFilteringWithLimitedAnglesOrigProposal { //extends AbstractTwoPivotsFilter {
 
 //    private final Map<String, List<Point2D.Double>> hullsForPivotPairs;
 //    private static final Logger LOGGER = Logger.getLogger(PtolemaiosFilteringWithLimitedAnglesOrigProposal.class.getName());

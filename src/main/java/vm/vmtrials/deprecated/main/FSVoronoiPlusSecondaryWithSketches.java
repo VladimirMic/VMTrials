@@ -106,7 +106,7 @@ public class FSVoronoiPlusSecondaryWithSketches {
 
         LOG.log(Level.INFO, "Storing results of queries");
         FSNearestNeighboursStorageImpl resultsStorage = new FSNearestNeighboursStorageImpl();
-        resultsStorage.storeQueryResults(metricSpace, queries, results, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), filter.getTechFullName());
+        resultsStorage.storeQueryResults(metricSpace, queries, results, k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), filter.getTechFullName());
 
         LOG.log(Level.INFO, "Evaluating accuracy of queries");
         FSRecallOfCandidateSetsStorageImpl recallStorage = new FSRecallOfCandidateSetsStorageImpl(fullDataset.getDatasetName(), fullDataset.getQuerySetName(), k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), filter.getTechFullName(), null);
