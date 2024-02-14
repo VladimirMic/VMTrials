@@ -26,7 +26,6 @@ import vm.metricSpace.distance.bounding.nopivot.impl.SecondaryFilteringWithSketc
 import vm.metricSpace.distance.bounding.nopivot.learning.LearningSecondaryFilteringWithSketches;
 import vm.objTransforms.objectToSketchTransformators.AbstractObjectToSketchTransformator;
 import vm.objTransforms.objectToSketchTransformators.SketchingGHP;
-import vm.objTransforms.storeLearned.GHPSketchingPivotPairsStoreInterface;
 import vm.queryResults.errorOnDistEvaluation.ErrorOnDistEvaluator;
 import vm.queryResults.recallEvaluation.RecallOfCandsSetsEvaluator;
 import vm.search.algorithm.impl.VoronoiPartitionsCandSetIdentifier;
@@ -35,6 +34,7 @@ import vm.simRel.SimRelInterface;
 import vm.simRel.impl.DumbSimRel;
 import vm.simRel.impl.SimRelEuclideanPCAImplForTesting;
 import vm.simRel.impl.learn.SimRelEuclideanPCAForLearning;
+import vm.objTransforms.storeLearned.PivotPairsStoreInterface;
 
 /**
  *
@@ -122,7 +122,7 @@ public class EvaluateCRANBERRYMain {
         AbstractMetricSpace pcaDatasetMetricSpace = pcaDataset.getMetricSpace();
 
         // sketching technique to transform query object to sketch
-        GHPSketchingPivotPairsStoreInterface storageOfPivotPairs = new FSGHPSketchesPivotPairsStorageImpl();
+        PivotPairsStoreInterface storageOfPivotPairs = new FSGHPSketchesPivotPairsStorageImpl();
         AbstractObjectToSketchTransformator sketchingTechnique = new SketchingGHP(fullDataset.getDistanceFunction(), fullDataset.getMetricSpace(), pivots, fullDataset.getDatasetName(), 0.5f, sketchLength, storageOfPivotPairs);
 
         // filtering algorithms and filters

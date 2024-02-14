@@ -24,12 +24,12 @@ import vm.metricSpace.distance.bounding.nopivot.learning.LearningSecondaryFilter
 import vm.metricSpace.distance.bounding.nopivot.storeLearned.SecondaryFilteringWithSketchesStoreInterface;
 import vm.objTransforms.objectToSketchTransformators.AbstractObjectToSketchTransformator;
 import vm.objTransforms.objectToSketchTransformators.SketchingGHP;
-import vm.objTransforms.storeLearned.GHPSketchingPivotPairsStoreInterface;
 import vm.queryResults.recallEvaluation.RecallOfCandsSetsEvaluator;
 import vm.search.algorithm.SearchingAlgorithm;
 import vm.search.algorithm.impl.KNNSearchWithSketchSecondaryFiltering;
 import vm.search.algorithm.impl.VoronoiPartitionsCandSetIdentifier;
 import vm.metricSpace.datasetPartitioning.StorageDatasetPartitionsInterface;
+import vm.objTransforms.storeLearned.PivotPairsStoreInterface;
 
 /**
  *
@@ -79,7 +79,7 @@ public class FSVoronoiPlusSecondaryWithSketches {
         StorageDatasetPartitionsInterface voronoiPartitioningStorage = new FSVoronoiPartitioningStorage();
         SearchingAlgorithm voronoi = new VoronoiPartitionsCandSetIdentifier(fullDataset, voronoiPartitioningStorage, pivotCountUsedForVoronoiLearning);
 
-        GHPSketchingPivotPairsStoreInterface storageOfPivotPairs = new FSGHPSketchesPivotPairsStorageImpl();
+        PivotPairsStoreInterface storageOfPivotPairs = new FSGHPSketchesPivotPairsStorageImpl();
         List pivots = fullDataset.getPivots(-1);
 
         AbstractObjectToSketchTransformator sketchingTechnique = new SketchingGHP(df, metricSpace, pivots, fullDataset.getDatasetName(), 0.5f, sketchLength, storageOfPivotPairs);

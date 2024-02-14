@@ -39,10 +39,10 @@ import vm.objTransforms.objectToSketchTransformators.AbstractObjectToSketchTrans
 import vm.objTransforms.objectToSketchTransformators.SketchingGHP;
 import vm.objTransforms.perform.PCAPrefixMetricObjectTransformer;
 import vm.objTransforms.perform.TransformDataToGHPSketches;
-import vm.objTransforms.storeLearned.GHPSketchingPivotPairsStoreInterface;
 import vm.search.algorithm.impl.multiFiltering.CranberryAlgorithm;
 import static vm.vmtrials.tripleFiltering_Challenge.SISAPChallengeAlgBuilder.MAX_DATASET_SIZE_TO_CACHE;
 import static vm.vmtrials.tripleFiltering_Challenge.SISAPChallengeAlgBuilder.MIN_DATASET_SIZE_TO_CACHE;
+import vm.objTransforms.storeLearned.PivotPairsStoreInterface;
 
 /**
  *
@@ -195,7 +195,7 @@ public class Main {
 
     private static AbstractObjectToSketchTransformator createSketches(Dataset fullDataset, MainMemoryDatasetCache resultsDataset) {
         AbstractMetricSpacesStorage storageForSketches = new FSMetricSpacesStorage(new FSMetricSpaceImpl<>(), SingularisedConvertors.LONG_VECTOR_SPACE);
-        GHPSketchingPivotPairsStoreInterface storageOfPivotPairs = new FSGHPSketchesPivotPairsStorageImpl();
+        PivotPairsStoreInterface storageOfPivotPairs = new FSGHPSketchesPivotPairsStorageImpl();
         TransformDataToGHPSketches evaluator = new TransformDataToGHPSketches(fullDataset, storageOfPivotPairs, storageForSketches, 0.5f, -1);
         int[] sketchesLengths = new int[]{SKETCH_LENGTH};
         String[] sketchesPairsName = new String[]{"laion2B-en-clip768v2-n=100M.h5_GHP_50_" + SKETCH_LENGTH};
