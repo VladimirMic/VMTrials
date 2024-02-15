@@ -55,7 +55,7 @@ public class SimRelInstantRefinement<T> extends SearchingAlgorithm<T> {
         }
         T qData = fullMetricSpace.getDataOfMetricObject(fullQueryObject);
         Object qId = fullMetricSpace.getIDOfMetricObject(fullQueryObject);
-        TreeSet<Map.Entry<Object, Float>> ret = currAnswer == null ? new TreeSet<>(new Tools.MapByValueComparator()) : currAnswer;
+        TreeSet<Map.Entry<Object, Float>> ret = currAnswer == null ? new TreeSet<>(new Tools.MapByFloatValueComparator()) : currAnswer;
 
         if (simRelFunc instanceof SimRelEuclideanPCAImplForTesting) {
             SimRelEuclideanPCAImplForTesting euclid = (SimRelEuclideanPCAImplForTesting) simRelFunc;

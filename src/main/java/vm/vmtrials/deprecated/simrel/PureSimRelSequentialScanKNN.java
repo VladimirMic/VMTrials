@@ -101,7 +101,7 @@ public class PureSimRelSequentialScanKNN<T> extends SearchingAlgorithm<T> {
     }
 
     private TreeSet<Entry<Object, Float>> transformListToAbstractDists(List<Object> list) {
-        TreeSet<Map.Entry<Object, Float>> ret = new TreeSet<>(new Tools.MapByValueComparator());
+        TreeSet<Map.Entry<Object, Float>> ret = new TreeSet<>(new Tools.MapByFloatValueComparator());
         for (int i = 0; i < list.size(); i++) {
             ret.add(new AbstractMap.SimpleEntry<>(list.get(i), (float) i));
         }

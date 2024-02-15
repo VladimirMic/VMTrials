@@ -45,7 +45,7 @@ public class SimRelSeqScanKNNJustLastObjCheckThenFullDistEval<T> extends Searchi
             euclid.resetEarlyStopsOnCoordsCounts();
         }
         T queryObjectData = metricSpace.getDataOfMetricObject(queryObject);
-        TreeSet<Map.Entry<Object, Float>> ret = new TreeSet<>(new Tools.MapByValueComparator());
+        TreeSet<Map.Entry<Object, Float>> ret = new TreeSet<>(new Tools.MapByFloatValueComparator());
         Map<Object, T> retData = new HashMap<>();
         distCounter = 0;
         for (int i = 1; objects.hasNext(); i++) {
