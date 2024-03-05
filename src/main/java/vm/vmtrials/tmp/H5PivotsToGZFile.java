@@ -8,7 +8,7 @@ import vm.fs.dataset.FSDatasetInstanceSingularizator;
 import vm.fs.metricSpaceImpl.FSMetricSpacesStorage;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.Dataset;
-import vm.metricSpace.dataToStringConvertors.SingularisedConvertors;
+import vm.metricSpace.data.toStringConvertors.SingularisedConvertors;
 
 /**
  *

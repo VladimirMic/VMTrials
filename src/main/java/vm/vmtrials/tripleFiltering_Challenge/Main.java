@@ -31,7 +31,7 @@ import vm.metricSpace.Dataset;
 import vm.metricSpace.AbstractMetricSpacesStorage;
 import vm.metricSpace.MainMemoryDatasetCache;
 import vm.metricSpace.ToolsMetricDomain;
-import vm.metricSpace.dataToStringConvertors.SingularisedConvertors;
+import vm.metricSpace.data.toStringConvertors.SingularisedConvertors;
 import vm.metricSpace.datasetPartitioning.impl.VoronoiPartitioning;
 import vm.objTransforms.MetricObjectTransformerInterface;
 import vm.objTransforms.MetricObjectsParallelTransformerImpl;

@@ -12,7 +12,7 @@ import vm.math.Tools;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.ToolsMetricDomain;
 import vm.metricSpace.AbstractMetricSpacesStorage;
-import vm.metricSpace.dataToStringConvertors.impl.FloatVectorConvertor;
+import vm.metricSpace.data.toStringConvertors.impl.FloatVectorConvertor;
 
 /**
  *
