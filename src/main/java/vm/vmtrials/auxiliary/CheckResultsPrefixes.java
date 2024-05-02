@@ -23,7 +23,7 @@ public class CheckResultsPrefixes {
 
     public static void main(String[] args) {
         String lessResultsFolder = "faiss-100M_CLIP_PCA256-IVFPQ-tr1000000-cc262144-m32-nbits8-qc1000-k50000";
-        String moreResultsFolder = "faiss-100M_CLIP_PCA256-IVFPQ-tr1000000-cc262144-m32-nbits8-qc1000-k100000";
+        String moreResultsFolder = "faiss-100M_CLIP_PCA256-IVFPQ-tr1000000-cc262144-m32-nbits8-qc1000-k200000";
 
         String[] lessFiles = new File(FSGlobal.RESULT_FOLDER, lessResultsFolder).list((File file, String string) -> string.toLowerCase().endsWith(".gz"));
         String[] moreFiles = new File(FSGlobal.RESULT_FOLDER, moreResultsFolder).list((File file, String string) -> string.toLowerCase().endsWith(".gz"));
@@ -31,6 +31,7 @@ public class CheckResultsPrefixes {
         QueryNearestNeighboursStoreInterface resultsStorage = new FSNearestNeighboursStorageImpl();
         lessCandsCache = new Map[lessFiles.length];
         for (int m = 0; m < moreFiles.length; m++) {
+            System.gc();
             String more = moreFiles[m].trim().substring(0, moreFiles[m].length() - 3);
             Map<String, TreeSet<Map.Entry<Object, Float>>> moreCands = resultsStorage.getQueryResultsForDataset(moreResultsFolder, more, "", null);
 
@@ -58,7 +59,7 @@ public class CheckResultsPrefixes {
 
                     }
                 }
-                System.out.println("Heureka! File " + more + " is an extended list of candidates from a file " + less);
+                System.out.println("Heureka! File " + more + " is a longer list of candidates from a file " + less);
             }
         }
     }
