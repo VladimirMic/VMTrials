@@ -1,4 +1,4 @@
-package vm.vmtrials.auxiliary;
+package vm.vmtrials.deprecated.main;
 
 import java.util.List;
 import vm.datatools.Tools;
@@ -13,7 +13,8 @@ import vm.metricSpace.distance.DistanceFunctionInterface;
  *
  * @author Vlada
  */
-public class SelectRandomUniform {
+@Deprecated // use FSSelectRandomQueryObjectsAndPivotsFromDatasetMain instead
+public class SelectRandomUniformObjects {
 
     public static void main(String[] args) {
         Dataset dataset = new M2DatasetInstanceSingularizator.DeCAF100MDatasetAndromeda();
