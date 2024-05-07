@@ -25,7 +25,7 @@ import vm.search.algorithm.impl.SimRelSeqScanKNNCandSet;
 import vm.search.algorithm.impl.VoronoiPartitionsCandSetIdentifier;
 import vm.simRel.impl.SimRelEuclideanPCAImpl;
 import vm.simRel.impl.SimRelEuclideanPCAImplForTesting;
-import vm.fs.main.search.filtering.perform.FSKNNQueriesSeqScanWithSimRelMain;
+import vm.fs.main.search.perform.FSKNNQueriesSeqScanWithSimRelMain;
 import vm.vmtrials.tripleFiltering_Challenge.EvaluateCRANBERRYMain;
 
 /**
