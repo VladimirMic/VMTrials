@@ -27,12 +27,12 @@ public class GradualFilteringWithSeveralAlgorithms<T> extends SearchingAlgorithm
     @Override
     public TreeSet<Map.Entry<Object, Float>> completeKnnSearch(AbstractMetricSpace<T> metricSpace, Object queryObject, int k, Iterator<Object> objects, Object... additionalParams) {
         List<Object> candSetKnnSearch = candSetKnnSearch(metricSpace, queryObject, k, objects);
-        TreeSet ret = rerankCandidateSet(metricSpace, queryObject, k, dataset.getDatasetName(), dataset.getKeyValueStorage(), candSetKnnSearch);
+        TreeSet ret = rerankCandidateSet(metricSpace, queryObject, k, dataset.getDistanceFunction(), dataset.getKeyValueStorage(), candSetKnnSearch);
         return ret;
     }
 
     @Override
-    public List<Object> candSetKnnSearch(AbstractMetricSpace<T> metricSpace, Object queryObject, int k, Iterator<Object> objects, Object ... additionalParams) {
+    public List<Object> candSetKnnSearch(AbstractMetricSpace<T> metricSpace, Object queryObject, int k, Iterator<Object> objects, Object... additionalParams) {
         Iterator<Object> cands = objects;
         List<Object> candSetKnnSearch = null;
         for (SearchingAlgorithm<T> alg : algs) {

@@ -280,7 +280,7 @@ public class Main {
         }
 
         @Override
-        public final List<Object> getMetricQueryObjects() {
+        public final List<Object> getMetricQueryObjects(Object ... params) {
             if (cache.queriesLoaded()) {
                 return cache.getMetricQueryObjects();
             }

@@ -84,7 +84,7 @@ public class SimRelInstantRefinement<T> extends SearchingAlgorithm<T> {
                 float distance = fullDF.getDistance(qData, fullOData);
                 distCompsOfLastExecutedQuery++;
                 ret.add(new AbstractMap.SimpleEntry<>(oPCAID, distance));
-                float radius = adjustAndReturnSearchRadiusAfterAddingOne(ret, kPCA);
+                float radius = adjustAndReturnSearchRadiusAfterAddingOne(ret, kPCA, Float.MAX_VALUE);
                 if (distance <= radius) {
                     candSetData.put(oPCAID, oPCAData);
                     if (!ansOfSimRelSet.contains(oPCAID)) {
