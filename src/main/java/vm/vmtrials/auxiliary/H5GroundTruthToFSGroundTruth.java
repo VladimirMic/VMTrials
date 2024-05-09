@@ -17,7 +17,7 @@ import java.util.NoSuchElementException;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import vm.evaluatorsToBeUsed.GroundTruthEvaluator;
+import vm.search.algorithm.impl.GroundTruthEvaluator;
 import vm.fs.metricSpaceImpl.FSMetricSpaceImpl;
 import vm.fs.store.queryResults.FSNearestNeighboursStorageImpl;
 
