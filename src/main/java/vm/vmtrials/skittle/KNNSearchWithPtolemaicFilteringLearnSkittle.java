@@ -27,6 +27,7 @@ import static vm.search.algorithm.impl.KNNSearchWithPtolemaicFiltering.LB_COUNT;
 public class KNNSearchWithPtolemaicFilteringLearnSkittle<T> extends KNNSearchWithPtolemaicFiltering<T> {
 
     private final SortedMap<String, QueryLearnStats> queryStats = new TreeMap<>();
+    private int datasetSize;
 
     public KNNSearchWithPtolemaicFilteringLearnSkittle(AbstractMetricSpace metricSpace, AbstractPtolemaicBasedFiltering ptolemaicFilter, List pivots, float[][] poDists, Map rowHeaders, Map columnHeaders, DistanceFunctionInterface df) {
         super(metricSpace, ptolemaicFilter, pivots, poDists, rowHeaders, columnHeaders, df);
@@ -67,7 +68,8 @@ public class KNNSearchWithPtolemaicFilteringLearnSkittle<T> extends KNNSearchWit
             oCounter++;
             if (oCounter % objBeforeSeqScan == 0) {
                 float avg = lbChecked / (float) oCounter;
-                stats.addLBChecked(oCounter, avg);
+                stats.addLBChecked(avg);
+                stats.addTime(System.currentTimeMillis() - t);
             }
             o = objects.next();
             oId = metricSpace.getIDOfMetricObject(o);
@@ -97,6 +99,7 @@ public class KNNSearchWithPtolemaicFilteringLearnSkittle<T> extends KNNSearchWit
                 range = adjustAndReturnSearchRadiusAfterAddingOne(ret, k, Float.MAX_VALUE);
             }
         }
+        datasetSize = oCounter;
         t += System.currentTimeMillis();
 //        System.err.println("XXX:" + t + ";" + dc);
         incTime(qId, t);
@@ -107,6 +110,10 @@ public class KNNSearchWithPtolemaicFilteringLearnSkittle<T> extends KNNSearchWit
 
     public QueryLearnStats getQueryStats(String qId) {
         return queryStats.get(qId);
+    }
+
+    public int getDatasetSize() {
+        return datasetSize;
     }
 
 }

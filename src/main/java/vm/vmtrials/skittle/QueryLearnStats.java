@@ -12,50 +12,36 @@ import java.util.List;
  *
  * @author Vlada
  */
-public class QueryLearnStats implements Comparable<QueryLearnStats> {
+public class QueryLearnStats {
 
-    private long execTime;
-    private float importance;
     private final List<Float> avgNumberOfLBsPerO;
+    private final List<Long> qTimes;
     private final String queryID;
 
     public QueryLearnStats(String queryID) {
         this.queryID = queryID;
         avgNumberOfLBsPerO = new ArrayList<>();
+        qTimes = new ArrayList<>();
     }
 
-    public void addLBChecked(int objCheckedCount, float avgNumberOfLBsPerO) {
+    public void addLBChecked(float avgNumberOfLBsPerO) {
         this.avgNumberOfLBsPerO.add(avgNumberOfLBsPerO);
+    }
+
+    public void addTime(long qTime) {
+        this.qTimes.add(qTime);
     }
 
     public List<Float> getAvgNumberOfLBsPerO() {
         return Collections.unmodifiableList(avgNumberOfLBsPerO);
     }
 
+    public List<Long> getqTimes() {
+        return Collections.unmodifiableList(qTimes);
+    }
+
     public String getQueryID() {
         return queryID;
-    }
-
-    @Override
-    public int compareTo(QueryLearnStats o) {
-        int ret = Long.compare(execTime, o.execTime);
-        if (ret != 0) {
-            return ret;
-        }
-        return queryID.compareTo(o.queryID);
-    }
-
-    public long getExecTime() {
-        return execTime;
-    }
-
-    public void setExecTime(long execTime) {
-        this.execTime = execTime;
-    }
-
-    public float evaluateImportanceWeight(long seqScanTime) {
-        importance = execTime - seqScanTime;
-        return importance;
     }
 
 }
