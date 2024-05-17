@@ -106,7 +106,7 @@ public class EvaluateSimRelInstantWithVoronoi {
 
     private static void testQueries(Dataset fullDataset, Dataset pcaDataset, SimRelEuclideanPCAImpl simRel, Integer kVoronoi, int kPCA, int k, int prefixLength, QueryNearestNeighboursStoreInterface resultsStorage, String resultName, FSQueryExecutionStatsStoreImpl statsStorage, Map<FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME, String> fileNameDataForRecallStorage) {
         Map<Object, Object> mapOfAllFullObjects = fullDataset.getKeyValueStorage();
-        List<Object> fullQueries = fullDataset.getMetricQueryObjects();
+        List<Object> fullQueries = fullDataset.getQueryObjects();
 
         VoronoiPartitionsCandSetIdentifier algVoronoi = new VoronoiPartitionsCandSetIdentifier(fullDataset, new FSVoronoiPartitioningStorage(), 2048);
         SimRelInstantRefinement algSimRel = new SimRelInstantRefinement(fullDataset.getDistanceFunction(), simRel, kPCA);
@@ -115,7 +115,7 @@ public class EvaluateSimRelInstantWithVoronoi {
         AbstractMetricSpace pcaDatasetMetricSpace = pcaDataset.getMetricSpace();
 
         Map pcaOMap = EvaluateCRANBERRYMain.getMapOfPrefixes(pcaDatasetMetricSpace, pcaDataset.getMetricObjectsFromDataset(), prefixLength);
-        Map pcaQueriesMap = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(pcaDatasetMetricSpace, pcaDataset.getMetricQueryObjects(), false);
+        Map pcaQueriesMap = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(pcaDatasetMetricSpace, pcaDataset.getQueryObjects(), false);
 
         for (int i = 0; i < fullQueries.size(); i++) {
 

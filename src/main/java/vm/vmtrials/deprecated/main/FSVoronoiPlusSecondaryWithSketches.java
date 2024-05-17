@@ -88,7 +88,7 @@ public class FSVoronoiPlusSecondaryWithSketches {
 
         SearchingAlgorithm secondaryWithSketches = new KNNSearchWithSketchSecondaryFiltering(fullDataset, filter, sketchingTechnique);
 
-        List queries = fullDataset.getMetricQueryObjects();
+        List queries = fullDataset.getQueryObjects();
 
         Map keyValueStorage = fullDataset.getKeyValueStorage();
 //        Map keyValueStorage = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(metricSpace, fullDataset.getMetricObjectsFromDataset(), true);

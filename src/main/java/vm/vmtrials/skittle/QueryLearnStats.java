@@ -15,7 +15,7 @@ import java.util.List;
 public class QueryLearnStats {
 
     private final List<Float> avgNumberOfLBsPerO;
-    private final List<Long> qTimes;
+    private final List<Integer> qTimes;
     private final String queryID;
 
     public QueryLearnStats(String queryID) {
@@ -28,7 +28,7 @@ public class QueryLearnStats {
         this.avgNumberOfLBsPerO.add(avgNumberOfLBsPerO);
     }
 
-    public void addTime(long qTime) {
+    public void addTime(int qTime) {
         this.qTimes.add(qTime);
     }
 
@@ -36,7 +36,7 @@ public class QueryLearnStats {
         return Collections.unmodifiableList(avgNumberOfLBsPerO);
     }
 
-    public List<Long> getqTimes() {
+    public List<Integer> getqTimes() {
         return Collections.unmodifiableList(qTimes);
     }
 

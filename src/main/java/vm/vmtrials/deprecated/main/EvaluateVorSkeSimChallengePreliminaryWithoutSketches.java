@@ -105,7 +105,7 @@ public class EvaluateVorSkeSimChallengePreliminaryWithoutSketches {
         if (FULL_RERANK) {
             mapOfAllFullObjects = fullDataset.getKeyValueStorage();
         }
-        List<Object> fullQueries = fullDataset.getMetricQueryObjects();
+        List<Object> fullQueries = fullDataset.getQueryObjects();
 
         VoronoiPartitionsCandSetIdentifier algVoronoi = new VoronoiPartitionsCandSetIdentifier(fullDataset, new FSVoronoiPartitioningStorage(), 2048);
         SimRelSeqScanKNNCandSet algSimRel = new SimRelSeqScanKNNCandSet(simRel, kPCA, INVOLVE_OBJS_UNKNOWN_RELATION);
@@ -114,7 +114,7 @@ public class EvaluateVorSkeSimChallengePreliminaryWithoutSketches {
         AbstractMetricSpace pcaDatasetMetricSpace = pcaDataset.getMetricSpace();
 
         Map pcaOMap = EvaluateCRANBERRYMain.getMapOfPrefixes(pcaDatasetMetricSpace, pcaDataset.getMetricObjectsFromDataset(), prefixLength);
-        Map pcaQueriesMap = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(pcaDatasetMetricSpace, pcaDataset.getMetricQueryObjects(), false);
+        Map pcaQueriesMap = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(pcaDatasetMetricSpace, pcaDataset.getQueryObjects(), false);
 
         for (int i = 0; i < fullQueries.size(); i++) {
 

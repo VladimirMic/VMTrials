@@ -91,8 +91,8 @@ public class Main {
         }
         buildTime += System.currentTimeMillis();
         System.gc();
-        List fullQueries = fullDataset.getMetricQueryObjects();
-        List pcaQueries = pcaDataset.getMetricQueryObjects();
+        List fullQueries = fullDataset.getQueryObjects();
+        List pcaQueries = pcaDataset.getQueryObjects();
 
         AbstractMetricSpace pcaDatasetMetricSpace = pcaDataset.getMetricSpace();
 
@@ -245,7 +245,7 @@ public class Main {
             String newDatasetName = pca.getNameOfTransformedSetOfObjects(dataset.getDatasetName(), false);
             MetricObjectsParallelTransformerImpl parallelTransformerImpl = new MetricObjectsParallelTransformerImpl(pca, metricSpacesStorage, newDatasetName, newDatasetName, newDatasetName);
             FSApplyPCAMain.transformPivots(dataset.getPivots(-1).iterator(), parallelTransformerImpl, "Pivot set with name \"" + datasetUsedToLearnSVD + "\" transformed by VT matrix of svd " + sampleSetSize + " to the length " + pcaLength, cachedDataset);
-            FSApplyPCAMain.transformQueryObjects(dataset.getMetricQueryObjects().iterator(), parallelTransformerImpl, "Query set with name \"" + datasetUsedToLearnSVD + "\" transformed by VT matrix of svd " + sampleSetSize + " to the length " + pcaLength, cachedDataset);
+            FSApplyPCAMain.transformQueryObjects(dataset.getQueryObjects().iterator(), parallelTransformerImpl, "Query set with name \"" + datasetUsedToLearnSVD + "\" transformed by VT matrix of svd " + sampleSetSize + " to the length " + pcaLength, cachedDataset);
             FSApplyPCAMain.transformDataset(dataset.getMetricObjectsFromDataset(), parallelTransformerImpl, "Dataset with name \"" + datasetUsedToLearnSVD + "\" transformed by VT matrix of svd " + sampleSetSize + " to the length " + pcaLength, cachedDataset);
             LOG.log(Level.INFO, "\nTransform to the prefixes of PCA finished");
         }
@@ -271,7 +271,7 @@ public class Main {
             this.querySetFile = FSGlobal.checkFileExistence(new File(querySetPath), false);
             cache = new MainMemoryDatasetCache(metricSpace, datasetName, metricSpacesStorage);
             cache.addPivots(getPivots(-1));
-            cache.addQueries(getMetricQueryObjects());
+            cache.addQueries(getQueryObjects());
         }
 
         @Override
@@ -280,9 +280,9 @@ public class Main {
         }
 
         @Override
-        public final List<Object> getMetricQueryObjects(Object ... params) {
+        public final List<Object> getQueryObjects(Object ... params) {
             if (cache.queriesLoaded()) {
-                return cache.getMetricQueryObjects();
+                return cache.getQueryObjects();
             }
             FSMetricSpacesStorage storage = (FSMetricSpacesStorage) metricSpacesStorage;
             Iterator it = storage.getIteratorOfObjects(querySetFile, "Q");

@@ -53,7 +53,7 @@ public class PrintStatsWhereAreNNs {
         DistanceFunctionInterface df = dataset.getDistanceFunction();
         //
         Map<Object, Object> pivots = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(metricSpace, dataset.getPivots(pivotCount), true);
-        Map<Object, Object> queries = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(metricSpace, dataset.getMetricQueryObjects(), true);
+        Map<Object, Object> queries = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(metricSpace, dataset.getQueryObjects(), true);
         Map<String, TreeSet<Map.Entry<Object, Float>>> gt = new FSNearestNeighboursStorageImpl().getGroundTruthForDataset(dataset.getDatasetName(), dataset.getQuerySetName());
         //
         Map<Object, TreeSet<Object>> partitioning = storage.load(dataset.getDatasetName(), pivotCount);

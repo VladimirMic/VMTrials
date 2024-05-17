@@ -18,8 +18,10 @@ import java.util.logging.Logger;
 import vm.datatools.Tools;
 import vm.fs.store.queryResults.FSQueryExecutionStatsStoreImpl;
 import vm.metricSpace.AbstractMetricSpace;
+import vm.metricSpace.Dataset;
 import vm.metricSpace.distance.DistanceFunctionInterface;
 import vm.queryResults.QueryExecutionStatsStoreInterface;
+import vm.search.algorithm.SearchingAlgorithm;
 import vm.search.algorithm.impl.GroundTruthEvaluator;
 import static vm.search.algorithm.impl.KNNSearchWithPtolemaicFiltering.LB_COUNT;
 
@@ -30,26 +32,27 @@ import static vm.search.algorithm.impl.KNNSearchWithPtolemaicFiltering.LB_COUNT;
  */
 public class LearnSkittleForDataDepPtolemaios<T> {
 
-    public static final Integer O_COUNT_STEP = 1000;
+    public static final Integer O_COUNT_STEP = 2000;
+    public static final Float MAX_RATIO_OF_DATASET = 0.5f;
     public static final Integer K = 30;
     public static final Logger LOG = Logger.getLogger(LearnSkittleForDataDepPtolemaios.class.getName());
     private final KNNSearchWithPtolemaicFilteringLearnSkittle alg;
     private final AbstractMetricSpace metricSpace;
     private final List<Object> queriesSamples;
-    private final Iterator<Object> sampleObjects;
+    private final Dataset dataset;
     private final DistanceFunctionInterface<T> df;
     private final String datasetName;
     private final String querySetName;
 
-    public LearnSkittleForDataDepPtolemaios(KNNSearchWithPtolemaicFilteringLearnSkittle alg, String datasetName, String querySetName, AbstractMetricSpace metricSpace, List<Object> queriesSamples, Iterator<Object> sampleObjects, DistanceFunctionInterface<T> df) {
+    public LearnSkittleForDataDepPtolemaios(KNNSearchWithPtolemaicFilteringLearnSkittle alg, Dataset dataset, List<Object> queriesSamples) {
         alg.setObjBeforeSeqScan(O_COUNT_STEP);
         this.alg = alg;
-        this.metricSpace = metricSpace;
+        this.metricSpace = dataset.getMetricSpace();
         this.queriesSamples = queriesSamples;
-        this.sampleObjects = sampleObjects;
-        this.df = df;
-        this.datasetName = datasetName;
-        this.querySetName = querySetName;
+        this.dataset = dataset;
+        this.df = dataset.getDistanceFunction();
+        this.datasetName = dataset.getDatasetName();
+        this.querySetName = dataset.getQuerySetName();
     }
 
     /**
@@ -57,19 +60,23 @@ public class LearnSkittleForDataDepPtolemaios<T> {
      * decision whether go to brute force seq scan, (1) the average number of
      * lower bounds that should be checked per o to
      *
-     * @return
      */
     public void learn() {
         long timeOfSequentialScan = loadTimeOfSequentialScan();
         LOG.log(Level.INFO, "Median brute force time over queries: {0} ms", Long.toString(timeOfSequentialScan));
-        for (Object q : queriesSamples) {
-            alg.completeKnnSearch(metricSpace, q, K, sampleObjects);
+        Iterator<Object> oIt = dataset.getMetricObjectsFromDataset();
+        int datasetSize = 0;
+        while (oIt.hasNext()) {
+            List<Object> batch = Tools.getObjectsFromIterator(oIt, SearchingAlgorithm.BATCH_SIZE);
+            datasetSize += batch.size();
+            for (Object q : queriesSamples) {
+                alg.completeKnnSearch(metricSpace, q, K, batch.iterator());
+            }
         }
         Map<Object, AtomicLong> timesPerQueries = alg.getTimesPerQueries();
 // evaluate estimate of raw times for each step.
         List<float[][]> estimatedTimes = new ArrayList<>();
-        int datasetSize = alg.getDatasetSize();
-        List<Long> qTimes = null;
+        List<Integer> qTimes = null;
         for (int i = 0; i < queriesSamples.size(); i++) {
             Object q = queriesSamples.get(i);
             String qId = metricSpace.getIDOfMetricObject(q).toString();
@@ -77,27 +84,29 @@ public class LearnSkittleForDataDepPtolemaios<T> {
             QueryLearnStats stats = alg.getQueryStats(qId);
             List<Float> qLBCounts = stats.getAvgNumberOfLBsPerO();
             qTimes = stats.getqTimes();
+            qTimes = sumQTimesOverBatches(qTimes, SearchingAlgorithm.BATCH_SIZE / O_COUNT_STEP);
             estimatedTimes.add(estimateTimesForSkittle(timeOfSequentialScan, qTimeComplete, qTimes, qLBCounts, datasetSize));
         }
 
-        float[][] estimatedTimesForSkittleOCountLBCount = estimateAvgTimesForSkittleOCountLBCount(estimatedTimes, qTimes.size());
+        float[][] estimatedTimesForSkittleOCountLBCount = estimateAvgTimesForSkittleOCountLBCount(estimatedTimes, (int) (qTimes.size() * MAX_RATIO_OF_DATASET));
         try {
-            System.setOut(new PrintStream("h:\\Similarity_search\\Trials\\¨Skittle_time_estimations.csv"));
+            System.setErr(new PrintStream("h:\\Similarity_search\\Trials\\Skittle_time_estimations.csv"));
         } catch (FileNotFoundException ex) {
             Logger.getLogger(LearnSkittleForDataDepPtolemaios.class.getName()).log(Level.SEVERE, null, ex);
         }
         Tools.printMatrix(estimatedTimesForSkittleOCountLBCount);
     }
 
-    private float[][] estimateTimesForSkittle(long timeOfSequentialScan, long qTimeComplete, List<Long> qTimes, List<Float> qLBCounts, int datasetSize) {
-        float[][] ret = new float[qTimes.size()][LB_COUNT];
-        for (int batchIndex = 0; batchIndex < qTimes.size(); batchIndex++) {
-            long batchTime = qTimes.get(batchIndex);
+    private float[][] estimateTimesForSkittle(long timeOfSequentialScan, long qTimeComplete, List<Integer> qTimes, List<Float> qLBCounts, int datasetSize) {
+        int maxSampleChecked = (int) (qTimes.size() * MAX_RATIO_OF_DATASET);
+        float[][] ret = new float[maxSampleChecked][LB_COUNT];
+        for (int batchIndex = 0; batchIndex < maxSampleChecked; batchIndex++) {
+            long qTime = qTimes.get(batchIndex);
             float lbCountBatch = qLBCounts.get(batchIndex);
-            float processedO = O_COUNT_STEP * batchIndex;
+            float processedO = O_COUNT_STEP * (batchIndex + 1);
             float remainingO = datasetSize - processedO;
             long timeOfRemainingSeqScan = (long) (timeOfSequentialScan * remainingO / datasetSize);
-            long estimatedTime = timeOfRemainingSeqScan + batchTime;
+            long estimatedTime = timeOfRemainingSeqScan + qTime;
             for (int lbStop = 0; lbStop < LB_COUNT; lbStop++) {
                 if (lbCountBatch >= lbStop) { // would be stopped and continued by the seq scan
                     ret[batchIndex][lbStop] = estimatedTime;
@@ -138,7 +147,7 @@ public class LearnSkittleForDataDepPtolemaios<T> {
     private long evaluateTimeOfSequentialScan() {
         GroundTruthEvaluator gtEval = new GroundTruthEvaluator(df);
         long[] times = new long[queriesSamples.size()];
-        gtEval.completeKnnFilteringWithQuerySet(metricSpace, queriesSamples, K, sampleObjects, 1);
+        gtEval.completeKnnFilteringWithQuerySet(metricSpace, queriesSamples, K, dataset.getMetricObjectsFromDataset(), 1);
         Map<Object, AtomicLong> timesMap = gtEval.getTimesPerQueries();
         Iterator<AtomicLong> it = timesMap.values().iterator();
         for (int i = 0; it.hasNext(); i++) {
@@ -146,6 +155,21 @@ public class LearnSkittleForDataDepPtolemaios<T> {
         }
         Arrays.sort(times);
         return times[times.length / 2];
+    }
+
+    private List<Integer> sumQTimesOverBatches(List<Integer> qTimes, int interval) {
+        List<Integer> ret = new ArrayList<>();
+        for (int i = 0; i < qTimes.size(); i++) {
+            int value = qTimes.get(i);
+            int idx = (int) vm.math.Tools.round(i, interval, true);
+            while (idx > 0) {
+                value += qTimes.get(idx - 1);
+                idx -= interval;
+                idx = (int) vm.math.Tools.round(idx, interval, true);
+            }
+            ret.add(value);
+        }
+        return ret;
     }
 
 }

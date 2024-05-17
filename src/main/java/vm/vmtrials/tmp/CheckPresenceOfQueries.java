@@ -23,7 +23,7 @@ public class CheckPresenceOfQueries {
     public static void main(String[] args) {
         Dataset dataset = new FSDatasetInstanceSingularizator.DeCAF20M_PCA256Dataset();
         AbstractMetricSpace metricSpace = dataset.getMetricSpace();
-        List queries = dataset.getMetricQueryObjects();
+        List queries = dataset.getQueryObjects();
 
         Iterator it = dataset.getMetricObjectsFromDataset();
 

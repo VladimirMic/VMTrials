@@ -112,7 +112,7 @@ public class EvaluateCRANBERRYMain {
     ) {
 
         //queries
-        List<Object> fullQueries = fullDataset.getMetricQueryObjects();
+        List<Object> fullQueries = fullDataset.getQueryObjects();
 
         //original metric space objects
         AbstractMetricSpace fullMetricSpace = fullDataset.getMetricSpace();
@@ -143,7 +143,7 @@ public class EvaluateCRANBERRYMain {
             pcaOMap = getMapOfPrefixes(pcaDatasetMetricSpace, pcaDataset.getMetricObjectsFromDataset(), prefixLength);
         }
         // key value map to PCA of the query objects
-        Map pcaQMap = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(pcaDatasetMetricSpace, pcaDataset.getMetricQueryObjects(), false);
+        Map pcaQMap = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(pcaDatasetMetricSpace, pcaDataset.getQueryObjects(), false);
 
         CranberryAlgorithm alg = new CranberryAlgorithm(
                 algVoronoi,

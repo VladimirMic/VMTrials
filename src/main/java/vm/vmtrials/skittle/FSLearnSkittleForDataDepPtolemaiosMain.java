@@ -4,7 +4,6 @@
  */
 package vm.vmtrials.skittle;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
@@ -12,7 +11,6 @@ import vm.fs.store.auxiliaryForDistBounding.FSPtolemyInequalityWithLimitedAngles
 import vm.fs.store.precomputedDists.FSPrecomputedDistancesMatrixLoaderImpl;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.Dataset;
-import vm.metricSpace.ToolsMetricDomain;
 import vm.metricSpace.distance.DistanceFunctionInterface;
 import vm.metricSpace.distance.bounding.twopivots.impl.DataDependentGeneralisedPtolemaicFiltering;
 import vm.metricSpace.distance.storedPrecomputedDistances.AbstractPrecomputedDistancesMatrixLoader;
@@ -25,7 +23,7 @@ import vm.search.algorithm.impl.KNNSearchWithPtolemaicFiltering;
 public class FSLearnSkittleForDataDepPtolemaiosMain {
 
     public static final Integer SAMPLE_SET_SIZE = -1;
-    public static final Integer SAMPLE_QUERY_SET_SIZE = 100;
+    public static final Integer SAMPLE_QUERY_SET_SIZE = 1000;
     public static final Logger LOG = Logger.getLogger(FSLearnSkittleForDataDepPtolemaiosMain.class.getName());
 
     public static void main(String[] args) {
@@ -45,8 +43,7 @@ public class FSLearnSkittleForDataDepPtolemaiosMain {
         List pivots = dataset.getPivots(pivotCount);
         DataDependentGeneralisedPtolemaicFiltering filter = initDataDepPtolemaicFilter(pivots, dataset);
 
-        Iterator<Object> sampleObjects = dataset.getMetricObjectsFromDataset(SAMPLE_SET_SIZE);
-        List<Object> queriesSamples = dataset.getSampleOfDataset(SAMPLE_QUERY_SET_SIZE);
+        List<Object> queriesSamples = dataset.getQueryObjects(SAMPLE_QUERY_SET_SIZE);
 
         AbstractPrecomputedDistancesMatrixLoader pd = new FSPrecomputedDistancesMatrixLoaderImpl();
 //        AbstractPrecomputedDistancesMatrixLoader pd = ToolsMetricDomain.evaluateMatrixOfDistances(sampleObjects, pivots, metricSpace, df);
@@ -54,7 +51,7 @@ public class FSLearnSkittleForDataDepPtolemaiosMain {
 
         KNNSearchWithPtolemaicFilteringLearnSkittle alg = new KNNSearchWithPtolemaicFilteringLearnSkittle(metricSpace, filter, pivots, poDists, pd.getRowHeaders(), pd.getColumnHeaders(), df);
 
-        LearnSkittleForDataDepPtolemaios evaluator = new LearnSkittleForDataDepPtolemaios(alg, dataset.getDatasetName(),dataset.getQuerySetName(), metricSpace, queriesSamples, sampleObjects, df);
+        LearnSkittleForDataDepPtolemaios evaluator = new LearnSkittleForDataDepPtolemaios(alg, dataset, queriesSamples);
         evaluator.learn();
 
     }

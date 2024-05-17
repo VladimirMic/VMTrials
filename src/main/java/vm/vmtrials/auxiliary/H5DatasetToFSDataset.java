@@ -28,7 +28,7 @@ public class H5DatasetToFSDataset {
         AbstractMetricSpacesStorage metricSpacesStorage = dataset.getMetricSpacesStorage();
         Iterator it = dataset.getPivots(-1).iterator();
         processData(it, OBJECT_TYPE.PIVOT_OBJECT, dataset.getPivotSetName(), metricSpacesStorage);
-        it = dataset.getMetricQueryObjects().iterator();
+        it = dataset.getQueryObjects().iterator();
         processData(it, OBJECT_TYPE.QUERY_OBJECT, dataset.getQuerySetName(), metricSpacesStorage);
         it = dataset.getMetricObjectsFromDataset();
         processData(it, OBJECT_TYPE.DATASET_OBJECT, dataset.getDatasetName(), metricSpacesStorage);
