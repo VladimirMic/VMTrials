@@ -4,12 +4,8 @@
  */
 package vm.vmtrials.auxiliary;
 
-import java.util.AbstractMap;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
-import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.Dataset;
 import vm.metricSpace.AbstractMetricSpacesStorage;
 
@@ -20,23 +16,23 @@ import vm.metricSpace.AbstractMetricSpacesStorage;
 public class SelectAndStoreObjectsFromDatasetToAnotherDataset {
 
     public static void main(String[] args) {
-        Dataset idsProvider = new FSDatasetInstanceSingularizator.LAION_100M_Dataset(true);
-        List pivots = idsProvider.getPivots(-1);
-        AbstractMetricSpace providersMetricSpace = idsProvider.getMetricSpace();
+        int k = 1000;
+        Dataset dataProvider = new FSDatasetInstanceSingularizator.DeCAF100M_PCA256Dataset();
+        List objects = dataProvider.getSampleOfDataset(k);
 
-        Dataset dataProvider = new FSDatasetInstanceSingularizator.LAION_100M_PCA32Dataset();
-        Map dataMap = dataProvider.getKeyValueStorage();
-
-        List objectsToStore = new ArrayList();
-        for (Object pivot : pivots) {
-            Object pID = providersMetricSpace.getIDOfMetricObject(pivot);
-            Object data = dataMap.get(pID);
-            AbstractMap.SimpleEntry<Object, Object> simpleEntry = new AbstractMap.SimpleEntry<>(pID, data);
-            objectsToStore.add(simpleEntry);
-        }
+//        Map dataMap = dataProvider.getKeyValueStorage();
+//
+//        List objectsToStore = new ArrayList();
+//        for (Object o : objects) {
+//            Object oID = providersMetricSpace.getIDOfMetricObject(o);
+//            Object oData = dataMap.get(oID);
+//            AbstractMap.SimpleEntry<Object, Object> simpleEntry = new AbstractMap.SimpleEntry<>(oID, oData);
+//            objectsToStore.add(simpleEntry);
+//        }
 
         AbstractMetricSpacesStorage storage = dataProvider.getMetricSpacesStorage();
-        storage.storePivots(objectsToStore, "laion2B-en-clip768v2-n=100M.h5_PCA32_20000");
+        storage.storeQueryObjects(objects, "decaf_100m_PCA256_first_objects_" + k);
+//        storage.storePivots(objectsToStore, "laion2B-en-clip768v2-n=100M.h5_PCA32_20000");
 
     }
 }
