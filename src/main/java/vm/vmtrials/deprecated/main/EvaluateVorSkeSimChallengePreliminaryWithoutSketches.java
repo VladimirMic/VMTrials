@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import vm.datatools.DataTypeConvertor;
 import vm.datatools.Tools;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
+import vm.fs.main.search.filtering.perform.FSKNNQueriesSeqScanWithSimRelMain;
 import vm.fs.store.filtering.FSSimRelThresholdsTOmegaStorage;
 import vm.fs.store.queryResults.FSNearestNeighboursStorageImpl;
 import vm.fs.store.queryResults.FSQueryExecutionStatsStoreImpl;
@@ -25,7 +26,6 @@ import vm.search.algorithm.impl.SimRelSeqScanKNNCandSet;
 import vm.search.algorithm.impl.VoronoiPartitionsCandSetIdentifier;
 import vm.simRel.impl.SimRelEuclideanPCAImpl;
 import vm.simRel.impl.SimRelEuclideanPCAImplForTesting;
-import vm.fs.main.search.perform.FSKNNQueriesSeqScanWithSimRelMain;
 import vm.vmtrials.tripleFiltering_Challenge.EvaluateCRANBERRYMain;
 
 /**
@@ -35,7 +35,7 @@ import vm.vmtrials.tripleFiltering_Challenge.EvaluateCRANBERRYMain;
 @Deprecated // does not use the Secondary filtering with sketches
 public class EvaluateVorSkeSimChallengePreliminaryWithoutSketches {
 
-    private static final Logger LOG = Logger.getLogger(FSKNNQueriesSeqScanWithSimRelMain.class.getName());
+    private static final Logger LOG = Logger.getLogger(EvaluateVorSkeSimChallengePreliminaryWithoutSketches.class.getName());
 
     public static final Boolean STORE_RESULTS = true;
     public static final Boolean FULL_RERANK = true;
