@@ -22,7 +22,7 @@ public class ReStoreDatasetCatchingExceptions {
     public static final Integer BATCH_SIZE = 500000;
 
     public static void main(String[] args) {
-        Dataset dataset = new FSDatasetInstanceSingularizator.DeCAF100M_Dataset();
+        Dataset dataset = new FSDatasetInstanceSingularizator.RandomDataset10Uniform();
         Iterator it = dataset.getMetricObjectsFromDataset();
         AbstractMetricSpacesStorage storage = dataset.getMetricSpacesStorage();
         String newDatasetName = dataset.getDatasetName() + "_restored";
