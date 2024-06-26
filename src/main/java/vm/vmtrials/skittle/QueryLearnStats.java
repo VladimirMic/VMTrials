@@ -16,9 +16,9 @@ public class QueryLearnStats {
 
     private final List<Float> avgNumberOfLBsPerO;
     private final List<Integer> qTimes;
-    private final String queryID;
+    private final Comparable queryID;
 
-    public QueryLearnStats(String queryID) {
+    public QueryLearnStats(Comparable queryID) {
         this.queryID = queryID;
         avgNumberOfLBsPerO = new ArrayList<>();
         qTimes = new ArrayList<>();
@@ -40,7 +40,7 @@ public class QueryLearnStats {
         return Collections.unmodifiableList(qTimes);
     }
 
-    public String getQueryID() {
+    public Comparable getQueryID() {
         return queryID;
     }
 

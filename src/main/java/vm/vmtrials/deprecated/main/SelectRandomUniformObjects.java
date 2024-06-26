@@ -3,7 +3,6 @@ package vm.vmtrials.deprecated.main;
 import java.util.List;
 import vm.datatools.Tools;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
-import vm.m2.dataset.M2DatasetInstanceSingularizator;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.Dataset;
 import vm.metricSpace.AbstractMetricSpacesStorage;
@@ -17,7 +16,7 @@ import vm.metricSpace.distance.DistanceFunctionInterface;
 public class SelectRandomUniformObjects {
 
     public static void main(String[] args) {
-        Dataset dataset = new M2DatasetInstanceSingularizator.DeCAF100MDatasetAndromeda();
+        Dataset dataset = new FSDatasetInstanceSingularizator.DeCAF100M_Dataset();
         int count = 5000;
         List list = Tools.randomUniform(dataset.getMetricObjectsFromDataset(), 102050000, count);
         DistanceFunctionInterface df = dataset.getDistanceFunction();

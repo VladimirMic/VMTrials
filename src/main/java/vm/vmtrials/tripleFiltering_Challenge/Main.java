@@ -97,7 +97,7 @@ public class Main {
         AbstractMetricSpace pcaDatasetMetricSpace = pcaDataset.getMetricSpace();
 
         // key value map to PCA of the query objects
-        Map pcaQMap = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(pcaDatasetMetricSpace, pcaQueries, false);
+        Map pcaQMap = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(pcaDatasetMetricSpace, pcaQueries);
 
         AbstractMetricSpace<float[]> fullMetricSpace = fullDataset.getMetricSpace();
 
@@ -280,7 +280,7 @@ public class Main {
         }
 
         @Override
-        public final List<Object> getQueryObjects(Object ... params) {
+        public final List<Object> getQueryObjects(Object... params) {
             if (cache.queriesLoaded()) {
                 return cache.getQueryObjects();
             }
@@ -301,7 +301,7 @@ public class Main {
         }
 
         @Override
-        public Map<Object, Object> getKeyValueStorage() {
+        public Map<Comparable, float[]> getKeyValueStorage() {
             if (cache.dataLoaded()) {
                 return cache.getKeyValueStorage();
             }

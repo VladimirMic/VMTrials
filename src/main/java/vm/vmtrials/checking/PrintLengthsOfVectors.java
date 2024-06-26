@@ -18,7 +18,7 @@ public class PrintLengthsOfVectors {
         AbstractMetricSpace<float[]> metricSpace = dataset.getMetricSpace();
         List objs = dataset.getSampleOfDataset(count);
         for (Object obj : objs) {
-            Object oID = metricSpace.getIDOfMetricObject(obj);
+            Comparable oID = metricSpace.getIDOfMetricObject(obj);
             float[] oData = metricSpace.getDataOfMetricObject(obj);
             double lengthOfVector = Tools.getLengthOfVector(oData);
             System.out.println(oID.toString() + ";" + lengthOfVector);

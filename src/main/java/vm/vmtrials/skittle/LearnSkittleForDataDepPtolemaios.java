@@ -79,7 +79,7 @@ public class LearnSkittleForDataDepPtolemaios<T> {
         List<Integer> qTimes = null;
         for (int i = 0; i < queriesSamples.size(); i++) {
             Object q = queriesSamples.get(i);
-            String qId = metricSpace.getIDOfMetricObject(q).toString();
+            Comparable qId = metricSpace.getIDOfMetricObject(q);
             long qTimeComplete = timesPerQueries.get(qId).get();
             QueryLearnStats stats = alg.getQueryStats(qId);
             List<Float> qLBCounts = stats.getAvgNumberOfLBsPerO();

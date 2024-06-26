@@ -19,7 +19,7 @@ public class RemoveSelectedObjectFromPivots {
         List pivots = dataset.getPivots(-1);
         List newPivots = new ArrayList();
         for (Object pivot : pivots) {
-            Object pID = metricSpace.getIDOfMetricObject(pivot);
+            Comparable pID = metricSpace.getIDOfMetricObject(pivot);
             if (!pID.toString().equals("P96747670")) {
                 newPivots.add(pivot);
             } else {

@@ -34,18 +34,18 @@ public class PureSimRelSequentialScanKNN<T> extends SearchingAlgorithm<T> {
     }
 
     @Override
-    public TreeSet<Map.Entry<Object, Float>> completeKnnSearch(AbstractMetricSpace<T> metricSpace, Object queryObject, int k, Iterator<Object> objects, Object... paramsToExtractDataFromMetricObject) {
+    public TreeSet<Map.Entry<Comparable, Float>> completeKnnSearch(AbstractMetricSpace<T> metricSpace, Object queryObject, int k, Iterator<Object> objects, Object... paramsToExtractDataFromMetricObject) {
         if (simRelFunc instanceof SimRelEuclideanPCAImplForTesting) {
             SimRelEuclideanPCAImplForTesting euclid = (SimRelEuclideanPCAImplForTesting) simRelFunc;
             euclid.resetEarlyStopsOnCoordsCounts();
         }
         T queryObjectData = metricSpace.getDataOfMetricObject(queryObject);
-        List<Object> ret = new ArrayList<>();
-        Map<Object, T> retData = new HashMap<>();
+        List<Comparable> ret = new ArrayList<>();
+        Map<Comparable, T> retData = new HashMap<>();
         simRelEvalCounter = 0;
         for (int i = 1; objects.hasNext(); i++) {
             Object metricObject = objects.next();
-            Object idOfMetricObject = metricSpace.getIDOfMetricObject(metricObject);
+            Comparable idOfMetricObject = metricSpace.getIDOfMetricObject(metricObject);
             T metricObjectData = metricSpace.getDataOfMetricObject(metricObject);
             addOToAnswer(k, queryObjectData, metricObjectData, idOfMetricObject, ret, retData);
             if (i % 1000000 == 0) {
@@ -64,7 +64,7 @@ public class PureSimRelSequentialScanKNN<T> extends SearchingAlgorithm<T> {
         return null;
     }
 
-    private void addOToAnswer(int k, T queryObjectData, T oData, Object idOfO, List<Object> ret, Map<Object, T> retData) {
+    private void addOToAnswer(int k, T queryObjectData, T oData, Comparable idOfO, List<Comparable> ret, Map<Comparable, T> retData) {
         if (ret.isEmpty()) {
             ret.add(idOfO);
             retData.put(idOfO, oData);
@@ -100,8 +100,8 @@ public class PureSimRelSequentialScanKNN<T> extends SearchingAlgorithm<T> {
         }
     }
 
-    private TreeSet<Entry<Object, Float>> transformListToAbstractDists(List<Object> list) {
-        TreeSet<Map.Entry<Object, Float>> ret = new TreeSet<>(new Tools.MapByFloatValueComparator());
+    private TreeSet<Entry<Comparable, Float>> transformListToAbstractDists(List<Comparable> list) {
+        TreeSet<Map.Entry<Comparable, Float>> ret = new TreeSet<>(new Tools.MapByFloatValueComparator());
         for (int i = 0; i < list.size(); i++) {
             ret.add(new AbstractMap.SimpleEntry<>(list.get(i), (float) i));
         }
@@ -109,7 +109,7 @@ public class PureSimRelSequentialScanKNN<T> extends SearchingAlgorithm<T> {
     }
 
     @Override
-    public List<Object> candSetKnnSearch(AbstractMetricSpace<T> metricSpace, Object queryObject, int k, Iterator<Object> objects, Object ... additionalParams) {
+    public List<Comparable> candSetKnnSearch(AbstractMetricSpace<T> metricSpace, Object queryObject, int k, Iterator<Object> objects, Object ... additionalParams) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

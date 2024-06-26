@@ -30,7 +30,7 @@ public class CheckPresenceOfQueries {
         Set qIDs = ToolsMetricDomain.getIDs(queries.iterator(), metricSpace);
         for (int i = 0; it.hasNext(); i++) {
             Object o = it.next();
-            Object oID = metricSpace.getIDOfMetricObject(o);
+            Comparable oID = metricSpace.getIDOfMetricObject(o);
             if (qIDs.contains(oID)) {
                 Logger.getLogger(CheckPresenceOfQueries.class.getName()).log(Level.WARNING, "The set contains ID of the query {0}", oID.toString());
             }

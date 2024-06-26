@@ -49,7 +49,7 @@ public class FSLearnSkittleForDataDepPtolemaiosMain {
 //        AbstractPrecomputedDistancesMatrixLoader pd = ToolsMetricDomain.evaluateMatrixOfDistances(sampleObjects, pivots, metricSpace, df);
         float[][] poDists = pd.loadPrecomPivotsToObjectsDists(dataset, pivotCount);
 
-        KNNSearchWithPtolemaicFilteringLearnSkittle alg = new KNNSearchWithPtolemaicFilteringLearnSkittle(metricSpace, filter, pivots, poDists, pd.getRowHeaders(), pd.getColumnHeaders(), df);
+        KNNSearchWithPtolemaicFilteringLearnSkittle alg = new KNNSearchWithPtolemaicFilteringLearnSkittle(metricSpace, filter, pivots, poDists, pd.getRowHeaders(), df);
 
         LearnSkittleForDataDepPtolemaios evaluator = new LearnSkittleForDataDepPtolemaios(alg, dataset, queriesSamples);
         evaluator.learn();

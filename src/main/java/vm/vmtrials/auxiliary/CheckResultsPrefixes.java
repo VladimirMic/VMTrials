@@ -19,7 +19,7 @@ import vm.queryResults.QueryNearestNeighboursStoreInterface;
  */
 public class CheckResultsPrefixes {
 
-    private static Map<String, TreeSet<Map.Entry<Object, Float>>>[] lessCandsCache;
+    private static Map<Comparable, TreeSet<Map.Entry<Comparable, Float>>>[] lessCandsCache;
 
     public static void main(String[] args) {
         String lessResultsFolder = "faiss-100M_CLIP_PCA256-IVFPQ-tr1000000-cc262144-m32-nbits8-qc1000-k50000";
@@ -33,25 +33,25 @@ public class CheckResultsPrefixes {
         for (int m = 0; m < moreFiles.length; m++) {
             System.gc();
             String more = moreFiles[m].trim().substring(0, moreFiles[m].length() - 3);
-            Map<String, TreeSet<Map.Entry<Object, Float>>> moreCands = resultsStorage.getQueryResultsForDataset(moreResultsFolder, more, "", null);
+            Map<Comparable, TreeSet<Map.Entry<Comparable, Float>>> moreCands = resultsStorage.getQueryResultsForDataset(moreResultsFolder, more, "", null);
 
             for (int l = 0; l < lessFiles.length; l++) {
                 String less = lessFiles[l].trim().substring(0, lessFiles[l].length() - 3);
 
-                Map<String, TreeSet<Map.Entry<Object, Float>>> lessCands = lessCandsCache[l] != null ? lessCandsCache[l] : resultsStorage.getQueryResultsForDataset(lessResultsFolder, less, "", null);
+                Map<Comparable, TreeSet<Map.Entry<Comparable, Float>>> lessCands = lessCandsCache[l] != null ? lessCandsCache[l] : resultsStorage.getQueryResultsForDataset(lessResultsFolder, less, "", null);
                 if (lessCandsCache[l] == null) {
                     lessCandsCache[l] = lessCands;
                 }
                 lessFilesLoop:
-                for (String queryID : lessCands.keySet()) {
+                for (Comparable queryID : lessCands.keySet()) {
                     if (!moreCands.containsKey(queryID)) {
                         System.out.println("File " + more + " does not contain query " + queryID + " which is in file " + less);
                         break;
                     }
-                    TreeSet<Map.Entry<Object, Float>> lessCandsResults = lessCands.get(queryID);
-                    TreeSet<Map.Entry<Object, Float>> moreCandsResults = moreCands.get(queryID);
+                    TreeSet<Map.Entry<Comparable, Float>> lessCandsResults = lessCands.get(queryID);
+                    TreeSet<Map.Entry<Comparable, Float>> moreCandsResults = moreCands.get(queryID);
                     Set moreNN = getNNKeys(moreCandsResults);
-                    for (Map.Entry<Object, Float> nnEntry : lessCandsResults) {
+                    for (Map.Entry<Comparable, Float> nnEntry : lessCandsResults) {
                         if (!moreNN.contains(nnEntry.getKey())) {
                             System.out.println("No Heureka. File " + more + " is not an extended list of candidates from a file " + less);
                             break lessFilesLoop;
@@ -64,9 +64,9 @@ public class CheckResultsPrefixes {
         }
     }
 
-    private static Set getNNKeys(TreeSet<Map.Entry<Object, Float>> candsResults) {
+    private static Set getNNKeys(TreeSet<Map.Entry<Comparable, Float>> candsResults) {
         Set ret = new HashSet();
-        for (Map.Entry<Object, Float> entry : candsResults) {
+        for (Map.Entry<Comparable, Float> entry : candsResults) {
             ret.add(entry.getKey());
         }
         return ret;

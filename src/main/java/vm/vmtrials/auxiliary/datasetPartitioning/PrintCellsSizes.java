@@ -37,7 +37,7 @@ public class PrintCellsSizes {
     private static void run(Dataset dataset) {
         int pivotCount = 256;
         FSVoronoiPartitioningStorage storage = new FSGRAPPLEPartitioningStorage();
-        Map<Object, TreeSet<Object>> vp = storage.load(dataset.getDatasetName(), pivotCount);
+        Map<Comparable, TreeSet<Comparable>> vp = storage.load(dataset.getDatasetName(), pivotCount);
         File file = storage.getFile(dataset.getDatasetName(), pivotCount, false);
         String name = file.getName() + "cells_stats.csv";
         try {
@@ -45,9 +45,9 @@ public class PrintCellsSizes {
         } catch (FileNotFoundException ex) {
             Logger.getLogger(PrintCellsSizes.class.getName()).log(Level.SEVERE, null, ex);
         }
-        for (Map.Entry<Object, TreeSet<Object>> cell : vp.entrySet()) {
+        for (Map.Entry<Comparable, TreeSet<Comparable>> cell : vp.entrySet()) {
             String pivotID = cell.getKey().toString();
-            TreeSet<Object> ids = cell.getValue();
+            TreeSet<Comparable> ids = cell.getValue();
             System.out.println(pivotID + ";" + ids.size());
         }
         System.out.flush();

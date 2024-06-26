@@ -17,9 +17,9 @@ import java.util.NoSuchElementException;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import vm.search.algorithm.impl.GroundTruthEvaluator;
 import vm.fs.metricSpaceImpl.FSMetricSpaceImpl;
 import vm.fs.store.queryResults.FSNearestNeighboursStorageImpl;
+import vm.search.algorithm.impl.GroundTruthEvaluator;
 
 /**
  *
@@ -33,7 +33,7 @@ public class H5GroundTruthToFSGroundTruth {
         String groundTruthName = "laion2B-en-private-gold-standard-v2-30M-F64-IEEE754";
         String path = "h:\\Similarity_search\\Result\\ground_truth\\" + groundTruthName + ".h5";
         Iterator[] it = parseH5GroundTruth(path);
-        TreeSet<Map.Entry<Object, Float>>[] results = GroundTruthEvaluator.initKNNResultSets(10000);
+        TreeSet<Map.Entry<Comparable, Float>>[] results = GroundTruthEvaluator.initKNNResultSets(10000);
         List<Object> queries = new ArrayList<>();
         for (int i = 0; it[0].hasNext() && it[1].hasNext(); i++) {
             AbstractMap.SimpleEntry<String, int[]> nextIDs = (AbstractMap.SimpleEntry<String, int[]>) it[0].next();
@@ -43,7 +43,7 @@ public class H5GroundTruthToFSGroundTruth {
             queries.add(new AbstractMap.SimpleEntry<>(qID, null));
             int[] ids = nextIDs.getValue();
             float[] dists = nextDist.getValue();
-            TreeSet<Map.Entry<Object, Float>> queryResult = results[i];
+            TreeSet<Map.Entry<Comparable, Float>> queryResult = results[i];
             for (int j = 0; j < ids.length; j++) {
                 Integer nnID = ids[j];
                 Float dist = dists[j];

@@ -36,7 +36,7 @@ public class H5PivotsToGZFile {
         Map map = pcaDataset.getKeyValueStorage();
         List pcaPivots = new ArrayList();
         for (Object pivot : pivots) {
-            Object pId = metricSpace.getIDOfMetricObject(pivot);
+            Comparable pId = metricSpace.getIDOfMetricObject(pivot);
             System.out.println(pId.toString());
             float[] data = (float[]) map.get(pId);
             AbstractMap.SimpleEntry<String, float[]> entry = new AbstractMap.SimpleEntry(pId.toString(), data);

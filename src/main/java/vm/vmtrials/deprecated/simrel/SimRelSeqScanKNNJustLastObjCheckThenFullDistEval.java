@@ -39,18 +39,18 @@ public class SimRelSeqScanKNNJustLastObjCheckThenFullDistEval<T> extends Searchi
     }
 
     @Override
-    public TreeSet<Map.Entry<Object, Float>> completeKnnSearch(AbstractMetricSpace<T> metricSpace, Object queryObject, int k, Iterator<Object> objects, Object... additionalParams) {
+    public TreeSet<Map.Entry<Comparable, Float>> completeKnnSearch(AbstractMetricSpace<T> metricSpace, Object queryObject, int k, Iterator<Object> objects, Object... additionalParams) {
         if (simRelFunc instanceof SimRelEuclideanPCAImplForTesting) {
             SimRelEuclideanPCAImplForTesting euclid = (SimRelEuclideanPCAImplForTesting) simRelFunc;
             euclid.resetEarlyStopsOnCoordsCounts();
         }
         T queryObjectData = metricSpace.getDataOfMetricObject(queryObject);
-        TreeSet<Map.Entry<Object, Float>> ret = new TreeSet<>(new Tools.MapByFloatValueComparator());
+        TreeSet<Map.Entry<Comparable, Float>> ret = new TreeSet<>(new Tools.MapByFloatValueComparator());
         Map<Object, T> retData = new HashMap<>();
         distCounter = 0;
         for (int i = 1; objects.hasNext(); i++) {
             Object metricObject = objects.next();
-            Object idOfMetricObject = metricSpace.getIDOfMetricObject(metricObject);
+            Comparable idOfMetricObject = metricSpace.getIDOfMetricObject(metricObject);
             T metricObjectData = metricSpace.getDataOfMetricObject(metricObject);
             if (ret.size() < k) {
                 float distance = fullDistanceFunction.getDistance(queryObjectData, metricObjectData);
@@ -66,7 +66,7 @@ public class SimRelSeqScanKNNJustLastObjCheckThenFullDistEval<T> extends Searchi
                     distCounter++;// tady pridavat jen pokud je mensi a dodat statistiky noveho posledniho simrelu
                     ret.add(new AbstractMap.SimpleEntry<>(idOfMetricObject, distance));
                     retData.put(idOfMetricObject, metricObjectData);
-                    Map.Entry<Object, Float> last = ret.last();
+                    Map.Entry<Comparable, Float> last = ret.last();
                     ret.remove(last);
                     retData.remove(last.getKey());
                 }
@@ -88,7 +88,7 @@ public class SimRelSeqScanKNNJustLastObjCheckThenFullDistEval<T> extends Searchi
     }
 
     @Override
-    public List<Object> candSetKnnSearch(AbstractMetricSpace<T> metricSpace, Object queryObject, int k, Iterator<Object> objects, Object... additionalParams) {
+    public List<Comparable> candSetKnnSearch(AbstractMetricSpace<T> metricSpace, Object queryObject, int k, Iterator<Object> objects, Object... additionalParams) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

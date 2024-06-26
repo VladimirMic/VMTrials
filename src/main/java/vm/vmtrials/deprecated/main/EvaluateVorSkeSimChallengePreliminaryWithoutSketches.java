@@ -45,7 +45,7 @@ public class EvaluateVorSkeSimChallengePreliminaryWithoutSketches {
             new FSDatasetInstanceSingularizator.LAION_10M_Dataset(true)
 //            new FSDatasetInstanceSingularizator.LAION_100M_Dataset(true),
         };
-        Dataset[] pcaDatasets = new Dataset[]{
+        Dataset<float[]>[] pcaDatasets = new Dataset[]{
             new FSDatasetInstanceSingularizator.LAION_10M_PCA96Dataset()
 //            new FSDatasetInstanceSingularizator.LAION_100M_PCA96Dataset()
         };
@@ -55,7 +55,7 @@ public class EvaluateVorSkeSimChallengePreliminaryWithoutSketches {
         }
     }
 
-    private static void run(Dataset fullDataset, Dataset pcaDataset) {
+    private static <T> void run(Dataset<T> fullDataset, Dataset<float[]> pcaDataset) {
         /* kNN queries - the result set size */
         int k = 10;
         /* the maximum number of candidates identified by the Voronoi partitioning*/
@@ -99,8 +99,8 @@ public class EvaluateVorSkeSimChallengePreliminaryWithoutSketches {
         testQueries(fullDataset, pcaDataset, simRel, kVoronoi, kPCA, k, prefixLength, resultsStorage, resultName, statsStorage, fileNameData);
     }
 
-    private static void testQueries(Dataset fullDataset, Dataset pcaDataset, SimRelEuclideanPCAImpl simRel, Integer kVoronoi, int kPCA, int k, int prefixLength, QueryNearestNeighboursStoreInterface resultsStorage, String resultName, FSQueryExecutionStatsStoreImpl statsStorage, Map<FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME, String> fileNameDataForRecallStorage) {
-        Map<Object, Object> mapOfAllFullObjects = null;
+    private static <T> void testQueries(Dataset fullDataset, Dataset pcaDataset, SimRelEuclideanPCAImpl simRel, Integer kVoronoi, int kPCA, int k, int prefixLength, QueryNearestNeighboursStoreInterface resultsStorage, String resultName, FSQueryExecutionStatsStoreImpl statsStorage, Map<FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME, String> fileNameDataForRecallStorage) {
+        Map<Comparable, float[]> mapOfAllFullObjects = null;
         if (FULL_RERANK) {
             mapOfAllFullObjects = fullDataset.getKeyValueStorage();
         }
@@ -113,20 +113,26 @@ public class EvaluateVorSkeSimChallengePreliminaryWithoutSketches {
         AbstractMetricSpace pcaDatasetMetricSpace = pcaDataset.getMetricSpace();
 
         Map pcaOMap = EvaluateCRANBERRYMain.getMapOfPrefixes(pcaDatasetMetricSpace, pcaDataset.getMetricObjectsFromDataset(), prefixLength);
-        Map pcaQueriesMap = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(pcaDatasetMetricSpace, pcaDataset.getQueryObjects(), false);
+        Map<Comparable, Object> pcaQueriesMap = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(pcaDatasetMetricSpace, pcaDataset.getQueryObjects());
 
         for (int i = 0; i < fullQueries.size(); i++) {
 
             long time = -System.currentTimeMillis();
             Object fullQueryObj = fullQueries.get(i);
-            Object queryObjId = metricSpaceOfFullDataset.getIDOfMetricObject(fullQueryObj);
+            Comparable queryObjId = metricSpaceOfFullDataset.getIDOfMetricObject(fullQueryObj);
 
             List candidatesIDs = algVoronoi.candSetKnnSearch(metricSpaceOfFullDataset, fullQueryObj, kVoronoi, null);
             List<Object> pcaOfCandidates = Tools.filterMapValues(pcaOMap, candidatesIDs);
             AbstractMap.SimpleEntry<Object, float[]> pcaQueryObj = (AbstractMap.SimpleEntry<Object, float[]>) pcaQueriesMap.get(queryObjId);
 
-            List<Object> candSetObjIDs = algSimRel.candSetKnnSearch(pcaDatasetMetricSpace, pcaQueryObj, kPCA, pcaOfCandidates.iterator());
-            TreeSet<Map.Entry<Object, Float>> rerankCandidateSet = algSimRel.rerankCandidateSet(metricSpaceOfFullDataset, fullQueryObj, k, fullDataset.getDistanceFunction(), mapOfAllFullObjects, candSetObjIDs);
+            List<Comparable> candSetObjIDs = algSimRel.candSetKnnSearch(pcaDatasetMetricSpace, pcaQueryObj, kPCA, pcaOfCandidates.iterator());
+            TreeSet<Map.Entry<Comparable, Float>> rerankCandidateSet = algSimRel.rerankCandidateSet(
+                    metricSpaceOfFullDataset,
+                    fullQueryObj, 
+                    k, 
+                    fullDataset.getDistanceFunction(),
+                    mapOfAllFullObjects,
+                    candSetObjIDs);
             time += System.currentTimeMillis();
             algSimRel.incTime(queryObjId, time);
             if (STORE_RESULTS) {
@@ -154,6 +160,5 @@ public class EvaluateVorSkeSimChallengePreliminaryWithoutSketches {
             recallStorage.save();
         }
     }
-
 
 }

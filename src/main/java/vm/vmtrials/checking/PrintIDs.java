@@ -19,10 +19,10 @@ public class PrintIDs {
         Dataset dataset = new FSDatasetInstanceSingularizator.DeCAF100M_PCA256Dataset();
         Iterator it = dataset.getMetricObjectsFromDataset();
         AbstractMetricSpace metricSpace = dataset.getMetricSpace();
-        String oIdPrev = null;
+        Comparable oIdPrev = null;
         for (int i = 0; i < 1000 && it.hasNext(); i++) {
             Object o = it.next();
-            String id = metricSpace.getIDOfMetricObject(o).toString();
+            Comparable id = metricSpace.getIDOfMetricObject(o);
             System.out.print(id);
             if (oIdPrev == null) {
                 System.out.println();

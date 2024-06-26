@@ -143,7 +143,7 @@ public class EvaluateCRANBERRYMain {
             pcaOMap = getMapOfPrefixes(pcaDatasetMetricSpace, pcaDataset.getMetricObjectsFromDataset(), prefixLength);
         }
         // key value map to PCA of the query objects
-        Map pcaQMap = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(pcaDatasetMetricSpace, pcaDataset.getQueryObjects(), false);
+        Map pcaQMap = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(pcaDatasetMetricSpace, pcaDataset.getQueryObjects());
 
         CranberryAlgorithm alg = new CranberryAlgorithm(
                 algVoronoi,
@@ -198,15 +198,15 @@ public class EvaluateCRANBERRYMain {
         sketchFiltering.shutdownThreadPool();
     }
 
-    public static Map<Object, Object> getMapOfPrefixes(AbstractMetricSpace<float[]> metricSpace, Iterator metricObjectsFromDataset, int prefixLength) {
-        Map<Object, Object> ret = new HashMap<>();
+    public static Map<Comparable, Object> getMapOfPrefixes(AbstractMetricSpace<float[]> metricSpace, Iterator metricObjectsFromDataset, int prefixLength) {
+        Map<Comparable, Object> ret = new HashMap<>();
         int counter = 0;
         boolean add = false;
         while (metricObjectsFromDataset.hasNext()) {
             List<Object> batch = Tools.getObjectsFromIterator(metricObjectsFromDataset, 10000000);
             counter += batch.size();
             for (Object next : batch) {
-                Object id = metricSpace.getIDOfMetricObject(next);
+                Comparable id = metricSpace.getIDOfMetricObject(next);
                 float[] vector = metricSpace.getDataOfMetricObject(next);
                 if (add || vector.length == prefixLength || LEARN_SIMREL) {
                     ret.put(id, vector);

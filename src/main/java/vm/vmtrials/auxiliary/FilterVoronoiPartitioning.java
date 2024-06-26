@@ -31,16 +31,16 @@ public class FilterVoronoiPartitioning {
         int pivotCount = 20000;
         String newDatasetName = targetDataset.getDatasetName();
 
-        Set<Object> idsToPreserve = loadKeyOfObjects(targetDataset);
+        Set<Comparable> idsToPreserve = loadKeyOfObjects(targetDataset);
 
         FSVoronoiPartitioningStorage voronoiPartitioningStorage = new FSVoronoiPartitioningStorage();
-        Map<Object, TreeSet<Object>> vp = voronoiPartitioningStorage.load(partitioninedDataset.getDatasetName(), pivotCount);
-        Map<Object, SortedSet<Object>> ret = new HashMap<>();
-        for (Map.Entry<Object, TreeSet<Object>> cell : vp.entrySet()) {
-            Object pivotID = cell.getKey();
-            TreeSet<Object> newCell = new TreeSet<>();
-            TreeSet<Object> idsInCell = cell.getValue();
-            for (Object id : idsInCell) {
+        Map<Comparable, TreeSet<Comparable>> vp = voronoiPartitioningStorage.load(partitioninedDataset.getDatasetName(), pivotCount);
+        Map<Comparable, SortedSet<Comparable>> ret = new HashMap<>();
+        for (Map.Entry<Comparable, TreeSet<Comparable>> cell : vp.entrySet()) {
+            Comparable pivotID = cell.getKey();
+            TreeSet<Comparable> newCell = new TreeSet<>();
+            TreeSet<Comparable> idsInCell = cell.getValue();
+            for (Comparable id : idsInCell) {
                 if (idsToPreserve.contains(id)) {
                     newCell.add(id);
                 }
@@ -51,7 +51,7 @@ public class FilterVoronoiPartitioning {
         voronoiPartitioningStorage.store(ret, newDatasetName, pivotCount);
     }
 
-    private static Set<Object> loadKeyOfObjects(Dataset dataset) {
+    private static Set<Comparable> loadKeyOfObjects(Dataset dataset) {
         Iterator it = dataset.getMetricObjectsFromDataset();
         return ToolsMetricDomain.getIDs(it, dataset.getMetricSpace());
     }

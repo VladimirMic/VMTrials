@@ -5,7 +5,6 @@
 package vm.vmtrials.tmp;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
@@ -26,12 +25,12 @@ public class CheckSufixesAsCountsOfNNResults {
         Map<File, File> map = new HashMap<>();
         for (File file : files) {
             try {
-                Map<String, TreeSet<Map.Entry<Object, Float>>> results = storage.getQueryResultsForDataset(file);
+                Map<Comparable, TreeSet<Map.Entry<Comparable, Float>>> results = storage.getQueryResultsForDataset(file);
                 String name = file.getName();
                 int idx = name.lastIndexOf(".");
                 String prefix = name.substring(0, idx);
                 String suffix = name.substring(idx);
-                Map.Entry<String, TreeSet<Map.Entry<Object, Float>>> qRes = results.entrySet().iterator().next();
+                Map.Entry<Comparable, TreeSet<Map.Entry<Comparable, Float>>> qRes = results.entrySet().iterator().next();
                 if (qRes == null) {
                     continue;
                 }

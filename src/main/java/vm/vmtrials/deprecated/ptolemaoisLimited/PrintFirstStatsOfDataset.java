@@ -31,8 +31,8 @@ public class PrintFirstStatsOfDataset {
         run(new FSDatasetInstanceSingularizator.MPEG7dataset());
     }
 
-    public static void run(Dataset dataset) throws FileNotFoundException {
-        AbstractMetricSpace metricSpace = new FSMetricSpaceImpl<>();
+    public static <T> void run(Dataset<T> dataset) throws FileNotFoundException {
+        AbstractMetricSpace<T> metricSpace = new FSMetricSpaceImpl<>();
 
         DistanceFunctionInterface df = dataset.getDistanceFunction();
 
@@ -51,7 +51,7 @@ public class PrintFirstStatsOfDataset {
                 Object[] twoObjects = Tools.randomUniqueObjects(metricObjects, 2);
                 fourObjects[2] = twoObjects[0];
                 fourObjects[3] = twoObjects[1];
-                Object[] fourObjectsData = ToolsMetricDomain.getData(fourObjects, metricSpace);
+                T[] fourObjectsData = ToolsMetricDomain.getData(fourObjects, metricSpace);
                 float[] sixDists = ToolsMetricDomain.getPairwiseDistsOfFourObjects(df, true, fourObjectsData);
                 if (sixDists == null) {
                     i--;
@@ -59,7 +59,7 @@ public class PrintFirstStatsOfDataset {
                 }
                 // print objects IDs
                 for (int j = 0; j < fourObjects.length; j++) {
-                    System.err.print(metricSpace.getIDOfMetricObject(fourObjects[j]));
+                    System.err.print(metricSpace.getIDOfMetricObject(fourObjects[j]).toString());
                     if (j == fourObjects.length - 1) {
                         System.err.print(";");
                     } else {

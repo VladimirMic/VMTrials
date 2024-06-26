@@ -108,15 +108,15 @@ public class EvaluateSimRelInfSysKNN {
         return ret;
     }
 
-    private static void testQueries(RefineCandidateSetWithPCASimRel alg, Dataset fullDataset, SimRelInterface simRel, boolean involveObjWithUnknownRelation, int kPCA, int k, QueryNearestNeighboursStoreInterface resultsStorage, String resultName, FSQueryExecutionStatsStoreImpl statsStorage, Map<FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME, String> fileNameDataForRecallStorage) {
+    private static void testQueries(RefineCandidateSetWithPCASimRel alg, Dataset<float[]> fullDataset, SimRelInterface simRel, boolean involveObjWithUnknownRelation, int kPCA, int k, QueryNearestNeighboursStoreInterface resultsStorage, String resultName, FSQueryExecutionStatsStoreImpl statsStorage, Map<FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME, String> fileNameDataForRecallStorage) {
         List<Object> fullQueries = fullDataset.getQueryObjects();
-        AbstractMetricSpace metricSpace = fullDataset.getMetricSpace();
+        AbstractMetricSpace<float[]> metricSpace = fullDataset.getMetricSpace();
         Iterator fullDatasetIterator = fullDataset.getMetricObjectsFromDataset(TESTED_DATASET_SIZE);
-        Map<Object, Object> mapOfAllFullObjects = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(fullDataset.getMetricSpace(), fullDatasetIterator, true);
+        Map<Comparable, float[]> mapOfAllFullObjects = ToolsMetricDomain.getMetricObjectsAsIdDataMap(fullDataset.getMetricSpace(), fullDatasetIterator);
         for (int i = 0; i < fullQueries.size(); i++) {
             Object fullQueryObj = fullQueries.get(i);
-            Object queryObjId = metricSpace.getIDOfMetricObject(fullQueryObj);
-            TreeSet<Map.Entry<Object, Float>> completeKnnSearch = alg.completeKnnSearch(metricSpace, fullQueryObj, k, mapOfAllFullObjects, kPCA, involveObjWithUnknownRelation);
+            Comparable queryObjId = metricSpace.getIDOfMetricObject(fullQueryObj);
+            TreeSet<Map.Entry<Comparable, Float>> completeKnnSearch = alg.completeKnnSearch(metricSpace, fullQueryObj, k, mapOfAllFullObjects, kPCA, involveObjWithUnknownRelation);
             if (STORE_RESULTS) {
                 resultsStorage.storeQueryResult(queryObjId, completeKnnSearch, k, fullDataset.getDatasetName(), fullDataset.getDatasetName(), resultName);
             }

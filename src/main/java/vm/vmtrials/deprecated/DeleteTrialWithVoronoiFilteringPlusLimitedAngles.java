@@ -29,20 +29,20 @@ public class DeleteTrialWithVoronoiFilteringPlusLimitedAngles<T> extends Searchi
 
     private final Logger LOG = Logger.getLogger(DeleteTrialWithVoronoiFilteringPlusLimitedAngles.class.getName());
 
-    private final Map<Object, Object> pivotsMap;
+    private final Map<Comparable, T> pivotsMap;
     private final DistanceFunctionInterface<T> df;
-    private final Map<Object, TreeSet<Object>> voronoiPartitioning;
+    private final Map<Comparable, TreeSet<Comparable>> voronoiPartitioning;
 
     private final AbstractOnePivotFilter filter;
     private final Map delete;
 
-    public DeleteTrialWithVoronoiFilteringPlusLimitedAngles(Dataset dataset, StorageDatasetPartitionsInterface voronoiPartitioningStorage, int pivotCountUsedForTheVoronoiPartitioning) {
+    public DeleteTrialWithVoronoiFilteringPlusLimitedAngles(Dataset<T> dataset, StorageDatasetPartitionsInterface voronoiPartitioningStorage, int pivotCountUsedForTheVoronoiPartitioning) {
         this(dataset, voronoiPartitioningStorage, 0, null);
     }
 
-    public DeleteTrialWithVoronoiFilteringPlusLimitedAngles(Dataset dataset, StorageDatasetPartitionsInterface voronoiPartitioningStorage, int pivotCountUsedForTheVoronoiPartitioning, AbstractOnePivotFilter filter) {
+    public DeleteTrialWithVoronoiFilteringPlusLimitedAngles(Dataset<T> dataset, StorageDatasetPartitionsInterface voronoiPartitioningStorage, int pivotCountUsedForTheVoronoiPartitioning, AbstractOnePivotFilter filter) {
         List pivots = dataset.getPivots(-1);
-        pivotsMap = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(dataset.getMetricSpace(), pivots, true);
+        pivotsMap = ToolsMetricDomain.getMetricObjectsAsIdDataMap(dataset.getMetricSpace(), pivots);
         df = dataset.getDistanceFunction();
         voronoiPartitioning = voronoiPartitioningStorage.load(dataset.getDatasetName(), pivotCountUsedForTheVoronoiPartitioning);
         this.filter = filter;
@@ -50,7 +50,7 @@ public class DeleteTrialWithVoronoiFilteringPlusLimitedAngles<T> extends Searchi
     }
 
     @Override
-    public TreeSet<Map.Entry<Object, Float>> completeKnnSearch(AbstractMetricSpace<T> metricSpace, Object queryObject, int k, Iterator<Object> objects, Object... additionalParams) {
+    public TreeSet<Map.Entry<Comparable, Float>> completeKnnSearch(AbstractMetricSpace<T> metricSpace, Object queryObject, int k, Iterator<Object> objects, Object... additionalParams) {
         throw new UnsupportedOperationException("Not supported and will not be.");
     }
 
@@ -63,20 +63,20 @@ public class DeleteTrialWithVoronoiFilteringPlusLimitedAngles<T> extends Searchi
      * @return
      */
     @Override
-    public List<Object> candSetKnnSearch(AbstractMetricSpace<T> metricSpace, Object fullQueryObj, int k, Iterator<Object> objects, Object... additionalParams) {
+    public List<Comparable> candSetKnnSearch(AbstractMetricSpace<T> metricSpace, Object fullQueryObj, int k, Iterator<Object> objects, Object... additionalParams) {
         T qData = metricSpace.getDataOfMetricObject(fullQueryObj);
-        TreeSet<Map.Entry<Object, Float>> pivotPerm = ToolsMetricDomain.getPivotIDsPermutationWithDists(df, pivotsMap, qData, -1);
-        Iterator<Map.Entry<Object, Float>> it = pivotPerm.iterator();
-        List<Object> ret = new ArrayList<>();
+        TreeSet<Map.Entry<Comparable, Float>> pivotPerm = ToolsMetricDomain.getPivotIDsPermutationWithDists(df, pivotsMap, qData, -1);
+        Iterator<Map.Entry<Comparable, Float>> it = pivotPerm.iterator();
+        List<Comparable> ret = new ArrayList<>();
         int idxOfNext = 0;
-        TreeSet<Object> nextCell = null;
+        TreeSet<Comparable> nextCell = null;
         while (it.hasNext() && (nextCell == null || ret.size() + nextCell.size() < k) && idxOfNext < voronoiPartitioning.size() - 1) {
-            Map.Entry<Object, Float> nextPIndex = it.next();
+            Map.Entry<Comparable, Float> nextPIndex = it.next();
             if (nextCell != null) {
                 if (filter == null) {
                     ret.addAll(nextCell);
                 } else {
-                    for (Map.Entry<Object, Float> entry : pivotPerm) {
+                    for (Map.Entry<Comparable, Float> entry : pivotPerm) {
                         Object pID = entry.getKey();
                         T pData = (T) pivotsMap.get(pID);
                         float dQP = entry.getValue();

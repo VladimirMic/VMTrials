@@ -44,7 +44,7 @@ public class PrintStatsWhereAreNNs {
         }
     }
 
-    private static void run(Dataset dataset) {
+    private static <T> void run(Dataset<T> dataset) {
         int k = 10;
         int pivotCount = 256;
         FSVoronoiPartitioningStorage storage = new FSGRAPPLEPartitioningStorage();
@@ -52,22 +52,22 @@ public class PrintStatsWhereAreNNs {
         AbstractMetricSpace metricSpace = dataset.getMetricSpace();
         DistanceFunctionInterface df = dataset.getDistanceFunction();
         //
-        Map<Object, Object> pivots = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(metricSpace, dataset.getPivots(pivotCount), true);
-        Map<Object, Object> queries = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(metricSpace, dataset.getQueryObjects(), true);
-        Map<String, TreeSet<Map.Entry<Object, Float>>> gt = new FSNearestNeighboursStorageImpl().getGroundTruthForDataset(dataset.getDatasetName(), dataset.getQuerySetName());
+        Map<Comparable, T> pivots = ToolsMetricDomain.getMetricObjectsAsIdDataMap(metricSpace, dataset.getPivots(pivotCount));
+        Map<Comparable, T> queries = ToolsMetricDomain.getMetricObjectsAsIdDataMap(metricSpace, dataset.getQueryObjects());
+        Map<Comparable, TreeSet<Map.Entry<Comparable, Float>>> gt = new FSNearestNeighboursStorageImpl().getGroundTruthForDataset(dataset.getDatasetName(), dataset.getQuerySetName());
         //
-        Map<Object, TreeSet<Object>> partitioning = storage.load(dataset.getDatasetName(), pivotCount);
+        Map<Comparable, TreeSet<Comparable>> partitioning = storage.load(dataset.getDatasetName(), pivotCount);
         VoronoiPartitionsCandSetIdentifier identifier = new GRAPPLEPartitionsCandSetIdentifier(dataset, storage, pivotCount);
         for (int limitToFind = 10; limitToFind > 0; limitToFind--) {
             performForLimit(limitToFind, pivots, queries, gt, partitioning, storage, identifier, dataset.getDatasetName(), pivotCount, df, k);
         }
     }
 
-    private static Map<Object, Boolean> createMapOfBooleaValues(TreeSet<Map.Entry<Object, Float>> gtQueryResult, int k, boolean value) {
+    private static Map<Object, Boolean> createMapOfBooleaValues(TreeSet<Map.Entry<Comparable, Float>> gtQueryResult, int k, boolean value) {
         Map<Object, Boolean> ret = new HashMap<>();
-        Iterator<Map.Entry<Object, Float>> it = gtQueryResult.iterator();
+        Iterator<Map.Entry<Comparable, Float>> it = gtQueryResult.iterator();
         for (int i = 0; it.hasNext() && i < k; i++) {
-            Map.Entry<Object, Float> nn = it.next();
+            Map.Entry<Comparable, Float> nn = it.next();
             ret.put(nn.getKey(), value);
         }
         return ret;
@@ -83,7 +83,7 @@ public class PrintStatsWhereAreNNs {
         return count >= limit;
     }
 
-    private static void performForLimit(int limitToFind, Map<Object, Object> pivots, Map<Object, Object> queries, Map<String, TreeSet<Map.Entry<Object, Float>>> gt, Map<Object, TreeSet<Object>> voronoiPartitioning, FSVoronoiPartitioningStorage storage, VoronoiPartitionsCandSetIdentifier identifier, String datasetName, int pivotCount, DistanceFunctionInterface df, int k) {
+    private static <T> void performForLimit(int limitToFind, Map<Comparable, T> pivots, Map<Comparable, T> queries, Map<Comparable, TreeSet<Map.Entry<Comparable, Float>>> gt, Map<Comparable, TreeSet<Comparable>> voronoiPartitioning, FSVoronoiPartitioningStorage storage, VoronoiPartitionsCandSetIdentifier identifier, String datasetName, int pivotCount, DistanceFunctionInterface df, int k) {
         LOG.log(Level.INFO, "Evaluation for limit {0}", limitToFind);
         File file = storage.getFile(datasetName, pivotCount, false);
         String name = file.getName() + "whereAre" + limitToFind + "outOf" + k + "closest.csv";
@@ -93,18 +93,18 @@ public class PrintStatsWhereAreNNs {
             Logger.getLogger(PrintCellsSizes.class.getName()).log(Level.SEVERE, null, ex);
         }
         int counter = 0;
-        for (Map.Entry<String, TreeSet<Map.Entry<Object, Float>>> gtForQuery : gt.entrySet()) {
+        for (Map.Entry<Comparable, TreeSet<Map.Entry<Comparable, Float>>> gtForQuery : gt.entrySet()) {
             counter++;
-            String qID = gtForQuery.getKey();
+            Comparable qID = gtForQuery.getKey();
             Object qData = queries.get(qID);
             Object[] priorityQueue = identifier.evaluateKeyOrdering(df, pivots, qData);
-            TreeSet<Map.Entry<Object, Float>> gtQueryResult = gtForQuery.getValue();
+            TreeSet<Map.Entry<Comparable, Float>> gtQueryResult = gtForQuery.getValue();
             // go cells by cell until all kNN are found
             int cellsCount = 0;
             int cellsTotalSize = 0;
             Map<Object, Boolean> mapOfCoveredNNs = createMapOfBooleaValues(gtQueryResult, k, false);
             for (Object cellID : priorityQueue) {
-                TreeSet<Object> cell = voronoiPartitioning.get(cellID);
+                TreeSet<Comparable> cell = voronoiPartitioning.get(cellID);
                 if (cell == null) {
                     continue;
                 }

@@ -115,13 +115,13 @@ public class EvaluateSimRelInstantWithVoronoi {
         AbstractMetricSpace pcaDatasetMetricSpace = pcaDataset.getMetricSpace();
 
         Map pcaOMap = EvaluateCRANBERRYMain.getMapOfPrefixes(pcaDatasetMetricSpace, pcaDataset.getMetricObjectsFromDataset(), prefixLength);
-        Map pcaQueriesMap = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(pcaDatasetMetricSpace, pcaDataset.getQueryObjects(), false);
+        Map pcaQueriesMap = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(pcaDatasetMetricSpace, pcaDataset.getQueryObjects());
 
         for (int i = 0; i < fullQueries.size(); i++) {
 
             long time = -System.currentTimeMillis();
             Object fullQueryObj = fullQueries.get(i);
-            Object queryObjId = metricSpaceOfFullDataset.getIDOfMetricObject(fullQueryObj);
+            Comparable queryObjId = metricSpaceOfFullDataset.getIDOfMetricObject(fullQueryObj);
 
             List candidatesIDs = algVoronoi.candSetKnnSearch(metricSpaceOfFullDataset, fullQueryObj, kVoronoi, null);
             List<Object> pcaOfCandidates = Tools.filterMapValues(pcaOMap, candidatesIDs);
@@ -129,7 +129,7 @@ public class EvaluateSimRelInstantWithVoronoi {
 
 //            List<Object> candSetObjIDs = algSimRel.candSetKnnSearch(pcaDatasetMetricSpace, pcaQueryObj, kPCA, pcaOfCandidates.iterator());
 //            TreeSet<Map.Entry<Object, Float>> rerankCandidateSet = algSimRel.rerankCandidateSet(metricSpaceOfFullDataset, fullQueryObj, k, fullDataset.getDatasetName(), mapOfAllFullObjects, candSetObjIDs);
-            TreeSet<Map.Entry<Object, Float>> result = algSimRel.completeKnnSearch(
+            TreeSet<Map.Entry<Comparable, Float>> result = algSimRel.completeKnnSearch(
                     metricSpaceOfFullDataset,
                     fullQueryObj,
                     k,

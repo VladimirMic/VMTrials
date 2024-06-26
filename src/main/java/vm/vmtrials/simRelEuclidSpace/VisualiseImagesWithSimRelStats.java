@@ -24,7 +24,7 @@ public class VisualiseImagesWithSimRelStats {
         FSNearestNeighboursStorageImpl groundTruthStorage = new FSNearestNeighboursStorageImpl();
 
         Dataset decaf = new FSDatasetInstanceSingularizator.DeCAFDataset();
-        Map<String, TreeSet<Map.Entry<Object, Float>>> groundTruth = groundTruthStorage.getGroundTruthForDataset(decaf.getDatasetName(), decaf.getDatasetName());
+        Map<Comparable, TreeSet<Map.Entry<Comparable, Float>>> groundTruth = groundTruthStorage.getGroundTruthForDataset(decaf.getDatasetName(), decaf.getDatasetName());
 
         List<String> ids = csvWithSimRelStats[0];
         List<String> filterByFirst = csvWithSimRelStats[1];
@@ -65,7 +65,7 @@ public class VisualiseImagesWithSimRelStats {
         return Float.toString(f);
     }
 
-    private static void printLine(List<String> ids, Map<String, TreeSet<Map.Entry<Object, Float>>> groundTruth, int i, List<String> filterByFirst, List<String> simRelZero, List<String> simRels, DecimalFormat idFormat, DecimalFormat df) {
+    private static void printLine(List<String> ids, Map<Comparable, TreeSet<Map.Entry<Comparable, Float>>> groundTruth, int i, List<String> filterByFirst, List<String> simRelZero, List<String> simRels, DecimalFormat idFormat, DecimalFormat df) {
         String id = ids.get(i);
         id = idFormat.format(Integer.parseInt(id));
         int byFirst = Integer.parseInt(filterByFirst.get(i));
@@ -87,9 +87,9 @@ public class VisualiseImagesWithSimRelStats {
         System.out.println("<br/>");
         System.out.println("SimRels: " + df.format(total));
         System.out.println("</td>");
-        Iterator<Map.Entry<Object, Float>> nns = groundTruth.get(id).iterator();
+        Iterator<Map.Entry<Comparable, Float>> nns = groundTruth.get(id).iterator();
         for (int j = 0; j < 10; j++) {
-            Map.Entry<Object, Float> nn = nns.next();
+            Map.Entry<Comparable, Float> nn = nns.next();
             String nnID = nn.getKey().toString();
             String dist = formatFloat(nn.getValue(), 1);
             url = "https://disa.fi.muni.cz/profimedia/images/" + nnID;

@@ -21,7 +21,7 @@ public class H5FileAsKeyValueStorage {
         AbstractMetricSpace metricSpace = dataset.getMetricSpace();
         while (it.hasNext()) {
             Object next = it.next();
-            Object id = metricSpace.getIDOfMetricObject(next);
+            Comparable id = metricSpace.getIDOfMetricObject(next);
             Object check = map.get(id);
             String s = "";
         }

@@ -26,21 +26,21 @@ import static vm.search.algorithm.impl.KNNSearchWithPtolemaicFiltering.LB_COUNT;
  */
 public class KNNSearchWithPtolemaicFilteringLearnSkittle<T> extends KNNSearchWithPtolemaicFiltering<T> {
 
-    private final SortedMap<String, QueryLearnStats> queryStats = new TreeMap<>();
+    private final SortedMap<Comparable, QueryLearnStats> queryStats = new TreeMap<>();
 
-    public KNNSearchWithPtolemaicFilteringLearnSkittle(AbstractMetricSpace metricSpace, AbstractPtolemaicBasedFiltering ptolemaicFilter, List pivots, float[][] poDists, Map rowHeaders, Map columnHeaders, DistanceFunctionInterface df) {
-        super(metricSpace, ptolemaicFilter, pivots, poDists, rowHeaders, columnHeaders, df);
+    public KNNSearchWithPtolemaicFilteringLearnSkittle(AbstractMetricSpace metricSpace, AbstractPtolemaicBasedFiltering ptolemaicFilter, List pivots, float[][] poDists, Map<Comparable, Integer> rowHeaders, DistanceFunctionInterface df) {
+        super(metricSpace, ptolemaicFilter, pivots, poDists, rowHeaders, df);
     }
 
     @Override
-    public TreeSet<Map.Entry<Object, Float>> completeKnnSearch(AbstractMetricSpace<T> metricSpace, Object q, int k, Iterator<Object> objects, Object... params) {
-        String qId = metricSpace.getIDOfMetricObject(q).toString();
+    public TreeSet<Map.Entry<Comparable, Float>> completeKnnSearch(AbstractMetricSpace<T> metricSpace, Object q, int k, Iterator<Object> objects, Object... params) {
+        Comparable qId = metricSpace.getIDOfMetricObject(q);
         if (!queryStats.containsKey(qId)) {
             queryStats.put(qId, new QueryLearnStats(qId));
         }
         QueryLearnStats stats = queryStats.get(qId);
         long t = -System.currentTimeMillis();
-        TreeSet<Map.Entry<Object, Float>> ret = params.length == 0 ? new TreeSet<>(new Tools.MapByFloatValueComparator()) : (TreeSet<Map.Entry<Object, Float>>) params[0];
+        TreeSet<Map.Entry<Comparable, Float>> ret = params.length == 0 ? new TreeSet<>(new Tools.MapByFloatValueComparator()) : (TreeSet<Map.Entry<Comparable, Float>>) params[0];
         long lbChecked = 0;
         T qData = metricSpace.getDataOfMetricObject(q);
 
@@ -59,7 +59,8 @@ public class KNNSearchWithPtolemaicFilteringLearnSkittle<T> extends KNNSearchWit
         int oIdx, p1Idx, p2Idx, p;
         float distP1O, distP2O, distP2Q, distQP1, lowerBound, distance;
         float[] poDistsArray;
-        Object o, oId;
+        Object o;
+        Comparable oId;
         T oData;
         int oCounter = 0;
         objectsLoop:
@@ -109,7 +110,7 @@ public class KNNSearchWithPtolemaicFilteringLearnSkittle<T> extends KNNSearchWit
         return ret;
     }
 
-    public QueryLearnStats getQueryStats(String qId) {
+    public QueryLearnStats getQueryStats(Comparable qId) {
         return queryStats.get(qId);
     }
 

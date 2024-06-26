@@ -30,13 +30,13 @@ public class ChangePivotIDsInVoronoiCells {
 
     private static void run(Dataset dataset, int length) {
         StorageDatasetPartitionsInterface storage = new FSVoronoiPartitioningStorage();
-        Map<Object, TreeSet<Object>> load = storage.load(dataset.getDatasetName(), length);
-        Map<Object, SortedSet<Object>> updated = new HashMap<>();
-        Set<Map.Entry<Object, TreeSet<Object>>> entrySet = load.entrySet();
-        for (Map.Entry<Object, TreeSet<Object>> entry : entrySet) {
+        Map<Comparable, TreeSet<Comparable>> load = storage.load(dataset.getDatasetName(), length);
+        Map<Comparable, SortedSet<Comparable>> updated = new HashMap<>();
+        Set<Map.Entry<Comparable, TreeSet<Comparable>>> entrySet = load.entrySet();
+        for (Map.Entry<Comparable, TreeSet<Comparable>> entry : entrySet) {
             String key = entry.getKey().toString();
             key = key.substring(1);
-            TreeSet<Object> value = entry.getValue();
+            TreeSet<Comparable> value = entry.getValue();
             updated.put(key, value);
         }
         storage.store(updated, "N_" + dataset.getDatasetName(), length);
