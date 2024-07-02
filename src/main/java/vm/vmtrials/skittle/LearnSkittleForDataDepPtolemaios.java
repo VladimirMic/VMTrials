@@ -23,7 +23,7 @@ import vm.metricSpace.distance.DistanceFunctionInterface;
 import vm.queryResults.QueryExecutionStatsStoreInterface;
 import vm.search.algorithm.SearchingAlgorithm;
 import vm.search.algorithm.impl.GroundTruthEvaluator;
-import static vm.search.algorithm.impl.KNNSearchWithPtolemaicFiltering.LB_COUNT;
+import static vm.search.algorithm.impl.KNNSearchWithPtolemaicFiltering.IMPLICIT_LB_COUNT;
 
 /**
  *
@@ -99,7 +99,7 @@ public class LearnSkittleForDataDepPtolemaios<T> {
 
     private float[][] estimateTimesForSkittle(long timeOfSequentialScan, long qTimeComplete, List<Integer> qTimes, List<Float> qLBCounts, int datasetSize) {
         int maxSampleChecked = (int) (qTimes.size() * MAX_RATIO_OF_DATASET);
-        float[][] ret = new float[maxSampleChecked][LB_COUNT];
+        float[][] ret = new float[maxSampleChecked][SearchingAlgorithm.IMPLICIT_LB_COUNT];
         for (int batchIndex = 0; batchIndex < maxSampleChecked; batchIndex++) {
             long qTime = qTimes.get(batchIndex);
             float lbCountBatch = qLBCounts.get(batchIndex);
@@ -107,7 +107,7 @@ public class LearnSkittleForDataDepPtolemaios<T> {
             float remainingO = datasetSize - processedO;
             long timeOfRemainingSeqScan = (long) (timeOfSequentialScan * remainingO / datasetSize);
             long estimatedTime = timeOfRemainingSeqScan + qTime;
-            for (int lbStop = 0; lbStop < LB_COUNT; lbStop++) {
+            for (int lbStop = 0; lbStop < SearchingAlgorithm.IMPLICIT_LB_COUNT; lbStop++) {
                 if (lbCountBatch >= lbStop) { // would be stopped and continued by the seq scan
                     ret[batchIndex][lbStop] = estimatedTime;
                 } else {                    // would not be stopped
@@ -119,16 +119,16 @@ public class LearnSkittleForDataDepPtolemaios<T> {
     }
 
     private float[][] estimateAvgTimesForSkittleOCountLBCount(List<float[][]> estimatedTimes, int batchesCount) {
-        float[][] ret = new float[batchesCount][LB_COUNT];
+        float[][] ret = new float[batchesCount][SearchingAlgorithm.IMPLICIT_LB_COUNT];
         for (float[][] qEstimatedTime : estimatedTimes) {
             for (int batchIndex = 0; batchIndex < batchesCount; batchIndex++) {
-                for (int i = 0; i < LB_COUNT; i++) {
+                for (int i = 0; i < SearchingAlgorithm.IMPLICIT_LB_COUNT; i++) {
                     ret[batchIndex][i] += qEstimatedTime[batchIndex][i];
                 }
             }
         }
         for (int batchIndex = 0; batchIndex < batchesCount; batchIndex++) {
-            for (int i = 0; i < LB_COUNT; i++) {
+            for (int i = 0; i < SearchingAlgorithm.IMPLICIT_LB_COUNT; i++) {
                 ret[batchIndex][i] = ret[batchIndex][i] / estimatedTimes.size();
             }
         }

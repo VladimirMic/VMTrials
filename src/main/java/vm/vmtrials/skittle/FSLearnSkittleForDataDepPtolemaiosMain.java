@@ -14,6 +14,7 @@ import vm.metricSpace.Dataset;
 import vm.metricSpace.distance.DistanceFunctionInterface;
 import vm.metricSpace.distance.bounding.twopivots.impl.DataDependentGeneralisedPtolemaicFiltering;
 import vm.metricSpace.distance.storedPrecomputedDistances.AbstractPrecomputedDistancesMatrixLoader;
+import vm.search.algorithm.SearchingAlgorithm;
 import vm.search.algorithm.impl.KNNSearchWithPtolemaicFiltering;
 
 /**
@@ -27,7 +28,7 @@ public class FSLearnSkittleForDataDepPtolemaiosMain {
     public static final Logger LOG = Logger.getLogger(FSLearnSkittleForDataDepPtolemaiosMain.class.getName());
 
     public static void main(String[] args) {
-        int pivotCount = KNNSearchWithPtolemaicFiltering.LB_COUNT;
+        int pivotCount = SearchingAlgorithm.IMPLICIT_LB_COUNT;
         Dataset[] datasets = new Dataset[]{
             new FSDatasetInstanceSingularizator.LAION_10M_PCA256Dataset()
         };
