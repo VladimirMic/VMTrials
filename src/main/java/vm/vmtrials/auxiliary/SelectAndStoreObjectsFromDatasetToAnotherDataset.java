@@ -17,7 +17,7 @@ public class SelectAndStoreObjectsFromDatasetToAnotherDataset {
 
     public static void main(String[] args) {
         int k = 1000;
-        Dataset dataProvider = new FSDatasetInstanceSingularizator.DeCAF100M_PCA256Dataset();
+        Dataset dataProvider = new FSDatasetInstanceSingularizator.DeCAF100M_Dataset();
         List objects = dataProvider.getSampleOfDataset(k);
 
 //        Map dataMap = dataProvider.getKeyValueStorage();
@@ -29,9 +29,8 @@ public class SelectAndStoreObjectsFromDatasetToAnotherDataset {
 //            AbstractMap.SimpleEntry<Object, Object> simpleEntry = new AbstractMap.SimpleEntry<>(oID, oData);
 //            objectsToStore.add(simpleEntry);
 //        }
-
         AbstractMetricSpacesStorage storage = dataProvider.getMetricSpacesStorage();
-        storage.storeQueryObjects(objects, "decaf_100m_PCA256_first_objects_" + k);
+        storage.storeQueryObjects(objects, dataProvider.getDatasetName() + "_first_objects_" + k);
 //        storage.storePivots(objectsToStore, "laion2B-en-clip768v2-n=100M.h5_PCA32_20000");
 
     }
