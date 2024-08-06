@@ -67,7 +67,7 @@ public class KNNSearchWithPtolemaicFilteringLearnSkittle<T> extends KNNSearchWit
         objectsLoop:
         while (objects.hasNext()) {
             oCounter++;
-            long tNotCount =- System.currentTimeMillis();
+            long tNotCount = -System.currentTimeMillis();
             if (oCounter % objBeforeSeqScan == 0) {
                 float avg = lbChecked / (float) oCounter;
                 stats.addLBChecked(avg);

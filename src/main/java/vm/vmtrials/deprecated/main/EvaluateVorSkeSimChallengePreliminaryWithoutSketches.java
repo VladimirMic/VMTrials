@@ -128,8 +128,8 @@ public class EvaluateVorSkeSimChallengePreliminaryWithoutSketches {
             List<Comparable> candSetObjIDs = algSimRel.candSetKnnSearch(pcaDatasetMetricSpace, pcaQueryObj, kPCA, pcaOfCandidates.iterator());
             TreeSet<Map.Entry<Comparable, Float>> rerankCandidateSet = algSimRel.rerankCandidateSet(
                     metricSpaceOfFullDataset,
-                    fullQueryObj, 
-                    k, 
+                    fullQueryObj,
+                    k,
                     fullDataset.getDistanceFunction(),
                     mapOfAllFullObjects,
                     candSetObjIDs);

@@ -1,7 +1,5 @@
 package vm.vmtrials.checking.laionAuxiliary;
 
-
-
 import java.util.Iterator;
 import java.util.Map;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
