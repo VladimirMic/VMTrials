@@ -23,7 +23,6 @@ import vm.metricSpace.distance.DistanceFunctionInterface;
 import vm.queryResults.QueryExecutionStatsStoreInterface;
 import vm.search.algorithm.SearchingAlgorithm;
 import vm.search.algorithm.impl.GroundTruthEvaluator;
-import static vm.search.algorithm.impl.KNNSearchWithPtolemaicFiltering.IMPLICIT_LB_COUNT;
 
 /**
  *
@@ -31,6 +30,7 @@ import static vm.search.algorithm.impl.KNNSearchWithPtolemaicFiltering.IMPLICIT_
  * @param <T>
  */
 public class LearnSkittleForDataDepPtolemaios<T> {
+    public static final Integer IMPLICIT_LB_COUNT = 24; //  128, 256
 
     public static final Integer O_COUNT_STEP = 2000;
     public static final Float MAX_RATIO_OF_DATASET = 0.5f;
