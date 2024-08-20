@@ -2,38 +2,37 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package vm.vmtrials.skittle;
+package vm.vmtrials.strain;
 
 import java.util.List;
 import java.util.logging.Logger;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
+import vm.fs.main.search.perform.FSKNNQueriesSeqScanWithFilteringMain;
 import vm.fs.store.auxiliaryForDistBounding.FSPtolemyInequalityWithLimitedAnglesCoefsStorageImpl;
-import vm.fs.store.precomputedDists.FSPrecomputedDistancesMatrixLoaderImpl;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.Dataset;
 import vm.metricSpace.distance.DistanceFunctionInterface;
 import vm.metricSpace.distance.bounding.twopivots.impl.DataDependentGeneralisedPtolemaicFiltering;
 import vm.metricSpace.distance.storedPrecomputedDistances.AbstractPrecomputedDistancesMatrixLoader;
-import vm.search.algorithm.SearchingAlgorithm;
-import vm.search.algorithm.impl.KNNSearchWithPtolemaicFiltering;
 
 /**
  *
  * @author Vlada
  */
-public class FSLearnSkittleForDataDepPtolemaiosMain {
+public class FSLearnStrainForDataDepPtolemaiosMain {
 
     public static final Integer SAMPLE_SET_SIZE = -1;
     public static final Integer SAMPLE_QUERY_SET_SIZE = 1000;
-    public static final Logger LOG = Logger.getLogger(FSLearnSkittleForDataDepPtolemaiosMain.class.getName());
+    public static final Logger LOG = Logger.getLogger(FSLearnStrainForDataDepPtolemaiosMain.class.getName());
 
     public static void main(String[] args) {
-        int pivotCount = SearchingAlgorithm.IMPLICIT_LB_COUNT;
         Dataset[] datasets = new Dataset[]{
-            new FSDatasetInstanceSingularizator.LAION_10M_PCA256Dataset()
+            //            new FSDatasetInstanceSingularizator.LAION_10M_PCA256Dataset()
+            new FSDatasetInstanceSingularizator.Faiss_Clip_100M_PCA256_Candidates()
         };
 
         for (Dataset dataset : datasets) {
+            int pivotCount = dataset.getRecommendedNumberOfPivotsForFiltering();
             run(dataset, pivotCount);
         }
     }
@@ -46,15 +45,17 @@ public class FSLearnSkittleForDataDepPtolemaiosMain {
 
         List<Object> queriesSamples = dataset.getQueryObjects(SAMPLE_QUERY_SET_SIZE);
 
-        AbstractPrecomputedDistancesMatrixLoader pd = new FSPrecomputedDistancesMatrixLoaderImpl();
-//        AbstractPrecomputedDistancesMatrixLoader pd = ToolsMetricDomain.evaluateMatrixOfDistances(sampleObjects, pivots, metricSpace, df);
-        float[][] poDists = pd.loadPrecomPivotsToObjectsDists(dataset, pivotCount);
+        FSKNNQueriesSeqScanWithFilteringMain.initPODists(dataset, pivotCount, dataset.getRecommendedNumberOfPivotsForFiltering(), pivots);
+        float[][] poDists = FSKNNQueriesSeqScanWithFilteringMain.getPoDists();
+        AbstractPrecomputedDistancesMatrixLoader pd = FSKNNQueriesSeqScanWithFilteringMain.getPd();
 
         KNNSearchWithPtolemaicFilteringLearnSkittle alg = new KNNSearchWithPtolemaicFilteringLearnSkittle(metricSpace, filter, pivots, poDists, pd.getRowHeaders(), df);
 
-        LearnSkittleForDataDepPtolemaios evaluator = new LearnSkittleForDataDepPtolemaios(alg, dataset, queriesSamples);
-        evaluator.learn();
-
+        LearnStrainForDataDepPtolemaios evaluator;
+        for (int i = 0; i < 1; i++) {
+            evaluator = new LearnStrainForDataDepPtolemaios(alg, dataset, queriesSamples, pivotCount);
+            evaluator.learn();
+        }
     }
 
     private static DataDependentGeneralisedPtolemaicFiltering initDataDepPtolemaicFilter(List pivots, Dataset dataset) {

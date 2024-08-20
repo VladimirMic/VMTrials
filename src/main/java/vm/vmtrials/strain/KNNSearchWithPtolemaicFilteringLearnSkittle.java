@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package vm.vmtrials.skittle;
+package vm.vmtrials.strain;
 
 import java.util.AbstractMap;
 import java.util.Iterator;
@@ -15,10 +15,8 @@ import vm.datatools.Tools;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.distance.DistanceFunctionInterface;
 import vm.metricSpace.distance.bounding.twopivots.AbstractPtolemaicBasedFiltering;
-import vm.search.algorithm.SearchingAlgorithm;
 import static vm.search.algorithm.SearchingAlgorithm.adjustAndReturnSearchRadiusAfterAddingOne;
 import vm.search.algorithm.impl.KNNSearchWithPtolemaicFiltering;
-import static vm.search.algorithm.impl.KNNSearchWithPtolemaicFiltering.IMPLICIT_LB_COUNT;
 
 /**
  *
@@ -52,7 +50,7 @@ public class KNNSearchWithPtolemaicFilteringLearnSkittle<T> extends KNNSearchWit
         }
         int[] pivotArrays = qPivotArraysCached.get(qId);
         if (pivotArrays == null) {
-            pivotArrays = identifyExtremePivotPairs(qpDistMultipliedByCoefForPivots, SearchingAlgorithm.IMPLICIT_LB_COUNT);
+            pivotArrays = identifyExtremePivotPairs(qpDistMultipliedByCoefForPivots, qpDistMultipliedByCoefForPivots.length);
             qPivotArraysCached.put(qId, pivotArrays);
         }
         int distComps = 0;
@@ -104,7 +102,7 @@ public class KNNSearchWithPtolemaicFilteringLearnSkittle<T> extends KNNSearchWit
             }
         }
         t += System.currentTimeMillis();
-        System.err.println("XXX:" + t);
+        System.err.println("Query " + qId + " time: " + t);
         incTime(qId, t);
         incDistsComps(qId, distComps);
         incLBChecked(qId, lbChecked);
