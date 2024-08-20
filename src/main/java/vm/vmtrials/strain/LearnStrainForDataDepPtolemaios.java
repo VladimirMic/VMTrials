@@ -34,7 +34,7 @@ import vm.search.algorithm.impl.GroundTruthEvaluator;
  */
 public class LearnStrainForDataDepPtolemaios<T> {
 
-    public static final Integer O_COUNT_STEP = 5;
+    public static final Integer O_COUNT_STEP = 50;
     public static final Float MAX_RATIO_OF_DATASET = 1f;
     public static final Integer K = 30;
     public static final Logger LOG = Logger.getLogger(LearnStrainForDataDepPtolemaios.class.getName());
@@ -108,6 +108,7 @@ public class LearnStrainForDataDepPtolemaios<T> {
 
         float[][] estimatedTimesForSkittleOCountLBCount = estimateAvgTimesForSkittleOCountLBCount(estimatedTimes, (int) (qTimes.size() * MAX_RATIO_OF_DATASET));
 
+        PrintStream err = System.err;
         String fileString = "h:\\Similarity_search\\Trials\\Skittle_time_estimations_2024_08_19.csv";
         try {
             System.setErr(new PrintStream(new FileOutputStream(fileString, false)));
@@ -115,12 +116,18 @@ public class LearnStrainForDataDepPtolemaios<T> {
             Logger.getLogger(LearnStrainForDataDepPtolemaios.class.getName()).log(Level.SEVERE, null, ex);
         }
         for (int i = 1; i <= lbCount; i++) {
-            System.err.print(i + ";");
+            System.err.print(";" + i);
         }
         System.err.println();
-        Tools.printMatrix(estimatedTimesForSkittleOCountLBCount);
+        String[] rowHeaders = new String[estimatedTimesForSkittleOCountLBCount.length];
+        for (int i = 0; i < rowHeaders.length; i++) {
+            rowHeaders[i] = Integer.toString(i * O_COUNT_STEP);
+        }
+        Tools.printMatrixWithRowHeaders(rowHeaders, estimatedTimesForSkittleOCountLBCount);
         System.err.flush();
-        FSHeatMapFromFile.run(fileString);
+        System.err.close();
+        FSHeatMapFromFile.run(fileString, 10);
+        System.setErr(err);
     }
 
     private float[][] estimateTimesForStrain(long timeOfSequentialScan, long qTimeComplete, List<Integer> qTimes, List<Float> qLBCounts, int datasetSize) {
