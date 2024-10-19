@@ -45,7 +45,7 @@ public class KNNSearchWithPtolemaicFilteringLearnSkittle<T> extends KNNSearchWit
 
         float[][] qpDistMultipliedByCoefForPivots = qpMultipliedByCoefCached.get(qId);
         if (qpDistMultipliedByCoefForPivots == null) {
-            qpDistMultipliedByCoefForPivots = computeqpDistMultipliedByCoefForPivots(qData);
+            qpDistMultipliedByCoefForPivots = computeqpDistMultipliedByCoefForPivots(qData, pivotsData, df, filter);
             qpMultipliedByCoefCached.put(qId, qpDistMultipliedByCoefForPivots);
         }
         int[] pivotArrays = qPivotArraysCached.get(qId);
