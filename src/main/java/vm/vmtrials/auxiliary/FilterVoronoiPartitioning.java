@@ -4,11 +4,11 @@
  */
 package vm.vmtrials.auxiliary;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,7 +35,7 @@ public class FilterVoronoiPartitioning {
 
         FSVoronoiPartitioningStorage voronoiPartitioningStorage = new FSVoronoiPartitioningStorage();
         Map<Comparable, TreeSet<Comparable>> vp = voronoiPartitioningStorage.load(partitioninedDataset.getDatasetName(), pivotCount);
-        Map<Comparable, SortedSet<Comparable>> ret = new HashMap<>();
+        Map<Comparable, Collection<Comparable>> ret = new HashMap<>();
         for (Map.Entry<Comparable, TreeSet<Comparable>> cell : vp.entrySet()) {
             Comparable pivotID = cell.getKey();
             TreeSet<Comparable> newCell = new TreeSet<>();
