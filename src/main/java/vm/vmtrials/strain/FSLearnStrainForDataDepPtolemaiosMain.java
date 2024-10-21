@@ -12,7 +12,7 @@ import vm.fs.store.auxiliaryForDistBounding.FSPtolemyInequalityWithLimitedAngles
 import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.Dataset;
 import vm.metricSpace.distance.DistanceFunctionInterface;
-import vm.metricSpace.distance.bounding.twopivots.impl.DataDependentGeneralisedPtolemaicFiltering;
+import vm.metricSpace.distance.bounding.twopivots.impl.DataDependentPtolemaicFiltering;
 import vm.metricSpace.distance.storedPrecomputedDistances.AbstractPrecomputedDistancesMatrixLoader;
 
 /**
@@ -41,7 +41,7 @@ public class FSLearnStrainForDataDepPtolemaiosMain {
         AbstractMetricSpace metricSpace = dataset.getMetricSpace();
         DistanceFunctionInterface df = dataset.getDistanceFunction();
         List pivots = dataset.getPivots(pivotCount);
-        DataDependentGeneralisedPtolemaicFiltering filter = initDataDepPtolemaicFilter(pivots, dataset);
+        DataDependentPtolemaicFiltering filter = initDataDepPtolemaicFilter(pivots, dataset);
 
         List<Object> queriesSamples = dataset.getQueryObjects(SAMPLE_QUERY_SET_SIZE);
 
@@ -56,9 +56,9 @@ public class FSLearnStrainForDataDepPtolemaiosMain {
         }
     }
 
-    private static DataDependentGeneralisedPtolemaicFiltering initDataDepPtolemaicFilter(List pivots, Dataset dataset) {
+    private static DataDependentPtolemaicFiltering initDataDepPtolemaicFilter(List pivots, Dataset dataset) {
         int pivotCount = pivots.size();
-        DataDependentGeneralisedPtolemaicFiltering dataDependentPtolemaicFiltering = FSPtolemyInequalityWithLimitedAnglesCoefsStorageImpl.getLearnedInstance(
+        DataDependentPtolemaicFiltering dataDependentPtolemaicFiltering = FSPtolemyInequalityWithLimitedAnglesCoefsStorageImpl.getLearnedInstance(
                 "",
                 dataset,
                 pivotCount
