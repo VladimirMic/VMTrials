@@ -44,7 +44,7 @@ public class DeleteTrialWithVoronoiFilteringPlusLimitedAngles<T> extends Searchi
         List pivots = dataset.getPivots(-1);
         pivotsMap = ToolsMetricDomain.getMetricObjectsAsIdDataMap(dataset.getMetricSpace(), pivots);
         df = dataset.getDistanceFunction();
-        voronoiPartitioning = voronoiPartitioningStorage.load(dataset.getDatasetName(), pivotCountUsedForTheVoronoiPartitioning);
+        voronoiPartitioning = voronoiPartitioningStorage.loadAsTreeSets(dataset.getDatasetName(), pivotCountUsedForTheVoronoiPartitioning);
         this.filter = filter;
         delete = dataset.getKeyValueStorage();
     }

@@ -3,6 +3,7 @@ package vm.vmtrials.auxiliary.datasetPartitioning;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.util.Collection;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.logging.Level;
@@ -37,7 +38,7 @@ public class PrintCellsSizes {
     private static void run(Dataset dataset) {
         int pivotCount = 256;
         FSVoronoiPartitioningStorage storage = new FSGRAPPLEPartitioningStorage();
-        Map<Comparable, TreeSet<Comparable>> vp = storage.load(dataset.getDatasetName(), pivotCount);
+        Map<Comparable, Collection<Comparable>> vp = storage.load(dataset.getDatasetName(), pivotCount);
         File file = storage.getFile(dataset.getDatasetName(), pivotCount, false);
         String name = file.getName() + "cells_stats.csv";
         try {
@@ -45,9 +46,9 @@ public class PrintCellsSizes {
         } catch (FileNotFoundException ex) {
             Logger.getLogger(PrintCellsSizes.class.getName()).log(Level.SEVERE, null, ex);
         }
-        for (Map.Entry<Comparable, TreeSet<Comparable>> cell : vp.entrySet()) {
+        for (Map.Entry<Comparable, Collection<Comparable>> cell : vp.entrySet()) {
             String pivotID = cell.getKey().toString();
-            TreeSet<Comparable> ids = cell.getValue();
+            Collection<Comparable> ids = cell.getValue();
             System.out.println(pivotID + ";" + ids.size());
         }
         System.out.flush();

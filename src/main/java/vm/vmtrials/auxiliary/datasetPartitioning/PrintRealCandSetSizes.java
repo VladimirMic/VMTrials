@@ -4,6 +4,7 @@
  */
 package vm.vmtrials.auxiliary.datasetPartitioning;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.logging.Logger;
@@ -40,13 +41,13 @@ public class PrintRealCandSetSizes {
         Map<Comparable, T> queries = ToolsMetricDomain.getMetricObjectsAsIdDataMap(metricSpace, dataset.getQueryObjects());
         Map<Comparable, T> pivots = ToolsMetricDomain.getMetricObjectsAsIdDataMap(metricSpace, dataset.getPivots(-1));
 
-        Map<Comparable, TreeSet<Comparable>> voronoiPartitioning = storage.load(dataset.getDatasetName(), pivotCount);
+        Map<Comparable, Collection<Comparable>> voronoiPartitioning = storage.load(dataset.getDatasetName(), pivotCount);
         for (Map.Entry<Comparable, T> fullQuery : queries.entrySet()) {
             printNumberOfCandidates(k, fullQuery, voronoiPartitioning, df, pivots);
         }
     }
 
-    private static <T> void printNumberOfCandidates(int k, Map.Entry<Comparable, T> fullQuery, Map<Comparable, TreeSet<Comparable>> voronoiPartitioning, DistanceFunctionInterface df, Map pivots) {
+    private static <T> void printNumberOfCandidates(int k, Map.Entry<Comparable, T> fullQuery, Map<Comparable, Collection<Comparable>> voronoiPartitioning, DistanceFunctionInterface df, Map pivots) {
         String qID = (String) fullQuery.getKey();
         Object qData = fullQuery.getValue();
         Object[] pivotPermutation = ToolsMetricDomain.getPivotIDsPermutation(df, pivots, qData, -1, null);
@@ -55,7 +56,7 @@ public class PrintRealCandSetSizes {
         int cellsTotalSize = 0;
         int cellSizeWithNext = 0;
         for (Object idOfClosestPivotToQ : pivotPermutation) {
-            TreeSet<Comparable> cell = voronoiPartitioning.get(idOfClosestPivotToQ);
+            Collection<Comparable> cell = voronoiPartitioning.get(idOfClosestPivotToQ);
             if (cell == null) {
 //                LOG.log(Level.WARNING, "Empty Voronoi cell for pivot {0}", idOfClosestPivotToQ);
                 continue;

@@ -56,7 +56,7 @@ public class PrintStatsWhereAreNNs {
         Map<Comparable, T> queries = ToolsMetricDomain.getMetricObjectsAsIdDataMap(metricSpace, dataset.getQueryObjects());
         Map<Comparable, TreeSet<Map.Entry<Comparable, Float>>> gt = new FSNearestNeighboursStorageImpl().getGroundTruthForDataset(dataset.getDatasetName(), dataset.getQuerySetName());
         //
-        Map<Comparable, TreeSet<Comparable>> partitioning = storage.load(dataset.getDatasetName(), pivotCount);
+        Map<Comparable, TreeSet<Comparable>> partitioning = storage.loadAsTreeSets(dataset.getDatasetName(), pivotCount);
         VoronoiPartitionsCandSetIdentifier identifier = new GRAPPLEPartitionsCandSetIdentifier(dataset, storage, pivotCount);
         for (int limitToFind = 10; limitToFind > 0; limitToFind--) {
             performForLimit(limitToFind, pivots, queries, gt, partitioning, storage, identifier, dataset.getDatasetName(), pivotCount, df, k);

@@ -34,7 +34,7 @@ public class FilterVoronoiPartitioning {
         Set<Comparable> idsToPreserve = loadKeyOfObjects(targetDataset);
 
         FSVoronoiPartitioningStorage voronoiPartitioningStorage = new FSVoronoiPartitioningStorage();
-        Map<Comparable, TreeSet<Comparable>> vp = voronoiPartitioningStorage.load(partitioninedDataset.getDatasetName(), pivotCount);
+        Map<Comparable, TreeSet<Comparable>> vp = voronoiPartitioningStorage.loadAsTreeSets(partitioninedDataset.getDatasetName(), pivotCount);
         Map<Comparable, Collection<Comparable>> ret = new HashMap<>();
         for (Map.Entry<Comparable, TreeSet<Comparable>> cell : vp.entrySet()) {
             Comparable pivotID = cell.getKey();
