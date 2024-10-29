@@ -12,7 +12,7 @@
         <properties>
             <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
             <exec.executable>java</exec.executable>
-            <exec.mainClass>vm.vmtrials.strain.FSLearnStrainForDataDepPtolemaiosMain</exec.mainClass>
+            <exec.mainClass>vm.vmtrials.checking.pdbe.CheckQScoreDistComp</exec.mainClass>
             <exec.vmArgs>-Xmx96g</exec.vmArgs>
             <exec.appArgs>h:\Similarity_search\Dataset\Dataset\laion2B-en-clip768v2-n=100k.h5 x h:\Similarity_search\Dataset\Query\public-queries-10k-clip768v2.h5 y Z true 10</exec.appArgs>
         </properties>
@@ -30,7 +30,7 @@
             <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
             <exec.executable>java</exec.executable>
             <jpda.listen>true</jpda.listen>
-            <exec.mainClass>vm.vmtrials.strain.FSLearnStrainForDataDepPtolemaiosMain</exec.mainClass>
+            <exec.mainClass>vm.vmtrials.checking.pdbe.CheckQScoreDistComp</exec.mainClass>
             <exec.vmArgs>-Xmx96g -agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address}</exec.vmArgs>
             <exec.appArgs>h:\Similarity_search\Dataset\Dataset\laion2B-en-clip768v2-n=100k.h5 x h:\Similarity_search\Dataset\Query\public-queries-10k-clip768v2.h5 y Z true 10</exec.appArgs>
         </properties>
@@ -47,7 +47,7 @@
         <properties>
             <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
             <exec.executable>java</exec.executable>
-            <exec.mainClass>vm.vmtrials.strain.FSLearnStrainForDataDepPtolemaiosMain</exec.mainClass>
+            <exec.mainClass>vm.vmtrials.checking.pdbe.CheckQScoreDistComp</exec.mainClass>
             <exec.vmArgs>-Xmx96g</exec.vmArgs>
             <exec.appArgs>h:\Similarity_search\Dataset\Dataset\laion2B-en-clip768v2-n=100k.h5 x h:\Similarity_search\Dataset\Query\public-queries-10k-clip768v2.h5 y Z true 10</exec.appArgs>
         </properties>
