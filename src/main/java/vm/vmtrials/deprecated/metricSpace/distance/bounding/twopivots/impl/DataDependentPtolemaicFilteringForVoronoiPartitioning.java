@@ -4,11 +4,19 @@
  */
 package vm.vmtrials.deprecated.metricSpace.distance.bounding.twopivots.impl;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import vm.datatools.Tools;
+import vm.fs.store.auxiliaryForDistBounding.FSPtolemyInequalityWithLimitedAnglesCoefsStorageImpl;
+import static vm.fs.store.auxiliaryForDistBounding.FSPtolemyInequalityWithLimitedAnglesCoefsStorageImpl.getFile;
+import static vm.fs.store.auxiliaryForDistBounding.FSPtolemyInequalityWithLimitedAnglesCoefsStorageImpl.transformsCoefsToArrays;
+import vm.metricSpace.Dataset;
+import vm.metricSpace.ToolsMetricDomain;
 import vm.metricSpace.distance.DistanceFunctionInterface;
 import vm.metricSpace.distance.bounding.twopivots.impl.DataDependentPtolemaicFiltering;
 import vm.metricSpace.distance.bounding.twopivots.impl.PtolemaicFilterForVoronoiPartitioning;
@@ -157,4 +165,21 @@ public class DataDependentPtolemaicFilteringForVoronoiPartitioning<T> extends Da
         Logger.getLogger(DataDependentPtolemaicFilteringForVoronoiPartitioning.class.getName()).log(Level.INFO, "Finished deciding best pivot permutation");
         return ret;
     }
+    
+        public static DataDependentPtolemaicFilteringForVoronoiPartitioning getLearnedInstanceForVoronoiPartitioning(String resultPreffixName, Dataset dataset, int pivotCount) {
+        return getLearnedInstanceForVoronoiPartitioning(resultPreffixName, dataset, pivotCount, true);
+    }
+
+    public static DataDependentPtolemaicFilteringForVoronoiPartitioning getLearnedInstanceForVoronoiPartitioning(String resultPreffixName, Dataset dataset, int pivotCount, boolean wisePivotSelection) {
+        FSPtolemyInequalityWithLimitedAnglesCoefsStorageImpl storageOfCoefs = new FSPtolemyInequalityWithLimitedAnglesCoefsStorageImpl();
+        String fileName = storageOfCoefs.getNameOfFileWithCoefs(dataset.getDatasetName(), pivotCount, true);
+        File file = getFile(fileName, false);
+        Map<String, float[]> coefs = Tools.parseCsvMapKeyFloatValues(file.getAbsolutePath());
+        List pivots = dataset.getPivots(pivotCount);
+        List pivotsData = dataset.getMetricSpace().getDataOfMetricObjects(pivots);
+        List pivotIDs = ToolsMetricDomain.getIDsAsList(pivots.iterator(), dataset.getMetricSpace());
+        float[][][] coefsToArrays = transformsCoefsToArrays(coefs, pivotIDs);
+        return new DataDependentPtolemaicFilteringForVoronoiPartitioning(resultPreffixName, coefsToArrays, pivotsData, dataset.getDistanceFunction(), wisePivotSelection);
+    }
+
 }
