@@ -32,7 +32,7 @@ import vm.metricSpace.AbstractMetricSpacesStorage;
 import vm.metricSpace.MainMemoryDatasetCache;
 import vm.metricSpace.ToolsMetricDomain;
 import vm.metricSpace.data.toStringConvertors.SingularisedConvertors;
-import vm.metricSpace.datasetPartitioning.impl.VoronoiPartitioning;
+import vm.metricSpace.datasetPartitioning.impl.VoronoiPartitioningWithoutFilter;
 import vm.objTransforms.MetricObjectTransformerInterface;
 import vm.objTransforms.MetricObjectsParallelTransformerImpl;
 import vm.objTransforms.objectToSketchTransformators.AbstractObjectToSketchTransformator;
@@ -188,7 +188,7 @@ public class Main {
     private static void createAndStoreVoronoiPartitioning(Dataset dataset, int datasetSize) {
         int pivotCount = EvaluateCRANBERRYMain.getPivotCountForVoronoi(datasetSize);
         List<Object> pivots = dataset.getPivots(pivotCount);
-        VoronoiPartitioning vp = new VoronoiPartitioning(dataset.getMetricSpace(), dataset.getDistanceFunction(), pivots);
+        VoronoiPartitioningWithoutFilter vp = new VoronoiPartitioningWithoutFilter(dataset.getMetricSpace(), dataset.getDistanceFunction(), pivots);
         FSVoronoiPartitioningStorage storage = new FSVoronoiPartitioningStorage();
         vp.partitionObjects(dataset.getMetricObjectsFromDataset(), dataset.getDatasetName(), storage, pivotCount);
     }
