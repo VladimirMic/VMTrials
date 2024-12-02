@@ -71,7 +71,7 @@ public class PrintFirstStatsOfDataset {
 
                 // print 8 angles 0: beta1, 1: delta2, 2: gamma2, 3: alphao, 4: deltao, 5: betaq, 6: alphaq, 7: gamma1
                 float[] anglesRad = Tools.get8Angles(sixDists, false);
-                float[] anglesDeg = vm.math.Tools.radsToDeg(anglesRad);
+                float[] anglesDeg = vm.mathtools.Tools.radsToDeg(anglesRad);
                 Tools.printArray(anglesDeg, false);
 
                 // print fractions bd/a and ef/a

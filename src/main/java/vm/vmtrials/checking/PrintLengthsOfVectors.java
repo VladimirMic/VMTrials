@@ -2,7 +2,7 @@ package vm.vmtrials.checking;
 
 import java.util.List;
 import vm.fs.dataset.FSDatasetInstanceSingularizator;
-import vm.math.Tools;
+import vm.mathtools.Tools;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.Dataset;
 

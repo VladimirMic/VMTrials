@@ -8,7 +8,7 @@ import java.util.List;
 import vm.datatools.DataTypeConvertor;
 import vm.fs.metricSpaceImpl.FSMetricSpaceImpl;
 import vm.fs.metricSpaceImpl.FSMetricSpacesStorage;
-import vm.math.Tools;
+import vm.mathtools.Tools;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.ToolsMetricDomain;
 import vm.metricSpace.AbstractMetricSpacesStorage;

@@ -194,11 +194,11 @@ public class LearnStrainForDataDepPtolemaios<T> {
         List<Integer> ret = new ArrayList<>();
         for (int i = 0; i < qTimes.size(); i++) {
             int timeAfterKLB = qTimes.get(i);
-            int idx = (int) vm.math.Tools.round(i, interval, true);
+            int idx = (int) vm.mathtools.Tools.round(i, interval, true);
             while (idx > 0) {
                 timeAfterKLB += qTimes.get(idx - 1);
                 idx -= interval;
-                idx = (int) vm.math.Tools.round(idx, interval, true);
+                idx = (int) vm.mathtools.Tools.round(idx, interval, true);
             }
             ret.add(timeAfterKLB);
         }
