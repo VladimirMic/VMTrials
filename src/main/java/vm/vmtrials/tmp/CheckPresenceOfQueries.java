@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import vm.fs.dataset.FSDatasetInstanceSingularizator;
+import vm.fs.dataset.FSDatasetInstances;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.Dataset;
 import vm.metricSpace.ToolsMetricDomain;
@@ -21,7 +21,7 @@ import vm.metricSpace.ToolsMetricDomain;
 public class CheckPresenceOfQueries {
 
     public static void main(String[] args) {
-        Dataset dataset = new FSDatasetInstanceSingularizator.DeCAF20M_PCA256Dataset();
+        Dataset dataset = new FSDatasetInstances.DeCAF20M_PCA256Dataset();
         AbstractMetricSpace metricSpace = dataset.getMetricSpace();
         List queries = dataset.getQueryObjects();
 

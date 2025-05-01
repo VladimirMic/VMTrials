@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.logging.Logger;
-import vm.fs.dataset.FSDatasetInstanceSingularizator;
+import vm.fs.dataset.FSDatasetInstances;
 import vm.fs.store.partitioning.FSVoronoiPartitioningStorage;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.Dataset;
@@ -25,7 +25,7 @@ public class PrintRealCandSetSizes {
 
     public static void main(String[] args) {
         Dataset[] datasets = new Dataset[]{
-            new FSDatasetInstanceSingularizator.LAION_100M_Dataset(true)
+            new FSDatasetInstances.LAION_100M_Dataset(true)
         };
         for (Dataset dataset : datasets) {
             run(dataset);

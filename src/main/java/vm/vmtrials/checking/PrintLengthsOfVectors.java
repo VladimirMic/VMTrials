@@ -1,7 +1,7 @@
 package vm.vmtrials.checking;
 
 import java.util.List;
-import vm.fs.dataset.FSDatasetInstanceSingularizator;
+import vm.fs.dataset.FSDatasetInstances;
 import vm.mathtools.Tools;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.Dataset;
@@ -14,7 +14,7 @@ public class PrintLengthsOfVectors {
 
     public static void main(String[] args) {
         int count = 100;
-        Dataset dataset = new FSDatasetInstanceSingularizator.DeCAFDataset();
+        Dataset dataset = new FSDatasetInstances.DeCAFDataset();
         AbstractMetricSpace<float[]> metricSpace = dataset.getMetricSpace();
         List objs = dataset.getSampleOfDataset(count);
         for (Object obj : objs) {

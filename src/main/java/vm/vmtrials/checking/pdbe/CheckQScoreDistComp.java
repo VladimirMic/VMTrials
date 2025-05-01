@@ -5,7 +5,7 @@
 package vm.vmtrials.checking.pdbe;
 
 import java.util.Iterator;
-import vm.fs.dataset.FSDatasetInstanceSingularizator;
+import vm.fs.dataset.FSDatasetInstances;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.Dataset;
 import vm.metricSpace.distance.DistanceFunctionInterface;
@@ -17,7 +17,7 @@ import vm.metricSpace.distance.DistanceFunctionInterface;
 public class CheckQScoreDistComp {
 
     public static void main(String[] args) {
-        Dataset dataset = new FSDatasetInstanceSingularizator.PDBePtoteinChainsDataset();
+        Dataset dataset = new FSDatasetInstances.PDBePtoteinChainsDataset();
         AbstractMetricSpace metricSpace = dataset.getMetricSpace();
         Iterator it = dataset.getMetricObjectsFromDataset();
         Object o1 = it.next();

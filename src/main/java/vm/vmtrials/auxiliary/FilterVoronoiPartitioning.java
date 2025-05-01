@@ -12,7 +12,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import vm.fs.dataset.FSDatasetInstanceSingularizator;
+import vm.fs.dataset.FSDatasetInstances;
 import vm.fs.store.partitioning.FSVoronoiPartitioningStorage;
 import vm.metricSpace.Dataset;
 import vm.metricSpace.ToolsMetricDomain;
@@ -26,8 +26,8 @@ public class FilterVoronoiPartitioning {
     private static final Logger LOG = Logger.getLogger(FilterVoronoiPartitioning.class.getName());
 
     public static void main(String[] args) {
-        Dataset partitioninedDataset = new FSDatasetInstanceSingularizator.LAION_100M_Dataset(true);
-        Dataset targetDataset = new FSDatasetInstanceSingularizator.LAION_10M_Dataset(true);
+        Dataset partitioninedDataset = new FSDatasetInstances.LAION_100M_Dataset(true);
+        Dataset targetDataset = new FSDatasetInstances.LAION_10M_Dataset(true);
         int pivotCount = 20000;
         String newDatasetName = targetDataset.getDatasetName();
 

@@ -2,14 +2,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package vm.vmtrials.auxiliary;
+package vm.vmtrials.deprecated.main;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.datatools.Tools;
-import vm.fs.dataset.FSDatasetInstanceSingularizator;
+import vm.fs.dataset.FSDatasetInstances;
 import vm.metricSpace.AbstractMetricSpacesStorage;
 import vm.metricSpace.AbstractMetricSpacesStorage.OBJECT_TYPE;
 import vm.metricSpace.Dataset;
@@ -18,12 +18,13 @@ import vm.metricSpace.Dataset;
  *
  * @author Vlada
  */
+@Deprecated //no reason
 public class H5DatasetToFSDataset {
 
     public static final Logger LOG = Logger.getLogger(H5DatasetToFSDataset.class.getName());
 
     public static void main(String[] args) {
-        Dataset dataset = new FSDatasetInstanceSingularizator.LAION_30M_Dataset(true);
+        Dataset dataset = new FSDatasetInstances.LAION_30M_Dataset(true);
         AbstractMetricSpacesStorage metricSpacesStorage = dataset.getMetricSpacesStorage();
         Iterator it = dataset.getPivots(-1).iterator();
         processData(it, OBJECT_TYPE.PIVOT_OBJECT, dataset.getPivotSetName(), metricSpacesStorage);

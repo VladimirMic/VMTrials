@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 import vm.datatools.Tools;
-import vm.fs.dataset.FSDatasetInstanceSingularizator;
+import vm.fs.dataset.FSDatasetInstances;
 import vm.fs.store.queryResults.FSNearestNeighboursStorageImpl;
 import vm.metricSpace.Dataset;
 
@@ -23,7 +23,7 @@ public class VisualiseImagesWithSimRelStats {
         List<String>[] csvWithSimRelStats = Tools.parseCsv("c:\\Data\\2022\\query_obj_id,additional_stats.csv", columns, true);
         FSNearestNeighboursStorageImpl groundTruthStorage = new FSNearestNeighboursStorageImpl();
 
-        Dataset decaf = new FSDatasetInstanceSingularizator.DeCAFDataset();
+        Dataset decaf = new FSDatasetInstances.DeCAFDataset();
         Map<Comparable, TreeSet<Map.Entry<Comparable, Float>>> groundTruth = groundTruthStorage.getGroundTruthForDataset(decaf.getDatasetName(), decaf.getDatasetName());
 
         List<String> ids = csvWithSimRelStats[0];

@@ -4,7 +4,7 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import vm.fs.dataset.FSDatasetInstanceSingularizator;
+import vm.fs.dataset.FSDatasetInstances;
 import vm.fs.metricSpaceImpl.FSMetricSpacesStorage;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.Dataset;
@@ -18,12 +18,12 @@ public class H5PivotsToGZFile {
 
     public static void main(String[] args) {
         Dataset[] datasets = new Dataset[]{
-            new FSDatasetInstanceSingularizator.LAION_100M_PCA96Dataset(),
+            new FSDatasetInstances.LAION_100M_PCA96Dataset(),
             //
-            new FSDatasetInstanceSingularizator.LAION_100M_PCA32Dataset()
+            new FSDatasetInstances.LAION_100M_PCA32Dataset()
         };
 
-        Dataset fullDataset = new FSDatasetInstanceSingularizator.LAION_100M_Dataset(true);
+        Dataset fullDataset = new FSDatasetInstances.LAION_100M_Dataset(true);
         for (Dataset pcaDataset : datasets) {
             run(fullDataset, pcaDataset);
         }

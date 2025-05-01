@@ -13,7 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.datatools.DataTypeConvertor;
 import vm.datatools.Tools;
-import vm.fs.dataset.FSDatasetInstanceSingularizator;
+import vm.fs.dataset.FSDatasetInstances;
 import vm.fs.store.filtering.FSSimRelThresholdsTOmegaStorage;
 import vm.fs.store.queryResults.FSNearestNeighboursStorageImpl;
 import vm.fs.store.queryResults.FSQueryExecutionStatsStoreImpl;
@@ -44,14 +44,14 @@ public class EvaluateSimRelInstantWithVoronoi {
 
     public static void main(String[] args) {
         Dataset[] fullDatasets = new Dataset[]{
-            new FSDatasetInstanceSingularizator.LAION_10M_Dataset(true),
-            new FSDatasetInstanceSingularizator.LAION_30M_Dataset(true),
-            new FSDatasetInstanceSingularizator.LAION_100M_Dataset(true)
+            new FSDatasetInstances.LAION_10M_Dataset(true),
+            new FSDatasetInstances.LAION_30M_Dataset(true),
+            new FSDatasetInstances.LAION_100M_Dataset(true)
         };
         Dataset[] pcaDatasets = new Dataset[]{
-            new FSDatasetInstanceSingularizator.LAION_10M_PCA96Dataset(),
-            new FSDatasetInstanceSingularizator.LAION_30M_PCA96Dataset(),
-            new FSDatasetInstanceSingularizator.LAION_100M_PCA96Dataset()
+            new FSDatasetInstances.LAION_10M_PCA96Dataset(),
+            new FSDatasetInstances.LAION_30M_PCA96Dataset(),
+            new FSDatasetInstances.LAION_100M_PCA96Dataset()
         };
 
         for (int i = 0; i < fullDatasets.length; i++) {

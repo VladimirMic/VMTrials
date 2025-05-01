@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import vm.fs.dataset.FSDatasetInstanceSingularizator;
+import vm.fs.dataset.FSDatasetInstances;
 import vm.fs.store.queryResults.FSNearestNeighboursStorageImpl;
 import vm.metricSpace.Dataset;
 import vm.queryResults.QueryNearestNeighboursStoreInterface;
@@ -17,7 +17,7 @@ public class PrintRadii {
 
     public static void main(String[] args) {
         int k = 30;
-        Dataset groundTruthDataset = new FSDatasetInstanceSingularizator.DeCAFDataset();
+        Dataset groundTruthDataset = new FSDatasetInstances.DeCAFDataset();
         QueryNearestNeighboursStoreInterface resultsStorage = new FSNearestNeighboursStorageImpl();
         Map<Comparable, TreeSet<Map.Entry<Comparable, Float>>> groundTruthForDataset = resultsStorage.getGroundTruthForDataset(groundTruthDataset.getDatasetName(), groundTruthDataset.getDatasetName());
 

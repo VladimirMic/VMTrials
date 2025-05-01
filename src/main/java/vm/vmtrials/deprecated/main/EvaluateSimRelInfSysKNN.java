@@ -8,7 +8,7 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.datatools.DataTypeConvertor;
-import vm.fs.dataset.FSDatasetInstanceSingularizator;
+import vm.fs.dataset.FSDatasetInstances;
 import vm.fs.store.dataTransforms.FSSVDStorageImpl;
 import vm.fs.store.queryResults.FSNearestNeighboursStorageImpl;
 import vm.fs.store.queryResults.FSQueryExecutionStatsStoreImpl;
@@ -42,8 +42,8 @@ public class EvaluateSimRelInfSysKNN {
     public static final Integer TESTED_DATASET_SIZE = -1;
 
     public static void main(String[] args) {
-        FSDatasetInstanceSingularizator.DeCAFDataset fullDataset = new FSDatasetInstanceSingularizator.DeCAFDataset();
-        FSDatasetInstanceSingularizator.DeCAF_PCA256Dataset pcaDataset = new FSDatasetInstanceSingularizator.DeCAF_PCA256Dataset();
+        FSDatasetInstances.DeCAFDataset fullDataset = new FSDatasetInstances.DeCAFDataset();
+        FSDatasetInstances.DeCAF_PCA256Dataset pcaDataset = new FSDatasetInstances.DeCAF_PCA256Dataset();
         run(fullDataset, pcaDataset);
     }
 

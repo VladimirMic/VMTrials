@@ -7,7 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.datatools.Tools;
 import vm.fs.FSGlobal;
-import vm.fs.dataset.FSDatasetInstanceSingularizator;
+import vm.fs.dataset.FSDatasetInstances;
 import vm.metricSpace.Dataset;
 
 /**
@@ -17,7 +17,7 @@ import vm.metricSpace.Dataset;
 public class ImageProvider {
 
     public static void main(String[] args) {
-        Dataset dataset = new FSDatasetInstanceSingularizator.LAION_10M_Dataset(true);
+        Dataset dataset = new FSDatasetInstances.LAION_10M_Dataset(true);
         ImageProvider imageProvider = new ImageProvider(dataset);
         String url = imageProvider.getURLForImage("10");
         System.out.println(url);

@@ -12,7 +12,7 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.datatools.Tools;
-import vm.fs.dataset.FSDatasetInstanceSingularizator;
+import vm.fs.dataset.FSDatasetInstances;
 import vm.fs.store.dataTransforms.FSGHPSketchesPivotPairsStorageImpl;
 import vm.fs.store.filtering.FSSimRelThresholdsTOmegaStorage;
 import vm.fs.store.queryResults.FSNearestNeighboursStorageImpl;
@@ -56,20 +56,20 @@ public class EvaluateCRANBERRYMain {
         float pCum = LearningSecondaryFilteringWithSketches.THRESHOLDS_P_CUM[0];
         String tOmegaThresholdsFile = "laion2B-en-clip768v2-n=10M.h5_PCA256_q100voronoiP20000_voronoiK200101_pcaLength256_kPCA750.csv";
         Dataset[] fullDatasets = new Dataset[]{
-            new FSDatasetInstanceSingularizator.LAION_10M_Dataset(true),
-            new FSDatasetInstanceSingularizator.LAION_30M_Dataset(true),
-            new FSDatasetInstanceSingularizator.LAION_100M_Dataset(true)
+            new FSDatasetInstances.LAION_10M_Dataset(true),
+            new FSDatasetInstances.LAION_30M_Dataset(true),
+            new FSDatasetInstances.LAION_100M_Dataset(true)
         };
         Dataset[] pcaDatasets = new Dataset[]{
-            new FSDatasetInstanceSingularizator.LAION_10M_PCA256Prefixes24Dataset(),
-            new FSDatasetInstanceSingularizator.LAION_30M_PCA256Prefixes24Dataset(),
-            new FSDatasetInstanceSingularizator.LAION_100M_PCA256Prefixes24Dataset()
+            new FSDatasetInstances.LAION_10M_PCA256Prefixes24Dataset(),
+            new FSDatasetInstances.LAION_30M_PCA256Prefixes24Dataset(),
+            new FSDatasetInstances.LAION_100M_PCA256Prefixes24Dataset()
         };
 
         Dataset[] sketchesDatasets = new Dataset[]{
-            new FSDatasetInstanceSingularizator.LAION_10M_GHP_50_512Dataset(true),
-            new FSDatasetInstanceSingularizator.LAION_30M_GHP_50_512Dataset(true),
-            new FSDatasetInstanceSingularizator.LAION_100M_GHP_50_512Dataset(true)
+            new FSDatasetInstances.LAION_10M_GHP_50_512Dataset(true),
+            new FSDatasetInstances.LAION_30M_GHP_50_512Dataset(true),
+            new FSDatasetInstances.LAION_100M_GHP_50_512Dataset(true)
         };
 
         float distIntervalForPX = 0.004f;

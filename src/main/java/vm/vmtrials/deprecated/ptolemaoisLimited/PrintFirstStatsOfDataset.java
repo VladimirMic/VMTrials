@@ -7,7 +7,7 @@ import java.io.PrintStream;
 import java.util.List;
 import vm.datatools.Tools;
 import vm.fs.FSGlobal;
-import vm.fs.dataset.FSDatasetInstanceSingularizator;
+import vm.fs.dataset.FSDatasetInstances;
 import vm.fs.metricSpaceImpl.FSMetricSpaceImpl;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.Dataset;
@@ -25,10 +25,10 @@ public class PrintFirstStatsOfDataset {
     public static final Integer PIVOT_PAIRS = 256;
 
     public static void main(String[] args) throws IOException {
-        run(new FSDatasetInstanceSingularizator.DeCAFDataset());
-        run(new FSDatasetInstanceSingularizator.SIFTdataset());
-        run(new FSDatasetInstanceSingularizator.RandomDataset20Uniform());
-        run(new FSDatasetInstanceSingularizator.MPEG7dataset());
+        run(new FSDatasetInstances.DeCAFDataset());
+        run(new FSDatasetInstances.SIFTdataset());
+        run(new FSDatasetInstances.RandomDataset20Uniform());
+        run(new FSDatasetInstances.MPEG7dataset());
     }
 
     public static <T> void run(Dataset<T> dataset) throws FileNotFoundException {

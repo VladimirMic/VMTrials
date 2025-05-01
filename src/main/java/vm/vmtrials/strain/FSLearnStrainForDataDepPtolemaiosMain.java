@@ -6,7 +6,7 @@ package vm.vmtrials.strain;
 
 import java.util.List;
 import java.util.logging.Logger;
-import vm.fs.dataset.FSDatasetInstanceSingularizator;
+import vm.fs.dataset.FSDatasetInstances;
 import vm.fs.main.search.perform.FSKNNQueriesSeqScanWithFilteringMain;
 import vm.fs.store.auxiliaryForDistBounding.FSPtolemyInequalityWithLimitedAnglesCoefsStorageImpl;
 import vm.metricSpace.AbstractMetricSpace;
@@ -28,7 +28,7 @@ public class FSLearnStrainForDataDepPtolemaiosMain {
     public static void main(String[] args) {
         Dataset[] datasets = new Dataset[]{
             //            new FSDatasetInstanceSingularizator.LAION_10M_PCA256Dataset()
-            new FSDatasetInstanceSingularizator.Faiss_Clip_100M_PCA256_Candidates()
+            new FSDatasetInstances.Faiss_Clip_100M_PCA256_Candidates()
         };
 
         for (Dataset dataset : datasets) {

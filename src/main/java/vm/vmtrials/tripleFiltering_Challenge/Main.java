@@ -16,7 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.datatools.Tools;
 import vm.fs.FSGlobal;
-import vm.fs.dataset.FSDatasetInstanceSingularizator;
+import vm.fs.dataset.FSDatasetInstances;
 import vm.fs.main.objTransforms.apply.FSApplyPCAMain;
 import vm.fs.main.search.filtering.learning.FSLearnSecondaryFilteringWithGHPSketchesMain;
 import vm.fs.metricSpaceImpl.FSMetricSpaceImpl;
@@ -223,7 +223,7 @@ public class Main {
 
     private static Dataset createImplicitSketchesDataset(AbstractObjectToSketchTransformator sketchingTechnique, String fullDatasetName, int sketchLength, float balance) {
         String name = sketchingTechnique.getNameOfTransformedSetOfObjects(fullDatasetName, sketchLength, balance);
-        FSDatasetInstanceSingularizator.FSHammingSpaceDataset dataset = new FSDatasetInstanceSingularizator.FSHammingSpaceDataset(name);
+        FSDatasetInstances.FSHammingSpaceDataset dataset = new FSDatasetInstances.FSHammingSpaceDataset(name);
         return dataset;
     }
 
@@ -257,7 +257,7 @@ public class Main {
         return cachedDataset;
     }
 
-    private static class ImplicitH5Dataset extends FSDatasetInstanceSingularizator.H5FloatVectorDataset {
+    private static class ImplicitH5Dataset extends FSDatasetInstances.H5FloatVectorDataset {
 
         private final File datasetFile;
         private final File querySetFile;

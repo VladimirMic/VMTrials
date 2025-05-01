@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import vm.fs.dataset.FSDatasetInstanceSingularizator;
+import vm.fs.dataset.FSDatasetInstances;
 import vm.fs.store.partitioning.FSGRAPPLEPartitioningStorage;
 import vm.fs.store.partitioning.FSVoronoiPartitioningStorage;
 import vm.metricSpace.Dataset;
@@ -21,12 +21,12 @@ public class PrintCellsSizes {
 
     public static void main(String[] args) {
         Dataset[] datasets = new Dataset[]{
-            new FSDatasetInstanceSingularizator.DeCAFDataset(),
-            new FSDatasetInstanceSingularizator.MPEG7dataset(),
-            new FSDatasetInstanceSingularizator.SIFTdataset(),
+            new FSDatasetInstances.DeCAFDataset(),
+            new FSDatasetInstances.MPEG7dataset(),
+            new FSDatasetInstances.SIFTdataset(),
             //            new FSDatasetInstanceSingularizator.LAION_100k_Dataset(),
             //            new FSDatasetInstanceSingularizator.LAION_300k_Dataset(),
-            new FSDatasetInstanceSingularizator.LAION_10M_Dataset(true)
+            new FSDatasetInstances.LAION_10M_Dataset(true)
 //            new FSDatasetInstanceSingularizator.LAION_30M_Dataset(),
 //            new FSDatasetInstanceSingularizator.LAION_100M_Dataset()
         };

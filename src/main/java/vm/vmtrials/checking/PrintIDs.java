@@ -6,7 +6,7 @@ package vm.vmtrials.checking;
 
 import java.util.Iterator;
 import java.util.Map;
-import vm.fs.dataset.FSDatasetInstanceSingularizator;
+import vm.fs.dataset.FSDatasetInstances;
 import vm.fs.metricSpaceImpl.FSMetricSpaceImpl;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.Dataset;
@@ -18,7 +18,7 @@ import vm.metricSpace.Dataset;
 public class PrintIDs {
 
     public static void main(String[] args) {
-        Dataset dataset = new FSDatasetInstanceSingularizator.LAION_10M_PCA256Dataset();
+        Dataset dataset = new FSDatasetInstances.LAION_10M_PCA256Dataset();
         run(dataset, true);
     }
 

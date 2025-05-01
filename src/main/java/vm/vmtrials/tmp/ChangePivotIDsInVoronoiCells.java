@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import vm.fs.dataset.FSDatasetInstanceSingularizator;
+import vm.fs.dataset.FSDatasetInstances;
 import vm.fs.store.partitioning.FSVoronoiPartitioningStorage;
 import vm.metricSpace.Dataset;
 import vm.metricSpace.datasetPartitioning.StorageDatasetPartitionsInterface;
@@ -19,7 +19,7 @@ public class ChangePivotIDsInVoronoiCells {
 
     public static void main(String[] args) {
         Dataset[] datasets = new Dataset[]{
-            new FSDatasetInstanceSingularizator.LAION_100M_Dataset(true)
+            new FSDatasetInstances.LAION_100M_Dataset(true)
         };
         int[] lengths = new int[]{256, 512, 768, 1024, 1536, 2048};
         for (Dataset dataset : datasets) {

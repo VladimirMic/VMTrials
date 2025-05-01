@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import vm.fs.dataset.FSDatasetInstanceSingularizator;
+import vm.fs.dataset.FSDatasetInstances;
 import vm.fs.store.dataTransforms.FSGHPSketchesPivotPairsStorageImpl;
 import vm.fs.store.filtering.FSSecondaryFilteringWithSketchesStorage;
 import vm.fs.store.queryResults.FSNearestNeighboursStorageImpl;
@@ -45,14 +45,14 @@ public class FSVoronoiPlusSecondaryWithSketches {
         int sketchLength = 256;
         int pivotCount = 2048;
         Dataset[] fullDatasets = new Dataset[]{
-            new FSDatasetInstanceSingularizator.LAION_10M_Dataset(true),
-            new FSDatasetInstanceSingularizator.LAION_30M_Dataset(true),
-            new FSDatasetInstanceSingularizator.LAION_100M_Dataset(true)
+            new FSDatasetInstances.LAION_10M_Dataset(true),
+            new FSDatasetInstances.LAION_30M_Dataset(true),
+            new FSDatasetInstances.LAION_100M_Dataset(true)
         };
         Dataset[] sketchesDatasets = new Dataset[]{
-            new FSDatasetInstanceSingularizator.LAION_10M_GHP_50_256Dataset(true),
-            new FSDatasetInstanceSingularizator.LAION_30M_GHP_50_256Dataset(true),
-            new FSDatasetInstanceSingularizator.LAION_100M_GHP_50_256Dataset(true)
+            new FSDatasetInstances.LAION_10M_GHP_50_256Dataset(true),
+            new FSDatasetInstances.LAION_30M_GHP_50_256Dataset(true),
+            new FSDatasetInstances.LAION_100M_GHP_50_256Dataset(true)
         };
         float[] distIntervalsForPX = new float[]{
             0.004f,
@@ -101,7 +101,7 @@ public class FSVoronoiPlusSecondaryWithSketches {
         }
         LOG.log(Level.INFO, "Storing statistics of queries");
         FSQueryExecutionStatsStoreImpl statsStorage = new FSQueryExecutionStatsStoreImpl(fullDataset.getDatasetName(), fullDataset.getQuerySetName(), k, fullDataset.getDatasetName(), fullDataset.getQuerySetName(), filter.getTechFullName(), null);
-        statsStorage.storeStatsForQueries(secondaryWithSketches.getDistCompsPerQueries(), secondaryWithSketches.getTimesPerQueries());
+        statsStorage.storeStatsForQueries(secondaryWithSketches.getDistCompsPerQueries(), secondaryWithSketches.getTimesPerQueries(), secondaryWithSketches.getAdditionalStats());
         statsStorage.save();
 
         LOG.log(Level.INFO, "Storing results of queries");

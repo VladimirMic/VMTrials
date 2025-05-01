@@ -2,7 +2,7 @@ package vm.vmtrials.tmp;
 
 import java.util.ArrayList;
 import java.util.List;
-import vm.fs.dataset.FSDatasetInstanceSingularizator;
+import vm.fs.dataset.FSDatasetInstances;
 import vm.metricSpace.AbstractMetricSpace;
 import vm.metricSpace.Dataset;
 import vm.metricSpace.AbstractMetricSpacesStorage;
@@ -14,7 +14,7 @@ import vm.metricSpace.AbstractMetricSpacesStorage;
 public class RemoveSelectedObjectFromPivots {
 
     public static void main(String[] args) {
-        Dataset dataset = new FSDatasetInstanceSingularizator.LAION_100M_Dataset(true);
+        Dataset dataset = new FSDatasetInstances.LAION_100M_Dataset(true);
         AbstractMetricSpace metricSpace = dataset.getMetricSpace();
         List pivots = dataset.getPivots(-1);
         List newPivots = new ArrayList();

@@ -105,7 +105,7 @@ public class KNNSearchWithPtolemaicFilteringLearnSkittle<T> extends KNNSearchWit
         System.err.println("Query " + qId + " time: " + t);
         incTime(qId, t);
         incDistsComps(qId, distComps);
-        incLBChecked(qId, lbChecked);
+        incAdditionalParam(qId, lbChecked, 0);
         return ret;
     }
 

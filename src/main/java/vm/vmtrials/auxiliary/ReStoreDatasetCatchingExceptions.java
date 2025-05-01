@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.datatools.Tools;
-import vm.fs.dataset.FSDatasetInstanceSingularizator;
+import vm.fs.dataset.FSDatasetInstances;
 import vm.metricSpace.AbstractMetricSpacesStorage;
 import vm.metricSpace.Dataset;
 
@@ -22,7 +22,7 @@ public class ReStoreDatasetCatchingExceptions {
     public static final Integer BATCH_SIZE = 500000;
 
     public static void main(String[] args) {
-        Dataset dataset = new FSDatasetInstanceSingularizator.RandomDataset10Uniform();
+        Dataset dataset = new FSDatasetInstances.RandomDataset10Uniform();
         Iterator it = dataset.getMetricObjectsFromDataset();
         AbstractMetricSpacesStorage storage = dataset.getMetricSpacesStorage();
         String newDatasetName = dataset.getDatasetName() + "_restored";
