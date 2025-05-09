@@ -19,6 +19,7 @@ import vm.datatools.Tools;
 public class DataParser {
 
     public static final Logger LOG = Logger.getLogger(DataParser.class.getName());
+    public static final Boolean IGNORE_SIDES = false;
 
     public static final String PATH_TO_TRIPLETS = "c:\\Data\\Dansko\\Markéta_data\\triplets.csv";
     public static final String PATH_TO_ANSWERS = "c:\\Data\\Dansko\\Markéta_data\\answers_from_users.csv";
@@ -54,7 +55,11 @@ public class DataParser {
             String[] tripletString = tripletsString.get(i);
             int tripletId = Integer.parseInt(tripletString[1]);
             ImageTriplet triplet = triplets.get(tripletId);
-            dbAnswers.addAnswer(tripletString[0], triplet, Integer.parseInt(tripletString[2]));
+            Integer answer = Integer.valueOf(tripletString[2]);
+            if (IGNORE_SIDES) {
+                answer = Math.min(answer, 100 - answer);
+            }
+            dbAnswers.addAnswer(tripletString[0], triplet, answer);
         }
         LOG.log(Level.INFO, "Found {0} answers from {1} respondents", new Object[]{dbAnswers.size(), dbAnswers.getUserCount()});
     }

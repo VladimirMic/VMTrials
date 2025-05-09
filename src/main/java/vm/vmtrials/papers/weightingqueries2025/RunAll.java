@@ -14,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jfree.chart.JFreeChart;
 import vm.plot.impl.BoxPlotXCategoriesPlotter;
+import static vm.vmtrials.papers.weightingqueries2025.DataParser.IGNORE_SIDES;
 
 /**
  *
@@ -24,6 +25,10 @@ public class RunAll {
     public static final Set<String> TRIPLETS_IDS_FOR_PLOT = new TreeSet<>();
 
     static {
+//        TRIPLETS_IDS_FOR_PLOT.add("69");
+//        TRIPLETS_IDS_FOR_PLOT.add("134");
+//        TRIPLETS_IDS_FOR_PLOT.add("63");
+//        TRIPLETS_IDS_FOR_PLOT.add("37");
 //////        TRIPLETS_IDS_FOR_PLOT.add("108");
 //////        TRIPLETS_IDS_FOR_PLOT.add("146");
 //////        TRIPLETS_IDS_FOR_PLOT.add("2");
@@ -32,11 +37,9 @@ public class RunAll {
 //////        TRIPLETS_IDS_FOR_PLOT.add("4");
 ////        TRIPLETS_IDS_FOR_PLOT.add("64");
 ////        TRIPLETS_IDS_FOR_PLOT.add("73");
-//        TRIPLETS_IDS_FOR_PLOT.add("72");
-//        TRIPLETS_IDS_FOR_PLOT.add("36");
 ////        TRIPLETS_IDS_FOR_PLOT.add("138");
-        TRIPLETS_IDS_FOR_PLOT.add("121");
-        TRIPLETS_IDS_FOR_PLOT.add("136");
+//        TRIPLETS_IDS_FOR_PLOT.add("121");
+//        TRIPLETS_IDS_FOR_PLOT.add("136");
     }
     public static final Logger LOG = Logger.getLogger(RunAll.class.getName());
 
@@ -58,7 +61,7 @@ public class RunAll {
             ImageTriplet key = next.getKey();
             if (TRIPLETS_IDS_FOR_PLOT.isEmpty() || TRIPLETS_IDS_FOR_PLOT.contains(key.toString())) {
                 float[] value = next.getValue();
-                LOG.log(Level.INFO, "Triplet: {0}: Mean: {1}, Variance: {2}, Median: {3}", new Object[]{key.toString(), value[0], value[1], value[2]});
+                LOG.log(Level.INFO, "Triplet: {0}: Mean: {1}, Variance: {2}, STD: {3}, Median: {4}, IQD: {5}, count: {6}", new Object[]{key.toString(), value[0], value[1], value[2], value[3], value[4], value[5]});
                 groupsNames[i] = key.toString();
                 List list = tripletsToTheirAssessments.get(key);
                 values[i] = list;
@@ -67,7 +70,8 @@ public class RunAll {
         }
         // plotting
         BoxPlotXCategoriesPlotter plotter = new BoxPlotXCategoriesPlotter();
-        plotter.setYBounds(0, 100);
+        int max = IGNORE_SIDES ? 50 : 100;
+        plotter.setYBounds(0, max);
         plotter.setYStep(5d);
         plotter.setVerticalXLabels(true);
         float scale = TRIPLETS_IDS_FOR_PLOT.isEmpty() ? 0.3f : 1f;
@@ -75,8 +79,8 @@ public class RunAll {
         JFreeChart plot = plotter.createPlot("", "Query (Triplet ID)", "Crowd-Sourced Assessment", null, null, groupsNames, values);
         String path = DataParser.PATH_TO_TRIPLETS + "_AnswersDistribution" + TRIPLETS_IDS_FOR_PLOT.size();
         if (TRIPLETS_IDS_FOR_PLOT.isEmpty()) {
-            plotter.storePlotPDF(path, plot, plotter.IMPLICIT_WIDTH * 5, (int) (plotter.IMPLICIT_HEIGHT * 0.75));
-            plotter.storePlotPNG(path, plot, plotter.IMPLICIT_WIDTH * 5, (int) (plotter.IMPLICIT_HEIGHT * 0.75));
+            plotter.storePlotPDF(path, plot, plotter.IMPLICIT_WIDTH * 5, (int) (plotter.IMPLICIT_HEIGHT));
+            plotter.storePlotPNG(path, plot, plotter.IMPLICIT_WIDTH * 5, (int) (plotter.IMPLICIT_HEIGHT));
         } else {
             plotter.storePlotPDF(path, plot);
             plotter.storePlotPNG(path, plot);

@@ -96,10 +96,13 @@ public class DBAnswers {
         for (Map.Entry<ImageTriplet, List<Integer>> entry : tripletsToTheirAssessments.entrySet()) {
             List<Integer> answers = entry.getValue();
             int[] ints = DataTypeConvertor.integerListToInts(answers);
-            float mean = (float) vm.mathtools.Tools.getMean(ints);
-            float median = (float) vm.mathtools.Tools.getMedian(ints);
-            float variance = (float) vm.mathtools.Tools.getVariance(ints);
-            AbstractMap.SimpleEntry entryToAdd = new AbstractMap.SimpleEntry(entry.getKey(), new float[]{mean, variance, median});
+            double[] intsToDoubles = DataTypeConvertor.intsToDoubles(ints);
+            float mean = (float) vm.mathtools.Tools.getMean(intsToDoubles);
+            float median = (float) vm.mathtools.Tools.getMedian(intsToDoubles);
+            float variance = (float) vm.mathtools.Tools.getVariance(intsToDoubles);
+            float std = (float) Math.sqrt(variance);
+            float iqd = (float) vm.mathtools.Tools.getIQD(intsToDoubles);
+            AbstractMap.SimpleEntry entryToAdd = new AbstractMap.SimpleEntry(entry.getKey(), new float[]{mean, variance, std, median, iqd, intsToDoubles.length});
             ret.add(entryToAdd);
         }
         return ret;
