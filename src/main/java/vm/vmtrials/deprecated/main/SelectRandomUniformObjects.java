@@ -16,7 +16,7 @@ import vm.metricSpace.distance.DistanceFunctionInterface;
 public class SelectRandomUniformObjects {
 
     public static void main(String[] args) {
-        Dataset dataset = new FSDatasetInstances.DeCAF100M_Dataset();
+        Dataset dataset = new FSDatasetInstances.Yahoo100M_Dataset();
         int count = 5000;
         List list = Tools.randomUniform(dataset.getMetricObjectsFromDataset(), 102050000, count);
         DistanceFunctionInterface df = dataset.getDistanceFunction();
