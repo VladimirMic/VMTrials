@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 import vm.datatools.Tools;
 import vm.fs.FSGlobal;
 import vm.fs.dataset.FSDatasetInstances;
-import vm.metricSpace.Dataset;
+import vm.searchSpace.Dataset;
 
 /**
  *

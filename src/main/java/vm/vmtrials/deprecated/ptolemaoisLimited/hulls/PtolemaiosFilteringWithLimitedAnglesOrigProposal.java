@@ -1,7 +1,5 @@
 package vm.vmtrials.deprecated.ptolemaoisLimited.hulls;
 
-import vm.metricSpace.distance.bounding.twopivots.AbstractTwoPivotsFilter;
-
 /**
  *
  * @author Vlada

@@ -10,8 +10,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.datatools.Tools;
 import vm.fs.dataset.FSDatasetInstances;
-import vm.metricSpace.AbstractMetricSpacesStorage;
-import vm.metricSpace.Dataset;
+import vm.searchSpace.AbstractSearchSpacesStorage;
+import vm.searchSpace.Dataset;
 
 /**
  *
@@ -23,8 +23,8 @@ public class ReStoreDatasetCatchingExceptions {
 
     public static void main(String[] args) {
         Dataset dataset = new FSDatasetInstances.RandomDataset10Uniform();
-        Iterator it = dataset.getMetricObjectsFromDataset();
-        AbstractMetricSpacesStorage storage = dataset.getMetricSpacesStorage();
+        Iterator it = dataset.getSearchObjectsFromDataset();
+        AbstractSearchSpacesStorage storage = dataset.getSearchSpacesStorage();
         String newDatasetName = dataset.getDatasetName() + "_restored";
         int count = 0;
         while (it.hasNext()) {

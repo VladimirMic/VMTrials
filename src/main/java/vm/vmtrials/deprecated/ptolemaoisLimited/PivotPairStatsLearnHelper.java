@@ -6,8 +6,8 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.datatools.Tools;
-import vm.metricSpace.ToolsMetricDomain;
-import vm.metricSpace.distance.DistanceFunctionInterface;
+import vm.searchSpace.ToolsSpaceDomain;
+import vm.searchSpace.distance.DistanceFunctionInterface;
 
 /**
  *
@@ -43,7 +43,7 @@ public class PivotPairStatsLearnHelper<T> {
     }
 
     public void registerSamplePointsQO(T qData, T oData) {
-        float[] sixDists = ToolsMetricDomain.getPairwiseDistsOfFourObjects(df, true, p1Data, p2Data, oData, qData);
+        float[] sixDists = ToolsSpaceDomain.getPairwiseDistsOfFourObjects(df, true, p1Data, p2Data, oData, qData);
         if (sixDists == null) {
             LOG.log(Level.INFO, "Zero distance observed, continuing");
             return;

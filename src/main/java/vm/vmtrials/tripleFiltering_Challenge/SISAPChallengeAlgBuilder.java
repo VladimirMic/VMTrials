@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package vm.vmtrials.tripleFiltering_Challenge;
 
 import java.util.AbstractMap;
@@ -9,14 +5,14 @@ import java.util.Map;
 import java.util.TreeSet;
 import vm.fs.store.filtering.FSSecondaryFilteringWithSketchesStorage;
 import vm.fs.store.partitioning.FSVoronoiPartitioningStorage;
-import vm.metricSpace.AbstractMetricSpace;
-import vm.metricSpace.Dataset;
-import vm.metricSpace.distance.bounding.nopivot.impl.SecondaryFilteringWithSketches;
-import vm.metricSpace.distance.bounding.nopivot.learning.LearningSecondaryFilteringWithSketches;
-import vm.metricSpace.distance.bounding.nopivot.storeLearned.SecondaryFilteringWithSketchesStoreInterface;
 import vm.objTransforms.objectToSketchTransformators.AbstractObjectToSketchTransformator;
 import vm.search.algorithm.impl.VoronoiPartitionsCandSetIdentifier;
 import vm.search.algorithm.impl.multiFiltering.CranberryAlgorithm;
+import vm.searchSpace.AbstractSearchSpace;
+import vm.searchSpace.Dataset;
+import vm.searchSpace.distance.bounding.nopivot.impl.SecondaryFilteringWithSketches;
+import vm.searchSpace.distance.bounding.nopivot.learning.LearningSecondaryFilteringWithSketches;
+import vm.searchSpace.distance.bounding.nopivot.storeLearned.SecondaryFilteringWithSketchesStoreInterface;
 import vm.simRel.SimRelInterface;
 
 /**
@@ -52,8 +48,8 @@ public class SISAPChallengeAlgBuilder {
     private final Integer k;
 
     private final CranberryAlgorithm cranberryAlg;
-    private final AbstractMetricSpace fullMetricSpace;
-    private final AbstractMetricSpace pcaDatasetMetricSpace;
+    private final AbstractSearchSpace fullMetricSpace;
+    private final AbstractSearchSpace pcaDatasetMetricSpace;
 
     /**
      *
@@ -78,17 +74,17 @@ public class SISAPChallengeAlgBuilder {
         algSimRelFiltering = EvaluateCRANBERRYMain.initSimRel(querySampleCount, pcaLength, kPCA, voronoiK, pcaDataset.getDatasetName(), percentile, prefixLength, null, tOmegaStresholdsFileNameVoluntary);
         this.k = k;
 
-        fullMetricSpace = fullDataset.getMetricSpace();
-        pcaDatasetMetricSpace = pcaDataset.getMetricSpace();
+        fullMetricSpace = fullDataset.getSearchSpace();
+        pcaDatasetMetricSpace = pcaDataset.getSearchSpace();
         System.gc();
-        Map pcaOMap = EvaluateCRANBERRYMain.getMapOfPrefixes(pcaDatasetMetricSpace, pcaDataset.getMetricObjectsFromDataset(), prefixLength);
+        Map pcaOMap = EvaluateCRANBERRYMain.getMapOfPrefixes(pcaDatasetMetricSpace, pcaDataset.getSearchObjectsFromDataset(), prefixLength);
 
         cranberryAlg = new CranberryAlgorithm<>(
                 algVoronoi,
                 voronoiK,
                 algSketchFiltering,
                 sketchingTechnique,
-                sketchesDataset.getMetricSpace(),
+                sketchesDataset.getSearchSpace(),
                 algSimRelFiltering,
                 kPCA,
                 pcaOMap,

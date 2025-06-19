@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package vm.vmtrials.auxiliary;
 
 import java.util.Collection;
@@ -14,8 +10,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.fs.dataset.FSDatasetInstances;
 import vm.fs.store.partitioning.FSVoronoiPartitioningStorage;
-import vm.metricSpace.Dataset;
-import vm.metricSpace.ToolsMetricDomain;
+import vm.searchSpace.Dataset;
+import vm.searchSpace.ToolsSpaceDomain;
 
 /**
  *
@@ -52,7 +48,7 @@ public class FilterVoronoiPartitioning {
     }
 
     private static Set<Comparable> loadKeyOfObjects(Dataset dataset) {
-        Iterator it = dataset.getMetricObjectsFromDataset();
-        return ToolsMetricDomain.getIDs(it, dataset.getMetricSpace());
+        Iterator it = dataset.getSearchObjectsFromDataset();
+        return ToolsSpaceDomain.getIDs(it, dataset.getSearchSpace());
     }
 }

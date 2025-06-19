@@ -19,16 +19,15 @@ import vm.fs.store.queryResults.FSNearestNeighboursStorageImpl;
 import vm.fs.store.queryResults.FSQueryExecutionStatsStoreImpl;
 import vm.fs.store.queryResults.recallEvaluation.FSRecallOfCandidateSetsStorageImpl;
 import vm.fs.store.partitioning.FSVoronoiPartitioningStorage;
-import vm.metricSpace.AbstractMetricSpace;
-import vm.metricSpace.Dataset;
-import vm.metricSpace.ToolsMetricDomain;
 import vm.queryResults.QueryNearestNeighboursStoreInterface;
 import vm.queryResults.errorOnDistEvaluation.ErrorOnDistEvaluator;
 import vm.queryResults.recallEvaluation.RecallOfCandsSetsEvaluator;
 import vm.search.algorithm.impl.VoronoiPartitionsCandSetIdentifier;
+import vm.searchSpace.AbstractSearchSpace;
+import vm.searchSpace.Dataset;
+import vm.searchSpace.ToolsSpaceDomain;
 import vm.simRel.impl.SimRelEuclideanPCAImpl;
 import vm.simRel.impl.SimRelEuclideanPCAImplForTesting;
-import vm.vmtrials.deprecated.simrel.SimRelInstantRefinement;
 import vm.vmtrials.tripleFiltering_Challenge.EvaluateCRANBERRYMain;
 
 /**
@@ -111,17 +110,17 @@ public class EvaluateSimRelInstantWithVoronoi {
         VoronoiPartitionsCandSetIdentifier algVoronoi = new VoronoiPartitionsCandSetIdentifier(fullDataset, new FSVoronoiPartitioningStorage(), 2048);
         SimRelInstantRefinement algSimRel = new SimRelInstantRefinement(fullDataset.getDistanceFunction(), simRel, kPCA);
 
-        AbstractMetricSpace metricSpaceOfFullDataset = fullDataset.getMetricSpace();
-        AbstractMetricSpace pcaDatasetMetricSpace = pcaDataset.getMetricSpace();
+        AbstractSearchSpace metricSpaceOfFullDataset = fullDataset.getSearchSpace();
+        AbstractSearchSpace pcaDatasetMetricSpace = pcaDataset.getSearchSpace();
 
-        Map pcaOMap = EvaluateCRANBERRYMain.getMapOfPrefixes(pcaDatasetMetricSpace, pcaDataset.getMetricObjectsFromDataset(), prefixLength);
-        Map pcaQueriesMap = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(pcaDatasetMetricSpace, pcaDataset.getQueryObjects());
+        Map pcaOMap = EvaluateCRANBERRYMain.getMapOfPrefixes(pcaDatasetMetricSpace, pcaDataset.getSearchObjectsFromDataset(), prefixLength);
+        Map pcaQueriesMap = ToolsSpaceDomain.getSearchObjectsAsIdObjectMap(pcaDatasetMetricSpace, pcaDataset.getQueryObjects());
 
         for (int i = 0; i < fullQueries.size(); i++) {
 
             long time = -System.currentTimeMillis();
             Object fullQueryObj = fullQueries.get(i);
-            Comparable queryObjId = metricSpaceOfFullDataset.getIDOfMetricObject(fullQueryObj);
+            Comparable queryObjId = metricSpaceOfFullDataset.getIDOfObject(fullQueryObj);
 
             List candidatesIDs = algVoronoi.candSetKnnSearch(metricSpaceOfFullDataset, fullQueryObj, kVoronoi, null);
             List<Object> pcaOfCandidates = Tools.filterMapValues(pcaOMap, candidatesIDs);

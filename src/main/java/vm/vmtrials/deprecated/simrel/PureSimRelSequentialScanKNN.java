@@ -11,8 +11,8 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.datatools.Tools;
-import vm.metricSpace.AbstractMetricSpace;
 import vm.search.algorithm.SearchingAlgorithm;
+import vm.searchSpace.AbstractSearchSpace;
 import vm.simRel.SimRelInterface;
 import vm.simRel.impl.SimRelEuclideanPCAImplForTesting;
 
@@ -34,19 +34,19 @@ public class PureSimRelSequentialScanKNN<T> extends SearchingAlgorithm<T> {
     }
 
     @Override
-    public TreeSet<Map.Entry<Comparable, Float>> completeKnnSearch(AbstractMetricSpace<T> metricSpace, Object queryObject, int k, Iterator<Object> objects, Object... paramsToExtractDataFromMetricObject) {
+    public TreeSet<Map.Entry<Comparable, Float>> completeKnnSearch(AbstractSearchSpace<T> metricSpace, Object queryObject, int k, Iterator<Object> objects, Object... paramsToExtractDataFromMetricObject) {
         if (simRelFunc instanceof SimRelEuclideanPCAImplForTesting) {
             SimRelEuclideanPCAImplForTesting euclid = (SimRelEuclideanPCAImplForTesting) simRelFunc;
             euclid.resetEarlyStopsOnCoordsCounts();
         }
-        T queryObjectData = metricSpace.getDataOfMetricObject(queryObject);
+        T queryObjectData = metricSpace.getDataOfObject(queryObject);
         List<Comparable> ret = new ArrayList<>();
         Map<Comparable, T> retData = new HashMap<>();
         simRelEvalCounter = 0;
         for (int i = 1; objects.hasNext(); i++) {
             Object metricObject = objects.next();
-            Comparable idOfMetricObject = metricSpace.getIDOfMetricObject(metricObject);
-            T metricObjectData = metricSpace.getDataOfMetricObject(metricObject);
+            Comparable idOfMetricObject = metricSpace.getIDOfObject(metricObject);
+            T metricObjectData = metricSpace.getDataOfObject(metricObject);
             addOToAnswer(k, queryObjectData, metricObjectData, idOfMetricObject, ret, retData);
             if (i % 1000000 == 0) {
                 LOG.log(Level.INFO, "Processed {0} objects, evaluated {1} distances", new Object[]{i, simRelEvalCounter});
@@ -109,7 +109,7 @@ public class PureSimRelSequentialScanKNN<T> extends SearchingAlgorithm<T> {
     }
 
     @Override
-    public List<Comparable> candSetKnnSearch(AbstractMetricSpace<T> metricSpace, Object queryObject, int k, Iterator<Object> objects, Object... additionalParams) {
+    public List<Comparable> candSetKnnSearch(AbstractSearchSpace<T> metricSpace, Object queryObject, int k, Iterator<Object> objects, Object... additionalParams) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

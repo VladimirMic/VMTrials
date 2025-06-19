@@ -6,9 +6,9 @@ package vm.vmtrials.checking.pdbe;
 
 import java.util.Iterator;
 import vm.fs.dataset.FSDatasetInstances;
-import vm.metricSpace.AbstractMetricSpace;
-import vm.metricSpace.Dataset;
-import vm.metricSpace.distance.DistanceFunctionInterface;
+import vm.searchSpace.AbstractSearchSpace;
+import vm.searchSpace.Dataset;
+import vm.searchSpace.distance.DistanceFunctionInterface;
 
 /**
  *
@@ -18,12 +18,12 @@ public class CheckQScoreDistComp {
 
     public static void main(String[] args) {
         Dataset dataset = new FSDatasetInstances.PDBePtoteinChainsDataset();
-        AbstractMetricSpace metricSpace = dataset.getMetricSpace();
-        Iterator it = dataset.getMetricObjectsFromDataset();
+        AbstractSearchSpace metricSpace = dataset.getSearchSpace();
+        Iterator it = dataset.getSearchObjectsFromDataset();
         Object o1 = it.next();
         Object o2 = it.next();
         DistanceFunctionInterface df = dataset.getDistanceFunction();
         float distance = df.getDistance(o1, o2);
-        System.out.print("The distance of " + metricSpace.getIDOfMetricObject(o1) + " and " + metricSpace.getIDOfMetricObject(o2) + " is " + distance);
+        System.out.print("The distance of " + metricSpace.getIDOfObject(o1) + " and " + metricSpace.getIDOfObject(o2) + " is " + distance);
     }
 }

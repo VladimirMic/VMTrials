@@ -16,20 +16,20 @@ import vm.fs.store.queryResults.FSNearestNeighboursStorageImpl;
 import vm.fs.store.queryResults.FSQueryExecutionStatsStoreImpl;
 import vm.fs.store.queryResults.recallEvaluation.FSRecallOfCandidateSetsStorageImpl;
 import vm.fs.store.partitioning.FSVoronoiPartitioningStorage;
-import vm.metricSpace.AbstractMetricSpace;
-import vm.metricSpace.Dataset;
-import vm.metricSpace.distance.DistanceFunctionInterface;
-import vm.metricSpace.distance.bounding.nopivot.impl.SecondaryFilteringWithSketches;
-import vm.metricSpace.distance.bounding.nopivot.learning.LearningSecondaryFilteringWithSketches;
-import vm.metricSpace.distance.bounding.nopivot.storeLearned.SecondaryFilteringWithSketchesStoreInterface;
 import vm.objTransforms.objectToSketchTransformators.AbstractObjectToSketchTransformator;
 import vm.objTransforms.objectToSketchTransformators.SketchingGHP;
 import vm.queryResults.recallEvaluation.RecallOfCandsSetsEvaluator;
 import vm.search.algorithm.SearchingAlgorithm;
 import vm.search.algorithm.impl.KNNSearchWithSketchSecondaryFiltering;
 import vm.search.algorithm.impl.VoronoiPartitionsCandSetIdentifier;
-import vm.metricSpace.datasetPartitioning.StorageDatasetPartitionsInterface;
 import vm.objTransforms.storeLearned.PivotPairsStoreInterface;
+import vm.searchSpace.AbstractSearchSpace;
+import vm.searchSpace.Dataset;
+import vm.searchSpace.datasetPartitioning.StorageDatasetPartitionsInterface;
+import vm.searchSpace.distance.DistanceFunctionInterface;
+import vm.searchSpace.distance.bounding.nopivot.impl.SecondaryFilteringWithSketches;
+import vm.searchSpace.distance.bounding.nopivot.learning.LearningSecondaryFilteringWithSketches;
+import vm.searchSpace.distance.bounding.nopivot.storeLearned.SecondaryFilteringWithSketchesStoreInterface;
 
 /**
  *
@@ -74,7 +74,7 @@ public class FSVoronoiPlusSecondaryWithSketches {
 
     private static void run(Dataset fullDataset, Dataset sketchesDataset, float distIntervalForPX, float pCum, int sketchLength, int pivotCountUsedForVoronoiLearning, int voronoiK) {
         int k = 10;
-        AbstractMetricSpace metricSpace = fullDataset.getMetricSpace();
+        AbstractSearchSpace metricSpace = fullDataset.getSearchSpace();
         DistanceFunctionInterface df = fullDataset.getDistanceFunction();
         StorageDatasetPartitionsInterface voronoiPartitioningStorage = new FSVoronoiPartitioningStorage();
         SearchingAlgorithm voronoi = new VoronoiPartitionsCandSetIdentifier(fullDataset, voronoiPartitioningStorage, pivotCountUsedForVoronoiLearning);

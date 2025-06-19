@@ -5,13 +5,12 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.Collection;
 import java.util.Map;
-import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.fs.dataset.FSDatasetInstances;
 import vm.fs.store.partitioning.FSGRAPPLEPartitioningStorage;
 import vm.fs.store.partitioning.FSVoronoiPartitioningStorage;
-import vm.metricSpace.Dataset;
+import vm.searchSpace.Dataset;
 
 /**
  *

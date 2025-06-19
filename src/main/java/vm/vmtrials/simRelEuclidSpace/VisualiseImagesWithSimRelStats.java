@@ -10,7 +10,7 @@ import java.util.TreeSet;
 import vm.datatools.Tools;
 import vm.fs.dataset.FSDatasetInstances;
 import vm.fs.store.queryResults.FSNearestNeighboursStorageImpl;
-import vm.metricSpace.Dataset;
+import vm.searchSpace.Dataset;
 
 /**
  *

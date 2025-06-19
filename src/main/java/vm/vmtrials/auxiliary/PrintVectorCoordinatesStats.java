@@ -6,13 +6,13 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 import vm.datatools.DataTypeConvertor;
-import vm.fs.metricSpaceImpl.FSMetricSpaceImpl;
-import vm.fs.metricSpaceImpl.FSMetricSpacesStorage;
+import vm.fs.searchSpaceImpl.FSSearchSpaceImpl;
+import vm.fs.searchSpaceImpl.FSSearchSpacesStorage;
 import vm.mathtools.Tools;
-import vm.metricSpace.AbstractMetricSpace;
-import vm.metricSpace.ToolsMetricDomain;
-import vm.metricSpace.AbstractMetricSpacesStorage;
-import vm.metricSpace.data.toStringConvertors.impl.FloatVectorToStringConvertor;
+import vm.searchSpace.AbstractSearchSpace;
+import vm.searchSpace.AbstractSearchSpacesStorage;
+import vm.searchSpace.ToolsSpaceDomain;
+import vm.searchSpace.data.toStringConvertors.impl.FloatVectorToStringConvertor;
 
 /**
  *
@@ -25,11 +25,11 @@ public class PrintVectorCoordinatesStats {
         String output = "h:\\Skola\\2022\\PCA\\simRel\\Coorinates_states__dataset_" + datasetName + ".csv";
         System.setOut(new PrintStream(output));
 
-        AbstractMetricSpace<float[]> metricSpace = new FSMetricSpaceImpl<>();
-        AbstractMetricSpacesStorage metricSpacesStorage = new FSMetricSpacesStorage<>(metricSpace, new FloatVectorToStringConvertor());
+        AbstractSearchSpace<float[]> metricSpace = new FSSearchSpaceImpl<>(null);
+        AbstractSearchSpacesStorage metricSpacesStorage = new FSSearchSpacesStorage<>(metricSpace, new FloatVectorToStringConvertor());
 
         List<Object> metricObjects = metricSpacesStorage.getSampleOfDataset(datasetName, -1);
-        float[][] matrix = ToolsMetricDomain.transformMetricObjectsToTransposedVectorMatrix(metricSpace, metricObjects);
+        float[][] matrix = ToolsSpaceDomain.transformSearchObjectsToTransposedVectorMatrix(metricSpace, metricObjects);
         // rows are coordinates, columns are samples
         printStatsForCoordinates(matrix);
     }

@@ -6,7 +6,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import vm.fs.dataset.FSDatasetInstances;
 import vm.fs.store.queryResults.FSNearestNeighboursStorageImpl;
-import vm.metricSpace.Dataset;
+import vm.searchSpace.Dataset;
 import vm.queryResults.QueryNearestNeighboursStoreInterface;
 
 /**

@@ -8,11 +8,11 @@ import java.util.List;
 import vm.datatools.Tools;
 import vm.fs.FSGlobal;
 import vm.fs.dataset.FSDatasetInstances;
-import vm.fs.metricSpaceImpl.FSMetricSpaceImpl;
-import vm.metricSpace.AbstractMetricSpace;
-import vm.metricSpace.Dataset;
-import vm.metricSpace.ToolsMetricDomain;
-import vm.metricSpace.distance.DistanceFunctionInterface;
+import vm.fs.searchSpaceImpl.FSSearchSpaceImpl;
+import vm.searchSpace.AbstractSearchSpace;
+import vm.searchSpace.Dataset;
+import vm.searchSpace.ToolsSpaceDomain;
+import vm.searchSpace.distance.DistanceFunctionInterface;
 
 /**
  *
@@ -32,7 +32,7 @@ public class PrintFirstStatsOfDataset {
     }
 
     public static <T> void run(Dataset<T> dataset) throws FileNotFoundException {
-        AbstractMetricSpace<T> metricSpace = new FSMetricSpaceImpl<>();
+        AbstractSearchSpace<T> metricSpace = new FSSearchSpaceImpl<>(null);
 
         DistanceFunctionInterface df = dataset.getDistanceFunction();
 
@@ -51,15 +51,15 @@ public class PrintFirstStatsOfDataset {
                 Object[] twoObjects = Tools.randomUniqueObjects(metricObjects, 2);
                 fourObjects[2] = twoObjects[0];
                 fourObjects[3] = twoObjects[1];
-                T[] fourObjectsData = ToolsMetricDomain.getData(fourObjects, metricSpace);
-                float[] sixDists = ToolsMetricDomain.getPairwiseDistsOfFourObjects(df, true, fourObjectsData);
+                T[] fourObjectsData = ToolsSpaceDomain.getData(fourObjects, metricSpace);
+                float[] sixDists = ToolsSpaceDomain.getPairwiseDistsOfFourObjects(df, true, fourObjectsData);
                 if (sixDists == null) {
                     i--;
                     continue;
                 }
                 // print objects IDs
                 for (int j = 0; j < fourObjects.length; j++) {
-                    System.err.print(metricSpace.getIDOfMetricObject(fourObjects[j]).toString());
+                    System.err.print(metricSpace.getIDOfObject(fourObjects[j]).toString());
                     if (j == fourObjects.length - 1) {
                         System.err.print(";");
                     } else {

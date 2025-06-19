@@ -12,11 +12,11 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import vm.datatools.Tools;
-import vm.metricSpace.AbstractMetricSpace;
-import vm.metricSpace.distance.DistanceFunctionInterface;
-import vm.metricSpace.distance.bounding.twopivots.AbstractPtolemaicBasedFiltering;
 import static vm.search.algorithm.SearchingAlgorithm.adjustAndReturnSearchRadiusAfterAddingOne;
 import vm.search.algorithm.impl.KNNSearchWithPtolemaicFiltering;
+import vm.searchSpace.AbstractSearchSpace;
+import vm.searchSpace.distance.DistanceFunctionInterface;
+import vm.searchSpace.distance.bounding.twopivots.AbstractPtolemaicBasedFiltering;
 
 /**
  *
@@ -27,13 +27,13 @@ public class KNNSearchWithPtolemaicFilteringLearnSkittle<T> extends KNNSearchWit
 
     private final SortedMap<Comparable, QueryLearnStats> queryStats = new TreeMap<>();
 
-    public KNNSearchWithPtolemaicFilteringLearnSkittle(AbstractMetricSpace metricSpace, AbstractPtolemaicBasedFiltering ptolemaicFilter, List pivots, float[][] poDists, Map<Comparable, Integer> rowHeaders, DistanceFunctionInterface df) {
+    public KNNSearchWithPtolemaicFilteringLearnSkittle(AbstractSearchSpace metricSpace, AbstractPtolemaicBasedFiltering ptolemaicFilter, List pivots, float[][] poDists, Map<Comparable, Integer> rowHeaders, DistanceFunctionInterface df) {
         super(metricSpace, ptolemaicFilter, pivots, poDists, rowHeaders, df);
     }
 
     @Override
-    public TreeSet<Map.Entry<Comparable, Float>> completeKnnSearch(AbstractMetricSpace<T> metricSpace, Object q, int k, Iterator<Object> objects, Object... params) {
-        Comparable qId = metricSpace.getIDOfMetricObject(q);
+    public TreeSet<Map.Entry<Comparable, Float>> completeKnnSearch(AbstractSearchSpace<T> metricSpace, Object q, int k, Iterator<Object> objects, Object... params) {
+        Comparable qId = metricSpace.getIDOfObject(q);
         if (!queryStats.containsKey(qId)) {
             queryStats.put(qId, new QueryLearnStats(qId));
         }
@@ -41,7 +41,7 @@ public class KNNSearchWithPtolemaicFilteringLearnSkittle<T> extends KNNSearchWit
         long t = -System.currentTimeMillis();
         TreeSet<Map.Entry<Comparable, Float>> ret = params.length == 0 ? new TreeSet<>(new Tools.MapByFloatValueComparator()) : (TreeSet<Map.Entry<Comparable, Float>>) params[0];
         long lbChecked = 0;
-        T qData = metricSpace.getDataOfMetricObject(q);
+        T qData = metricSpace.getDataOfObject(q);
 
         float[][] qpDistMultipliedByCoefForPivots = qpMultipliedByCoefCached.get(qId);
         if (qpDistMultipliedByCoefForPivots == null) {
@@ -74,7 +74,7 @@ public class KNNSearchWithPtolemaicFilteringLearnSkittle<T> extends KNNSearchWit
             tNotCount += System.currentTimeMillis();
             t += tNotCount;
             o = objects.next();
-            oId = metricSpace.getIDOfMetricObject(o);
+            oId = metricSpace.getIDOfObject(o);
             if (range < Float.MAX_VALUE) {
                 oIdx = rowHeaders.get(oId);
                 poDistsArray = poDists[oIdx];
@@ -94,7 +94,7 @@ public class KNNSearchWithPtolemaicFilteringLearnSkittle<T> extends KNNSearchWit
                 lbChecked += p / 2;
             }
             distComps++;
-            oData = metricSpace.getDataOfMetricObject(o);
+            oData = metricSpace.getDataOfObject(o);
             distance = df.getDistance(qData, oData);
             if (distance < range) {
                 ret.add(new AbstractMap.SimpleEntry<>(oId, distance));

@@ -9,11 +9,11 @@ import java.util.logging.Logger;
 import vm.fs.dataset.FSDatasetInstances;
 import vm.fs.main.search.perform.FSKNNQueriesSeqScanWithFilteringMain;
 import vm.fs.store.auxiliaryForDistBounding.FSPtolemyInequalityWithLimitedAnglesCoefsStorageImpl;
-import vm.metricSpace.AbstractMetricSpace;
-import vm.metricSpace.Dataset;
-import vm.metricSpace.distance.DistanceFunctionInterface;
-import vm.metricSpace.distance.bounding.twopivots.impl.DataDependentPtolemaicFiltering;
-import vm.metricSpace.distance.storedPrecomputedDistances.AbstractPrecomputedDistancesMatrixLoader;
+import vm.searchSpace.AbstractSearchSpace;
+import vm.searchSpace.Dataset;
+import vm.searchSpace.distance.DistanceFunctionInterface;
+import vm.searchSpace.distance.bounding.twopivots.impl.DataDependentPtolemaicFiltering;
+import vm.searchSpace.distance.storedPrecomputedDistances.AbstractPrecomputedDistancesMatrixLoader;
 
 /**
  *
@@ -38,7 +38,7 @@ public class FSLearnStrainForDataDepPtolemaiosMain {
     }
 
     private static void run(Dataset dataset, int pivotCount) {
-        AbstractMetricSpace metricSpace = dataset.getMetricSpace();
+        AbstractSearchSpace metricSpace = dataset.getSearchSpace();
         DistanceFunctionInterface df = dataset.getDistanceFunction();
         List pivots = dataset.getPivots(pivotCount);
         DataDependentPtolemaicFiltering filter = initDataDepPtolemaicFilter(pivots, dataset);

@@ -19,13 +19,13 @@ import java.util.logging.Logger;
 import vm.datatools.Tools;
 import vm.fs.plot.impl.FSHeatMapFromFile;
 import vm.fs.store.queryResults.FSQueryExecutionStatsStoreImpl;
-import vm.metricSpace.AbstractMetricSpace;
-import vm.metricSpace.Dataset;
-import vm.metricSpace.DatasetOfCandidates;
-import vm.metricSpace.distance.DistanceFunctionInterface;
 import vm.queryResults.QueryExecutionStatsStoreInterface;
 import vm.search.algorithm.SearchingAlgorithm;
 import vm.search.algorithm.impl.GroundTruthEvaluator;
+import vm.searchSpace.AbstractSearchSpace;
+import vm.searchSpace.Dataset;
+import vm.searchSpace.DatasetOfCandidates;
+import vm.searchSpace.distance.DistanceFunctionInterface;
 
 /**
  *
@@ -39,7 +39,7 @@ public class LearnStrainForDataDepPtolemaios<T> {
     public static final Integer K = 30;
     public static final Logger LOG = Logger.getLogger(LearnStrainForDataDepPtolemaios.class.getName());
     private final KNNSearchWithPtolemaicFilteringLearnSkittle alg;
-    private final AbstractMetricSpace metricSpace;
+    private final AbstractSearchSpace metricSpace;
     private final List<Object> queriesSamples;
     private final Dataset dataset;
     private final DistanceFunctionInterface<T> df;
@@ -50,7 +50,7 @@ public class LearnStrainForDataDepPtolemaios<T> {
     public LearnStrainForDataDepPtolemaios(KNNSearchWithPtolemaicFilteringLearnSkittle alg, Dataset dataset, List<Object> queriesSamples, int lbCount) {
         alg.setObjBeforeSeqScan(O_COUNT_STEP);
         this.alg = alg;
-        this.metricSpace = dataset.getMetricSpace();
+        this.metricSpace = dataset.getSearchSpace();
         this.queriesSamples = queriesSamples;
         this.dataset = dataset;
         this.df = dataset.getDistanceFunction();
@@ -72,16 +72,16 @@ public class LearnStrainForDataDepPtolemaios<T> {
         int batchSize = 1;
         if (dataset instanceof DatasetOfCandidates) {
             for (Object q : queriesSamples) {
-                Iterator it = dataset.getMetricObjectsFromDataset(metricSpace.getIDOfMetricObject(q));
+                Iterator it = dataset.getSearchObjectsFromDataset(metricSpace.getIDOfObject(q));
                 alg.completeKnnSearch(metricSpace, q, K, it);
                 if (datasetSize == 0) {
-                    it = dataset.getMetricObjectsFromDataset(metricSpace.getIDOfMetricObject(q));
+                    it = dataset.getSearchObjectsFromDataset(metricSpace.getIDOfObject(q));
                     datasetSize = Tools.getObjectsFromIterator(it).size();
                     batchSize = datasetSize;
                 }
             }
         } else {
-            Iterator<Object> oIt = dataset.getMetricObjectsFromDataset();
+            Iterator<Object> oIt = dataset.getSearchObjectsFromDataset();
             batchSize = SearchingAlgorithm.BATCH_SIZE;
             while (oIt.hasNext()) {
                 List<Object> batch = Tools.getObjectsFromIterator(oIt, batchSize);
@@ -97,7 +97,7 @@ public class LearnStrainForDataDepPtolemaios<T> {
         List<Integer> qTimes = null;
         for (int i = 0; i < queriesSamples.size(); i++) {
             Object q = queriesSamples.get(i);
-            Comparable qId = metricSpace.getIDOfMetricObject(q);
+            Comparable qId = metricSpace.getIDOfObject(q);
             long qTimeComplete = timesPerQueries.get(qId).get();
             QueryLearnStats stats = alg.getQueryStats(qId);
             List<Float> qLBCounts = stats.getAvgNumberOfLBsPerO();
@@ -180,7 +180,7 @@ public class LearnStrainForDataDepPtolemaios<T> {
     private long evaluateTimeOfSequentialScan() {
         GroundTruthEvaluator gtEval = new GroundTruthEvaluator(df);
         long[] times = new long[queriesSamples.size()];
-        gtEval.completeKnnFilteringWithQuerySet(metricSpace, queriesSamples, K, dataset.getMetricObjectsFromDataset(), 1);
+        gtEval.completeKnnFilteringWithQuerySet(metricSpace, queriesSamples, K, dataset.getSearchObjectsFromDataset(), 1);
         Map<Object, AtomicLong> timesMap = gtEval.getTimesPerQueries();
         Iterator<AtomicLong> it = timesMap.values().iterator();
         for (int i = 0; it.hasNext(); i++) {

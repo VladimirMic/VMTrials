@@ -13,15 +13,15 @@ import vm.fs.store.dataTransforms.FSSVDStorageImpl;
 import vm.fs.store.queryResults.FSNearestNeighboursStorageImpl;
 import vm.fs.store.queryResults.FSQueryExecutionStatsStoreImpl;
 import vm.fs.store.queryResults.recallEvaluation.FSRecallOfCandidateSetsStorageImpl;
-import vm.metricSpace.AbstractMetricSpace;
-import vm.metricSpace.Dataset;
-import vm.metricSpace.ToolsMetricDomain;
 import vm.objTransforms.storeLearned.SVDStoreInterface;
 import vm.queryResults.QueryNearestNeighboursStoreInterface;
 import vm.queryResults.recallEvaluation.RecallOfCandsSetsEvaluator;
 import vm.search.algorithm.SearchingAlgorithm;
 import vm.search.algorithm.impl.RefineCandidateSetWithPCASimRel;
 import vm.search.algorithm.impl.SimRelSeqScanKNNCandSet;
+import vm.searchSpace.AbstractSearchSpace;
+import vm.searchSpace.Dataset;
+import vm.searchSpace.ToolsSpaceDomain;
 import vm.simRel.SimRelInterface;
 import vm.simRel.impl.SimRelEuclideanPCAImpl;
 import vm.simRel.impl.SimRelEuclideanPCAImplForTesting;
@@ -82,7 +82,7 @@ public class EvaluateSimRelInfSysKNN {
         fileNameData.put(FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME.cand_set_name, pcaDataset.getDatasetName());
         fileNameData.put(FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME.storing_result_name, resultName);
         FSQueryExecutionStatsStoreImpl statsStorage = new FSQueryExecutionStatsStoreImpl(fileNameData);
-        RefineCandidateSetWithPCASimRel alg = new RefineCandidateSetWithPCASimRel(fullDataset.getMetricSpace(), pcaDataset.getMetricSpace(), fullDataset.getDistanceFunction(), simRel, svdStorage, pcaDataset.getMetricObjectsFromDataset(TESTED_DATASET_SIZE), prefixLength, pcaLength);
+        RefineCandidateSetWithPCASimRel alg = new RefineCandidateSetWithPCASimRel(fullDataset.getSearchSpace(), pcaDataset.getSearchSpace(), fullDataset.getDistanceFunction(), simRel, svdStorage, pcaDataset.getSearchObjectsFromDataset(TESTED_DATASET_SIZE), prefixLength, pcaLength);
 
         testQueries(alg, fullDataset, simRel, INVOLVE_OBJS_UNKNOWN_RELATION, kPCA, k, resultsStorage, resultName, statsStorage, fileNameData);
     }
@@ -96,7 +96,7 @@ public class EvaluateSimRelInfSysKNN {
 
         for (Object queryObj : querySamples) {
             simRelLearn.resetCounters(pcaLength);
-            alg.candSetKnnSearch(fullDataset.getMetricSpace(), queryObj, kPCA, sampleOfDataset.iterator());
+            alg.candSetKnnSearch(fullDataset.getSearchSpace(), queryObj, kPCA, sampleOfDataset.iterator());
 //            int[] errorsPerCoord = simRelLearn.getErrorsPerCoord();
 //            int comparisonCounter = simRelLearn.getSimRelCounter();
 //            for (int i = 0; i < pcaLength; i++) {
@@ -110,12 +110,12 @@ public class EvaluateSimRelInfSysKNN {
 
     private static void testQueries(RefineCandidateSetWithPCASimRel alg, Dataset<float[]> fullDataset, SimRelInterface simRel, boolean involveObjWithUnknownRelation, int kPCA, int k, QueryNearestNeighboursStoreInterface resultsStorage, String resultName, FSQueryExecutionStatsStoreImpl statsStorage, Map<FSQueryExecutionStatsStoreImpl.DATA_NAMES_IN_FILE_NAME, String> fileNameDataForRecallStorage) {
         List<Object> fullQueries = fullDataset.getQueryObjects();
-        AbstractMetricSpace<float[]> metricSpace = fullDataset.getMetricSpace();
-        Iterator fullDatasetIterator = fullDataset.getMetricObjectsFromDataset(TESTED_DATASET_SIZE);
-        Map<Comparable, float[]> mapOfAllFullObjects = ToolsMetricDomain.getMetricObjectsAsIdDataMap(fullDataset.getMetricSpace(), fullDatasetIterator);
+        AbstractSearchSpace<float[]> metricSpace = fullDataset.getSearchSpace();
+        Iterator fullDatasetIterator = fullDataset.getSearchObjectsFromDataset(TESTED_DATASET_SIZE);
+        Map<Comparable, float[]> mapOfAllFullObjects = ToolsSpaceDomain.getSearchObjectsAsIdDataMap(fullDataset.getSearchSpace(), fullDatasetIterator);
         for (int i = 0; i < fullQueries.size(); i++) {
             Object fullQueryObj = fullQueries.get(i);
-            Comparable queryObjId = metricSpace.getIDOfMetricObject(fullQueryObj);
+            Comparable queryObjId = metricSpace.getIDOfObject(fullQueryObj);
             TreeSet<Map.Entry<Comparable, Float>> completeKnnSearch = alg.completeKnnSearch(metricSpace, fullQueryObj, k, mapOfAllFullObjects, kPCA, involveObjWithUnknownRelation);
             if (STORE_RESULTS) {
                 resultsStorage.storeQueryResult(queryObjId, completeKnnSearch, k, fullDataset.getDatasetName(), fullDataset.getDatasetName(), resultName);

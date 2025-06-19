@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package vm.vmtrials.auxiliary;
 
 import io.jhdf.HdfFile;
@@ -17,7 +13,7 @@ import java.util.NoSuchElementException;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import vm.fs.metricSpaceImpl.FSMetricSpaceImpl;
+import vm.fs.searchSpaceImpl.FSSearchSpaceImpl;
 import vm.fs.store.queryResults.FSNearestNeighboursStorageImpl;
 import vm.search.algorithm.impl.GroundTruthEvaluator;
 
@@ -51,7 +47,7 @@ public class H5GroundTruthToFSGroundTruth {
             }
         }
         FSNearestNeighboursStorageImpl resultsStorage = new FSNearestNeighboursStorageImpl();
-        FSMetricSpaceImpl metricSpace = new FSMetricSpaceImpl();
+        FSSearchSpaceImpl metricSpace = new FSSearchSpaceImpl(null);
         resultsStorage.storeQueryResults(metricSpace, queries, results, null, groundTruthName, groundTruthName, "ground_truth");
     }
 

@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import vm.fs.dataset.FSDatasetInstances;
-import vm.fs.metricSpaceImpl.FSMetricSpacesStorage;
-import vm.metricSpace.AbstractMetricSpace;
-import vm.metricSpace.Dataset;
-import vm.metricSpace.data.toStringConvertors.SingularisedConvertors;
+import vm.fs.searchSpaceImpl.FSSearchSpacesStorage;
+import vm.searchSpace.AbstractSearchSpace;
+import vm.searchSpace.Dataset;
+import vm.searchSpace.data.toStringConvertors.SingularisedConvertors;
 
 /**
  *
@@ -32,18 +32,18 @@ public class H5PivotsToGZFile {
 
     private static void run(Dataset fullDataset, Dataset pcaDataset) {
         List pivots = fullDataset.getPivots(-1);
-        AbstractMetricSpace metricSpace = fullDataset.getMetricSpace();
+        AbstractSearchSpace metricSpace = fullDataset.getSearchSpace();
         Map map = pcaDataset.getKeyValueStorage();
         List pcaPivots = new ArrayList();
         for (Object pivot : pivots) {
-            Comparable pId = metricSpace.getIDOfMetricObject(pivot);
+            Comparable pId = metricSpace.getIDOfObject(pivot);
             System.out.println(pId.toString());
             float[] data = (float[]) map.get(pId);
             AbstractMap.SimpleEntry<String, float[]> entry = new AbstractMap.SimpleEntry(pId.toString(), data);
             pcaPivots.add(entry);
         }
         System.out.println("size " + pcaPivots.size());;
-        FSMetricSpacesStorage storage = new FSMetricSpacesStorage<>(pcaDataset.getMetricSpace(), SingularisedConvertors.FLOAT_VECTOR_SPACE);
+        FSSearchSpacesStorage storage = new FSSearchSpacesStorage<>(pcaDataset.getSearchSpace(), SingularisedConvertors.FLOAT_VECTOR_SPACE);
         storage.storePivots(pcaPivots, pcaDataset.getDatasetName());
     }
 }

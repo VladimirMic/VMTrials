@@ -13,12 +13,12 @@ import vm.fs.dataset.FSDatasetInstances;
 import vm.fs.store.queryResults.FSNearestNeighboursStorageImpl;
 import vm.fs.store.partitioning.FSGRAPPLEPartitioningStorage;
 import vm.fs.store.partitioning.FSVoronoiPartitioningStorage;
-import vm.metricSpace.AbstractMetricSpace;
-import vm.metricSpace.Dataset;
-import vm.metricSpace.ToolsMetricDomain;
-import vm.metricSpace.distance.DistanceFunctionInterface;
 import vm.search.algorithm.impl.GRAPPLEPartitionsCandSetIdentifier;
 import vm.search.algorithm.impl.VoronoiPartitionsCandSetIdentifier;
+import vm.searchSpace.AbstractSearchSpace;
+import vm.searchSpace.Dataset;
+import vm.searchSpace.ToolsSpaceDomain;
+import vm.searchSpace.distance.DistanceFunctionInterface;
 
 /**
  *
@@ -49,11 +49,11 @@ public class PrintStatsWhereAreNNs {
         int pivotCount = 256;
         FSVoronoiPartitioningStorage storage = new FSGRAPPLEPartitioningStorage();
 
-        AbstractMetricSpace metricSpace = dataset.getMetricSpace();
+        AbstractSearchSpace metricSpace = dataset.getSearchSpace();
         DistanceFunctionInterface df = dataset.getDistanceFunction();
         //
-        Map<Comparable, T> pivots = ToolsMetricDomain.getMetricObjectsAsIdDataMap(metricSpace, dataset.getPivots(pivotCount));
-        Map<Comparable, T> queries = ToolsMetricDomain.getMetricObjectsAsIdDataMap(metricSpace, dataset.getQueryObjects());
+        Map<Comparable, T> pivots = ToolsSpaceDomain.getSearchObjectsAsIdDataMap(metricSpace, dataset.getPivots(pivotCount));
+        Map<Comparable, T> queries = ToolsSpaceDomain.getSearchObjectsAsIdDataMap(metricSpace, dataset.getQueryObjects());
         Map<Comparable, TreeSet<Map.Entry<Comparable, Float>>> gt = new FSNearestNeighboursStorageImpl().getGroundTruthForDataset(dataset.getDatasetName(), dataset.getQuerySetName());
         //
         Map<Comparable, TreeSet<Comparable>> partitioning = storage.loadAsTreeSets(dataset.getDatasetName(), pivotCount);

@@ -3,8 +3,8 @@ package vm.vmtrials.checking;
 import java.util.List;
 import vm.fs.dataset.FSDatasetInstances;
 import vm.mathtools.Tools;
-import vm.metricSpace.AbstractMetricSpace;
-import vm.metricSpace.Dataset;
+import vm.searchSpace.AbstractSearchSpace;
+import vm.searchSpace.Dataset;
 
 /**
  *
@@ -15,11 +15,11 @@ public class PrintLengthsOfVectors {
     public static void main(String[] args) {
         int count = 100;
         Dataset dataset = new FSDatasetInstances.DeCAFDataset();
-        AbstractMetricSpace<float[]> metricSpace = dataset.getMetricSpace();
+        AbstractSearchSpace<float[]> metricSpace = dataset.getSearchSpace();
         List objs = dataset.getSampleOfDataset(count);
         for (Object obj : objs) {
-            Comparable oID = metricSpace.getIDOfMetricObject(obj);
-            float[] oData = metricSpace.getDataOfMetricObject(obj);
+            Comparable oID = metricSpace.getIDOfObject(obj);
+            float[] oData = metricSpace.getDataOfObject(obj);
             double lengthOfVector = Tools.getLengthOfVector(oData);
             System.out.println(oID.toString() + ";" + lengthOfVector);
         }

@@ -7,13 +7,13 @@ import java.util.Map;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import vm.metricSpace.AbstractMetricSpace;
-import vm.metricSpace.Dataset;
-import vm.metricSpace.ToolsMetricDomain;
-import vm.metricSpace.distance.DistanceFunctionInterface;
-import vm.metricSpace.distance.bounding.onepivot.AbstractOnePivotFilter;
 import vm.search.algorithm.SearchingAlgorithm;
-import vm.metricSpace.datasetPartitioning.StorageDatasetPartitionsInterface;
+import vm.searchSpace.AbstractSearchSpace;
+import vm.searchSpace.Dataset;
+import vm.searchSpace.ToolsSpaceDomain;
+import vm.searchSpace.datasetPartitioning.StorageDatasetPartitionsInterface;
+import vm.searchSpace.distance.DistanceFunctionInterface;
+import vm.searchSpace.distance.bounding.onepivot.AbstractOnePivotFilter;
 
 /**
  *
@@ -42,7 +42,7 @@ public class DeleteTrialWithVoronoiFilteringPlusLimitedAngles<T> extends Searchi
 
     public DeleteTrialWithVoronoiFilteringPlusLimitedAngles(Dataset<T> dataset, StorageDatasetPartitionsInterface voronoiPartitioningStorage, int pivotCountUsedForTheVoronoiPartitioning, AbstractOnePivotFilter filter) {
         List pivots = dataset.getPivots(-1);
-        pivotsMap = ToolsMetricDomain.getMetricObjectsAsIdDataMap(dataset.getMetricSpace(), pivots);
+        pivotsMap = ToolsSpaceDomain.getSearchObjectsAsIdDataMap(dataset.getSearchSpace(), pivots);
         df = dataset.getDistanceFunction();
         voronoiPartitioning = voronoiPartitioningStorage.loadAsTreeSets(dataset.getDatasetName(), pivotCountUsedForTheVoronoiPartitioning);
         this.filter = filter;
@@ -50,7 +50,7 @@ public class DeleteTrialWithVoronoiFilteringPlusLimitedAngles<T> extends Searchi
     }
 
     @Override
-    public TreeSet<Map.Entry<Comparable, Float>> completeKnnSearch(AbstractMetricSpace<T> metricSpace, Object queryObject, int k, Iterator<Object> objects, Object... additionalParams) {
+    public TreeSet<Map.Entry<Comparable, Float>> completeKnnSearch(AbstractSearchSpace<T> metricSpace, Object queryObject, int k, Iterator<Object> objects, Object... additionalParams) {
         throw new UnsupportedOperationException("Not supported and will not be.");
     }
 
@@ -63,9 +63,9 @@ public class DeleteTrialWithVoronoiFilteringPlusLimitedAngles<T> extends Searchi
      * @return
      */
     @Override
-    public List<Comparable> candSetKnnSearch(AbstractMetricSpace<T> metricSpace, Object fullQueryObj, int k, Iterator<Object> objects, Object... additionalParams) {
-        T qData = metricSpace.getDataOfMetricObject(fullQueryObj);
-        TreeSet<Map.Entry<Comparable, Float>> pivotPerm = ToolsMetricDomain.getPivotIDsPermutationWithDists(df, pivotsMap, qData, -1);
+    public List<Comparable> candSetKnnSearch(AbstractSearchSpace<T> metricSpace, Object fullQueryObj, int k, Iterator<Object> objects, Object... additionalParams) {
+        T qData = metricSpace.getDataOfObject(fullQueryObj);
+        TreeSet<Map.Entry<Comparable, Float>> pivotPerm = ToolsSpaceDomain.getPivotIDsPermutationWithDists(df, pivotsMap, qData, -1);
         Iterator<Map.Entry<Comparable, Float>> it = pivotPerm.iterator();
         List<Comparable> ret = new ArrayList<>();
         int idxOfNext = 0;

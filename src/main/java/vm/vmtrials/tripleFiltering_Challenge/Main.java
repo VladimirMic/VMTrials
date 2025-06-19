@@ -19,30 +19,32 @@ import vm.fs.FSGlobal;
 import vm.fs.dataset.FSDatasetInstances;
 import vm.fs.main.objTransforms.apply.FSApplyPCAMain;
 import vm.fs.main.search.filtering.learning.FSLearnSecondaryFilteringWithGHPSketchesMain;
-import vm.fs.metricSpaceImpl.FSMetricSpaceImpl;
-import vm.fs.metricSpaceImpl.FSMetricSpacesStorage;
+import vm.fs.searchSpaceImpl.FSSearchSpaceImpl;
+import vm.fs.searchSpaceImpl.FSSearchSpacesStorage;
 import vm.fs.store.dataTransforms.FSGHPSketchesPivotPairsStorageImpl;
 import vm.fs.store.dataTransforms.FSSVDStorageImpl;
 import vm.fs.store.queryResults.FSNearestNeighboursStorageImpl;
 import vm.fs.store.queryResults.FSQueryExecutionStatsStoreImpl;
 import vm.fs.store.partitioning.FSVoronoiPartitioningStorage;
-import vm.metricSpace.AbstractMetricSpace;
-import vm.metricSpace.Dataset;
-import vm.metricSpace.AbstractMetricSpacesStorage;
-import vm.metricSpace.MainMemoryDatasetCache;
-import vm.metricSpace.ToolsMetricDomain;
-import vm.metricSpace.data.toStringConvertors.SingularisedConvertors;
-import vm.metricSpace.datasetPartitioning.impl.VoronoiPartitioningWithoutFilter;
-import vm.objTransforms.MetricObjectTransformerInterface;
-import vm.objTransforms.MetricObjectsParallelTransformerImpl;
+import vm.objTransforms.SearchObjectsParallelTransformerImpl;
 import vm.objTransforms.objectToSketchTransformators.AbstractObjectToSketchTransformator;
 import vm.objTransforms.objectToSketchTransformators.SketchingGHP;
-import vm.objTransforms.perform.PCAPrefixMetricObjectTransformer;
+import vm.objTransforms.perform.PCAPrefixVectorTransformer;
 import vm.objTransforms.perform.TransformDataToGHPSketches;
 import vm.search.algorithm.impl.multiFiltering.CranberryAlgorithm;
 import static vm.vmtrials.tripleFiltering_Challenge.SISAPChallengeAlgBuilder.MAX_DATASET_SIZE_TO_CACHE;
 import static vm.vmtrials.tripleFiltering_Challenge.SISAPChallengeAlgBuilder.MIN_DATASET_SIZE_TO_CACHE;
 import vm.objTransforms.storeLearned.PivotPairsStoreInterface;
+import vm.objTransforms.SearchObjectTransformerInterface;
+import vm.searchSpace.AbstractSearchSpace;
+import vm.searchSpace.AbstractSearchSpacesStorage;
+import vm.searchSpace.Dataset;
+import vm.searchSpace.MainMemoryDatasetCache;
+import vm.searchSpace.ToolsSpaceDomain;
+import vm.searchSpace.data.toStringConvertors.SingularisedConvertors;
+import vm.searchSpace.datasetPartitioning.impl.VoronoiPartitioningWithoutFilter;
+import vm.searchSpace.distance.impl.DotProduct;
+import vm.searchSpace.distance.impl.HammingDistanceLongs;
 
 /**
  *
@@ -94,12 +96,12 @@ public class Main {
         List fullQueries = fullDataset.getQueryObjects();
         List pcaQueries = pcaDataset.getQueryObjects();
 
-        AbstractMetricSpace pcaDatasetMetricSpace = pcaDataset.getMetricSpace();
+        AbstractSearchSpace pcaDatasetMetricSpace = pcaDataset.getSearchSpace();
 
         // key value map to PCA of the query objects
-        Map pcaQMap = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(pcaDatasetMetricSpace, pcaQueries);
+        Map pcaQMap = ToolsSpaceDomain.getSearchObjectsAsIdObjectMap(pcaDatasetMetricSpace, pcaQueries);
 
-        AbstractMetricSpace<float[]> fullMetricSpace = fullDataset.getMetricSpace();
+        AbstractSearchSpace<float[]> fullMetricSpace = fullDataset.getSearchSpace();
 
         CranberryAlgorithm cranberryAlg = algBuilder.getCranberryAlg();
         fullDataset.unloadPivots();
@@ -164,7 +166,8 @@ public class Main {
      */
     private static Dataset buildAndStoreAlgorithm(Dataset fullDataset, boolean makeAllSteps) {
         LOG.log(Level.INFO, "\nStarting the sketching transformation with the predefined sketching technique");
-        MainMemoryDatasetCache sketchesDataset = new MainMemoryDatasetCache(new FSMetricSpaceImpl());
+        FSSearchSpacesStorage hamStorage = new FSSearchSpacesStorage(new FSSearchSpaceImpl(new HammingDistanceLongs()), SingularisedConvertors.LONG_VECTOR_SPACE);
+        MainMemoryDatasetCache sketchesDataset = new MainMemoryDatasetCache(fullDataset.getDatasetName() + "_sketches", hamStorage);
         AbstractObjectToSketchTransformator sketchingTechnique = createSketches(fullDataset, sketchesDataset);
         String name = sketchingTechnique.getNameOfTransformedSetOfObjects(fullDataset.getDatasetName(), SKETCH_LENGTH, 0.5f);
         sketchesDataset.setName(name);
@@ -188,13 +191,13 @@ public class Main {
     private static void createAndStoreVoronoiPartitioning(Dataset dataset, int datasetSize) {
         int pivotCount = EvaluateCRANBERRYMain.getPivotCountForVoronoi(datasetSize);
         List<Object> pivots = dataset.getPivots(pivotCount);
-        VoronoiPartitioningWithoutFilter vp = new VoronoiPartitioningWithoutFilter(dataset.getMetricSpace(), dataset.getDistanceFunction(), pivots);
+        VoronoiPartitioningWithoutFilter vp = new VoronoiPartitioningWithoutFilter(dataset.getSearchSpace(), dataset.getDistanceFunction(), pivots);
         FSVoronoiPartitioningStorage storage = new FSVoronoiPartitioningStorage();
-        vp.partitionObjects(dataset.getMetricObjectsFromDataset(), dataset.getDatasetName(), storage, pivotCount);
+        vp.partitionObjects(dataset.getSearchObjectsFromDataset(), dataset.getDatasetName(), storage, pivotCount);
     }
 
     private static AbstractObjectToSketchTransformator createSketches(Dataset fullDataset, MainMemoryDatasetCache resultsDataset) {
-        AbstractMetricSpacesStorage storageForSketches = new FSMetricSpacesStorage(new FSMetricSpaceImpl<>(), SingularisedConvertors.LONG_VECTOR_SPACE);
+        FSSearchSpacesStorage storageForSketches = new FSSearchSpacesStorage(new FSSearchSpaceImpl(new HammingDistanceLongs()), SingularisedConvertors.LONG_VECTOR_SPACE);
         PivotPairsStoreInterface storageOfPivotPairs = new FSGHPSketchesPivotPairsStorageImpl();
         TransformDataToGHPSketches evaluator = new TransformDataToGHPSketches(fullDataset, storageOfPivotPairs, storageForSketches, 0.5f, -1);
         int[] sketchesLengths = new int[]{SKETCH_LENGTH};
@@ -204,7 +207,7 @@ public class Main {
     }
 
     private static AbstractObjectToSketchTransformator getSketchingTechnique(Dataset dataset) {
-        SketchingGHP ret = new SketchingGHP(dataset.getDistanceFunction(), dataset.getMetricSpace(), dataset.getPivots(-1), "laion2B-en-clip768v2-n=100M.h5_GHP_50_512", new FSGHPSketchesPivotPairsStorageImpl());
+        SketchingGHP ret = new SketchingGHP(dataset.getDistanceFunction(), dataset.getSearchSpace(), dataset.getPivots(-1), "laion2B-en-clip768v2-n=100M.h5_GHP_50_512", new FSGHPSketchesPivotPairsStorageImpl());
         return ret;
     }
 
@@ -229,24 +232,24 @@ public class Main {
 
     private static MainMemoryDatasetCache transformDatasetAndQueriesToPCAPreffixes(Dataset dataset, int pcaLength, int storedPrefix) {
         String datasetUsedToLearnSVD = "laion2B-en-clip768v2-n=100M.h5";
-        AbstractMetricSpace<float[]> metricSpace = dataset.getMetricSpace();
-        AbstractMetricSpacesStorage metricSpacesStorage = dataset.getMetricSpacesStorage();
+        AbstractSearchSpacesStorage searchSpacesStorage = dataset.getSearchSpacesStorage();
+        AbstractSearchSpace searchSpace = searchSpacesStorage.getSearchSpace();
         int sampleSetSize = 500000;
         FSSVDStorageImpl svdStorage = new FSSVDStorageImpl(datasetUsedToLearnSVD, sampleSetSize, false);
         float[][] vtMatrixFull = svdStorage.getVTMatrix();
 
         float[][] vtMatrix = Tools.shrinkMatrix(vtMatrixFull, pcaLength, vtMatrixFull[0].length);
 
-        MetricObjectTransformerInterface pca = new PCAPrefixMetricObjectTransformer(vtMatrix, svdStorage.getMeansOverColumns(), metricSpace, metricSpace, storedPrefix);
+        SearchObjectTransformerInterface pca = new PCAPrefixVectorTransformer(vtMatrix, svdStorage.getMeansOverColumns(), searchSpace, searchSpace, storedPrefix);
         String newName = pca.getNameOfTransformedSetOfObjects(dataset.getDatasetName());
-        MainMemoryDatasetCache cachedDataset = new MainMemoryDatasetCache(metricSpace, newName);
+        MainMemoryDatasetCache cachedDataset = new MainMemoryDatasetCache(newName, searchSpacesStorage);
         if (makeAllSteps) {
             LOG.log(Level.INFO, "\nTransform to the prefixes of PCA start");
             String newDatasetName = pca.getNameOfTransformedSetOfObjects(dataset.getDatasetName(), false);
-            MetricObjectsParallelTransformerImpl parallelTransformerImpl = new MetricObjectsParallelTransformerImpl(pca, metricSpacesStorage, newDatasetName, newDatasetName, newDatasetName);
+            SearchObjectsParallelTransformerImpl parallelTransformerImpl = new SearchObjectsParallelTransformerImpl(pca, searchSpacesStorage, newDatasetName, newDatasetName, newDatasetName);
             FSApplyPCAMain.transformPivots(dataset.getPivots(-1).iterator(), parallelTransformerImpl, "Pivot set with name \"" + datasetUsedToLearnSVD + "\" transformed by VT matrix of svd " + sampleSetSize + " to the length " + pcaLength, cachedDataset);
             FSApplyPCAMain.transformQueryObjects(dataset.getQueryObjects().iterator(), parallelTransformerImpl, "Query set with name \"" + datasetUsedToLearnSVD + "\" transformed by VT matrix of svd " + sampleSetSize + " to the length " + pcaLength, cachedDataset);
-            FSApplyPCAMain.transformDataset(dataset.getMetricObjectsFromDataset(), parallelTransformerImpl, "Dataset with name \"" + datasetUsedToLearnSVD + "\" transformed by VT matrix of svd " + sampleSetSize + " to the length " + pcaLength, cachedDataset);
+            FSApplyPCAMain.transformDataset(dataset.getSearchObjectsFromDataset(), parallelTransformerImpl, "Dataset with name \"" + datasetUsedToLearnSVD + "\" transformed by VT matrix of svd " + sampleSetSize + " to the length " + pcaLength, cachedDataset);
             LOG.log(Level.INFO, "\nTransform to the prefixes of PCA finished");
         }
         int datasetSize = cachedDataset.getDatasetSize();
@@ -265,11 +268,11 @@ public class Main {
         private final MainMemoryDatasetCache cache;
 
         public ImplicitH5Dataset(String datasetPath, String querySetPath) {
-            super(new File(datasetPath).getName());
+            super(new File(datasetPath).getName(), new DotProduct());
             querySetName = new File(querySetPath).getName();
             this.datasetFile = FSGlobal.checkFileExistence(new File(datasetPath), false);
             this.querySetFile = FSGlobal.checkFileExistence(new File(querySetPath), false);
-            cache = new MainMemoryDatasetCache(metricSpace, datasetName, metricSpacesStorage);
+            cache = new MainMemoryDatasetCache(datasetName, searchSpacesStorage);
             cache.addPivots(getPivots(-1));
             cache.addQueries(getQueryObjects());
         }
@@ -284,17 +287,17 @@ public class Main {
             if (cache.queriesLoaded()) {
                 return cache.getQueryObjects();
             }
-            FSMetricSpacesStorage storage = (FSMetricSpacesStorage) metricSpacesStorage;
+            FSSearchSpacesStorage storage = (FSSearchSpacesStorage) searchSpacesStorage;
             Iterator it = storage.getIteratorOfObjects(querySetFile, "Q");
             return Tools.getObjectsFromIterator(it);
         }
 
         @Override
-        public Iterator<Object> getMetricObjectsFromDataset(Object... params) {
+        public Iterator<Object> getSearchObjectsFromDataset(Object... params) {
             if (cache.dataLoaded()) {
-                return cache.getMetricObjectsFromDataset(params);
+                return cache.getSearchObjectsFromDataset(params);
             }
-            FSMetricSpacesStorage storage = (FSMetricSpacesStorage) metricSpacesStorage;
+            FSSearchSpacesStorage storage = (FSSearchSpacesStorage) searchSpacesStorage;
             params = Tools.concatArrays(params, new Object[]{""});
             Iterator it = storage.getIteratorOfObjects(datasetFile, params);
             return it;
@@ -313,12 +316,12 @@ public class Main {
             if (cache.pivotsLoaded()) {
                 return cache.getPivots(objLoadedCount);
             }
-            return metricSpacesStorage.getPivots("laion2B-en-clip768v2-n=100M.h5_20000pivots.gz", objLoadedCount);
+            return searchSpacesStorage.getPivots("laion2B-en-clip768v2-n=100M.h5_20000pivots.gz", objLoadedCount);
         }
 
         @Override
         public List<Object> getSampleOfDataset(int objCount) {
-            Iterator<Object> it = getMetricObjectsFromDataset();
+            Iterator<Object> it = getSearchObjectsFromDataset();
             return Tools.getObjectsFromIterator(it, objCount);
         }
 

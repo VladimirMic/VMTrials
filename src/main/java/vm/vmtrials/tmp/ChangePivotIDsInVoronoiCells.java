@@ -4,12 +4,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 import vm.fs.dataset.FSDatasetInstances;
 import vm.fs.store.partitioning.FSVoronoiPartitioningStorage;
-import vm.metricSpace.Dataset;
-import vm.metricSpace.datasetPartitioning.StorageDatasetPartitionsInterface;
+import vm.searchSpace.Dataset;
+import vm.searchSpace.datasetPartitioning.StorageDatasetPartitionsInterface;
 
 /**
  *

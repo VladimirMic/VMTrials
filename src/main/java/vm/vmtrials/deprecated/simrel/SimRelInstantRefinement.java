@@ -16,9 +16,9 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.datatools.Tools;
-import vm.metricSpace.AbstractMetricSpace;
-import vm.metricSpace.distance.DistanceFunctionInterface;
 import vm.search.algorithm.SearchingAlgorithm;
+import vm.searchSpace.AbstractSearchSpace;
+import vm.searchSpace.distance.DistanceFunctionInterface;
 import vm.simRel.SimRelInterface;
 import vm.simRel.impl.SimRelEuclideanPCAImplForTesting;
 
@@ -45,7 +45,7 @@ public class SimRelInstantRefinement<T> extends SearchingAlgorithm<T> {
     }
 
     @Override
-    public TreeSet<Map.Entry<Comparable, Float>> completeKnnSearch(AbstractMetricSpace<T> fullMetricSpace, Object fullQueryObject, int k, Iterator<Object> pcaOfCandidates, Object... additionalParams) {
+    public TreeSet<Map.Entry<Comparable, Float>> completeKnnSearch(AbstractSearchSpace<T> fullMetricSpace, Object fullQueryObject, int k, Iterator<Object> pcaOfCandidates, Object... additionalParams) {
         long t = -System.currentTimeMillis();
         TreeSet<Map.Entry<Comparable, Float>> currAnswer = null;
         int paramIDX = 0;
@@ -53,8 +53,8 @@ public class SimRelInstantRefinement<T> extends SearchingAlgorithm<T> {
             currAnswer = (TreeSet<Map.Entry<Comparable, Float>>) additionalParams[0];
             paramIDX++;
         }
-        T qData = fullMetricSpace.getDataOfMetricObject(fullQueryObject);
-        Comparable qId = fullMetricSpace.getIDOfMetricObject(fullQueryObject);
+        T qData = fullMetricSpace.getDataOfObject(fullQueryObject);
+        Comparable qId = fullMetricSpace.getIDOfObject(fullQueryObject);
         TreeSet<Map.Entry<Comparable, Float>> ret = currAnswer == null ? new TreeSet<>(new Tools.MapByFloatValueComparator()) : currAnswer;
 
         if (simRelFunc instanceof SimRelEuclideanPCAImplForTesting) {
@@ -63,10 +63,10 @@ public class SimRelInstantRefinement<T> extends SearchingAlgorithm<T> {
         }
 
         Map<Object, Object> mapOfAllFullObjects = (Map<Object, Object>) additionalParams[paramIDX++];
-        AbstractMetricSpace<float[]> pcaMetricSpace = (AbstractMetricSpace<float[]>) additionalParams[paramIDX++];
+        AbstractSearchSpace<float[]> pcaMetricSpace = (AbstractSearchSpace<float[]>) additionalParams[paramIDX++];
         Object pcaQueryObject = additionalParams[paramIDX++];
 
-        float[] pcaQueryObjData = pcaMetricSpace.getDataOfMetricObject(pcaQueryObject);
+        float[] pcaQueryObjData = pcaMetricSpace.getDataOfObject(pcaQueryObject);
 
         List<Object> ansOfSimRel = new ArrayList<>();
         Set<Object> ansOfSimRelSet = new HashSet<>();
@@ -76,8 +76,8 @@ public class SimRelInstantRefinement<T> extends SearchingAlgorithm<T> {
         float lastRad = -1;
         for (int i = 1; pcaOfCandidates.hasNext(); i++) {
             Object oPCA = pcaOfCandidates.next();
-            Comparable oPCAID = pcaMetricSpace.getIDOfMetricObject(oPCA);
-            float[] oPCAData = pcaMetricSpace.getDataOfMetricObject(oPCA);
+            Comparable oPCAID = pcaMetricSpace.getIDOfObject(oPCA);
+            float[] oPCAData = pcaMetricSpace.getDataOfObject(oPCA);
             boolean toBeAdded = addOToAnswer(kPCA, pcaQueryObjData, oPCAData, oPCAID, ansOfSimRel, ansOfSimRelSet, candSetData);
             if (toBeAdded) {
                 T fullOData = (T) mapOfAllFullObjects.get(oPCAID);
@@ -168,7 +168,7 @@ public class SimRelInstantRefinement<T> extends SearchingAlgorithm<T> {
     }
 
     @Override
-    public List<Comparable> candSetKnnSearch(AbstractMetricSpace<T> metricSpace, Object queryObject, int k, Iterator<Object> objects, Object... additionalParams) {
+    public List<Comparable> candSetKnnSearch(AbstractSearchSpace<T> metricSpace, Object queryObject, int k, Iterator<Object> objects, Object... additionalParams) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

@@ -12,9 +12,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.datatools.Tools;
 import vm.fs.dataset.FSDatasetInstances;
-import vm.metricSpace.AbstractMetricSpace;
-import vm.metricSpace.Dataset;
-import vm.metricSpace.AbstractMetricSpacesStorage;
+import vm.searchSpace.AbstractSearchSpace;
+import vm.searchSpace.AbstractSearchSpacesStorage;
+import vm.searchSpace.Dataset;
 
 /**
  *
@@ -33,7 +33,7 @@ public class SelectAndStoreObjectsAsQueryAndDataObjects {
     }
 
     private static void run(Dataset dataProvider) {
-        List<Object> objects = Tools.getObjectsFromIterator(dataProvider.getMetricObjectsFromDataset(-1));
+        List<Object> objects = Tools.getObjectsFromIterator(dataProvider.getSearchObjectsFromDataset(-1));
         store(dataProvider, 0, objects);
         store(dataProvider, 1, objects);
     }
@@ -57,16 +57,16 @@ public class SelectAndStoreObjectsAsQueryAndDataObjects {
 
     private static void store(Dataset dataProvider, int type, List<Object> objects) {
         Set<Comparable> set = type == 0 ? provideMapOfCorrectDatasetIDsForDataset() : provideMapOfCorrectQueryIDsForDataset();
-        AbstractMetricSpace providersMetricSpace = dataProvider.getMetricSpace();
+        AbstractSearchSpace providersMetricSpace = dataProvider.getSearchSpace();
 
         List objectsToStore = new ArrayList();
         for (Object o : objects) {
-            Comparable oID = providersMetricSpace.getIDOfMetricObject(o);
+            Comparable oID = providersMetricSpace.getIDOfObject(o);
             if (set.contains(oID)) {
                 objectsToStore.add(o);
             }
         }
-        AbstractMetricSpacesStorage storage = dataProvider.getMetricSpacesStorage();
+        AbstractSearchSpacesStorage storage = dataProvider.getSearchSpacesStorage();
         String name;
         if (type == 0) {
             name = dataProvider.getDatasetName() + "_selected.txt.gz";

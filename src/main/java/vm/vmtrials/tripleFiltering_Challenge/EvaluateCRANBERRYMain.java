@@ -19,11 +19,6 @@ import vm.fs.store.queryResults.FSNearestNeighboursStorageImpl;
 import vm.fs.store.queryResults.FSQueryExecutionStatsStoreImpl;
 import vm.fs.store.queryResults.recallEvaluation.FSRecallOfCandidateSetsStorageImpl;
 import vm.fs.store.partitioning.FSVoronoiPartitioningStorage;
-import vm.metricSpace.AbstractMetricSpace;
-import vm.metricSpace.Dataset;
-import vm.metricSpace.ToolsMetricDomain;
-import vm.metricSpace.distance.bounding.nopivot.impl.SecondaryFilteringWithSketches;
-import vm.metricSpace.distance.bounding.nopivot.learning.LearningSecondaryFilteringWithSketches;
 import vm.objTransforms.objectToSketchTransformators.AbstractObjectToSketchTransformator;
 import vm.objTransforms.objectToSketchTransformators.SketchingGHP;
 import vm.queryResults.errorOnDistEvaluation.ErrorOnDistEvaluator;
@@ -35,6 +30,11 @@ import vm.simRel.impl.DumbSimRel;
 import vm.simRel.impl.SimRelEuclideanPCAImplForTesting;
 import vm.simRel.impl.learn.SimRelEuclideanPCAForLearning;
 import vm.objTransforms.storeLearned.PivotPairsStoreInterface;
+import vm.searchSpace.AbstractSearchSpace;
+import vm.searchSpace.Dataset;
+import vm.searchSpace.ToolsSpaceDomain;
+import vm.searchSpace.distance.bounding.nopivot.impl.SecondaryFilteringWithSketches;
+import vm.searchSpace.distance.bounding.nopivot.learning.LearningSecondaryFilteringWithSketches;
 
 /**
  *
@@ -115,15 +115,15 @@ public class EvaluateCRANBERRYMain {
         List<Object> fullQueries = fullDataset.getQueryObjects();
 
         //original metric space objects
-        AbstractMetricSpace fullMetricSpace = fullDataset.getMetricSpace();
+        AbstractSearchSpace fullMetricSpace = fullDataset.getSearchSpace();
         List pivots = fullDataset.getPivots(-1);
 
         // pca space for the simRel
-        AbstractMetricSpace pcaDatasetMetricSpace = pcaDataset.getMetricSpace();
+        AbstractSearchSpace pcaDatasetMetricSpace = pcaDataset.getSearchSpace();
 
         // sketching technique to transform query object to sketch
         PivotPairsStoreInterface storageOfPivotPairs = new FSGHPSketchesPivotPairsStorageImpl();
-        AbstractObjectToSketchTransformator sketchingTechnique = new SketchingGHP(fullDataset.getDistanceFunction(), fullDataset.getMetricSpace(), pivots, fullDataset.getDatasetName(), 0.5f, sketchLength, storageOfPivotPairs);
+        AbstractObjectToSketchTransformator sketchingTechnique = new SketchingGHP(fullDataset.getDistanceFunction(), fullDataset.getSearchSpace(), pivots, fullDataset.getDatasetName(), 0.5f, sketchLength, storageOfPivotPairs);
 
         // filtering algorithms and filters
         VoronoiPartitionsCandSetIdentifier algVoronoi = new VoronoiPartitionsCandSetIdentifier(fullDataset, new FSVoronoiPartitioningStorage(), pivotCountForVoronoi);
@@ -140,17 +140,17 @@ public class EvaluateCRANBERRYMain {
         if (simRel instanceof DumbSimRel) {
             pcaOMap = new HashMap<>();
         } else {
-            pcaOMap = getMapOfPrefixes(pcaDatasetMetricSpace, pcaDataset.getMetricObjectsFromDataset(), prefixLength);
+            pcaOMap = getMapOfPrefixes(pcaDatasetMetricSpace, pcaDataset.getSearchObjectsFromDataset(), prefixLength);
         }
         // key value map to PCA of the query objects
-        Map pcaQMap = ToolsMetricDomain.getMetricObjectsAsIdObjectMap(pcaDatasetMetricSpace, pcaDataset.getQueryObjects());
+        Map pcaQMap = ToolsSpaceDomain.getSearchObjectsAsIdObjectMap(pcaDatasetMetricSpace, pcaDataset.getQueryObjects());
 
         CranberryAlgorithm alg = new CranberryAlgorithm(
                 algVoronoi,
                 voronoiK,
                 sketchFiltering,
                 sketchingTechnique,
-                sketchesDataset.getMetricSpace(),
+                sketchesDataset.getSearchSpace(),
                 simRel,
                 simRelMinAnswerSize,
                 pcaOMap,
@@ -198,7 +198,7 @@ public class EvaluateCRANBERRYMain {
         sketchFiltering.shutdownThreadPool();
     }
 
-    public static Map<Comparable, Object> getMapOfPrefixes(AbstractMetricSpace<float[]> metricSpace, Iterator metricObjectsFromDataset, int prefixLength) {
+    public static Map<Comparable, Object> getMapOfPrefixes(AbstractSearchSpace<float[]> metricSpace, Iterator metricObjectsFromDataset, int prefixLength) {
         Map<Comparable, Object> ret = new HashMap<>();
         int counter = 0;
         boolean add = false;
@@ -206,8 +206,8 @@ public class EvaluateCRANBERRYMain {
             List<Object> batch = Tools.getObjectsFromIterator(metricObjectsFromDataset, 10000000);
             counter += batch.size();
             for (Object next : batch) {
-                Comparable id = metricSpace.getIDOfMetricObject(next);
-                float[] vector = metricSpace.getDataOfMetricObject(next);
+                Comparable id = metricSpace.getIDOfObject(next);
+                float[] vector = metricSpace.getDataOfObject(next);
                 if (add || vector.length == prefixLength || LEARN_SIMREL) {
                     ret.put(id, vector);
                     add = true;

@@ -10,9 +10,9 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.fs.dataset.FSDatasetInstances;
-import vm.metricSpace.AbstractMetricSpace;
-import vm.metricSpace.Dataset;
-import vm.metricSpace.ToolsMetricDomain;
+import vm.searchSpace.AbstractSearchSpace;
+import vm.searchSpace.Dataset;
+import vm.searchSpace.ToolsSpaceDomain;
 
 /**
  *
@@ -22,15 +22,15 @@ public class CheckPresenceOfQueries {
 
     public static void main(String[] args) {
         Dataset dataset = new FSDatasetInstances.DeCAF20M_PCA256Dataset();
-        AbstractMetricSpace metricSpace = dataset.getMetricSpace();
+        AbstractSearchSpace metricSpace = dataset.getSearchSpace();
         List queries = dataset.getQueryObjects();
 
-        Iterator it = dataset.getMetricObjectsFromDataset();
+        Iterator it = dataset.getSearchObjectsFromDataset();
 
-        Set qIDs = ToolsMetricDomain.getIDs(queries.iterator(), metricSpace);
+        Set qIDs = ToolsSpaceDomain.getIDs(queries.iterator(), metricSpace);
         for (int i = 0; it.hasNext(); i++) {
             Object o = it.next();
-            Comparable oID = metricSpace.getIDOfMetricObject(o);
+            Comparable oID = metricSpace.getIDOfObject(o);
             if (qIDs.contains(oID)) {
                 Logger.getLogger(CheckPresenceOfQueries.class.getName()).log(Level.WARNING, "The set contains ID of the query {0}", oID.toString());
             }

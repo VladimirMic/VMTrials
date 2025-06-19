@@ -5,11 +5,9 @@
 package vm.vmtrials.checking;
 
 import java.util.Iterator;
-import java.util.Map;
 import vm.fs.dataset.FSDatasetInstances;
-import vm.fs.metricSpaceImpl.FSMetricSpaceImpl;
-import vm.metricSpace.AbstractMetricSpace;
-import vm.metricSpace.Dataset;
+import vm.searchSpace.AbstractSearchSpace;
+import vm.searchSpace.Dataset;
 
 /**
  *
@@ -25,15 +23,15 @@ public class PrintIDs {
     private static <T> void run(Dataset<T> dataset, boolean fromKeyValueStorage) {
         Iterator it;
         if (fromKeyValueStorage) {
-            it = dataset.getMetricObjectsFromDatasetKeyValueStorage();
+            it = dataset.getSearchObjectsFromDatasetKeyValueStorage();
         } else {
-            it = dataset.getMetricObjectsFromDataset();
+            it = dataset.getSearchObjectsFromDataset();
         }
-        AbstractMetricSpace metricSpace = dataset.getMetricSpace();
+        AbstractSearchSpace metricSpace = dataset.getSearchSpace();
         Comparable oIdPrev = null;
         for (int i = 0; it.hasNext(); i++) {
             Object o = it.next();
-            Comparable id = metricSpace.getIDOfMetricObject(o);
+            Comparable id = metricSpace.getIDOfObject(o);
             System.out.print(i + ": " + id);
             if (oIdPrev == null) {
                 System.out.println();

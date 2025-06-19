@@ -9,11 +9,11 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.datatools.Tools;
-import vm.metricSpace.AbstractMetricSpace;
 import vm.search.algorithm.SearchingAlgorithm;
 import vm.simRel.SimRelInterface;
 import vm.simRel.impl.SimRelEuclideanPCAImplForTesting;
-import vm.metricSpace.distance.DistanceFunctionInterface;
+import vm.searchSpace.AbstractSearchSpace;
+import vm.searchSpace.distance.DistanceFunctionInterface;
 
 /**
  * Simple filtering with the simRel function. If o cannot be filtered thanks to
@@ -39,19 +39,19 @@ public class SimRelSeqScanKNNJustLastObjCheckThenFullDistEval<T> extends Searchi
     }
 
     @Override
-    public TreeSet<Map.Entry<Comparable, Float>> completeKnnSearch(AbstractMetricSpace<T> metricSpace, Object queryObject, int k, Iterator<Object> objects, Object... additionalParams) {
+    public TreeSet<Map.Entry<Comparable, Float>> completeKnnSearch(AbstractSearchSpace<T> metricSpace, Object queryObject, int k, Iterator<Object> objects, Object... additionalParams) {
         if (simRelFunc instanceof SimRelEuclideanPCAImplForTesting) {
             SimRelEuclideanPCAImplForTesting euclid = (SimRelEuclideanPCAImplForTesting) simRelFunc;
             euclid.resetEarlyStopsOnCoordsCounts();
         }
-        T queryObjectData = metricSpace.getDataOfMetricObject(queryObject);
+        T queryObjectData = metricSpace.getDataOfObject(queryObject);
         TreeSet<Map.Entry<Comparable, Float>> ret = new TreeSet<>(new Tools.MapByFloatValueComparator());
         Map<Object, T> retData = new HashMap<>();
         distCounter = 0;
         for (int i = 1; objects.hasNext(); i++) {
             Object metricObject = objects.next();
-            Comparable idOfMetricObject = metricSpace.getIDOfMetricObject(metricObject);
-            T metricObjectData = metricSpace.getDataOfMetricObject(metricObject);
+            Comparable idOfMetricObject = metricSpace.getIDOfObject(metricObject);
+            T metricObjectData = metricSpace.getDataOfObject(metricObject);
             if (ret.size() < k) {
                 float distance = fullDistanceFunction.getDistance(queryObjectData, metricObjectData);
                 distCounter++;
@@ -88,7 +88,7 @@ public class SimRelSeqScanKNNJustLastObjCheckThenFullDistEval<T> extends Searchi
     }
 
     @Override
-    public List<Comparable> candSetKnnSearch(AbstractMetricSpace<T> metricSpace, Object queryObject, int k, Iterator<Object> objects, Object... additionalParams) {
+    public List<Comparable> candSetKnnSearch(AbstractSearchSpace<T> metricSpace, Object queryObject, int k, Iterator<Object> objects, Object... additionalParams) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
