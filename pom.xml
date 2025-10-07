@@ -51,7 +51,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>VMFSMetricSpace</artifactId>
+            <artifactId>VMFSSearchSpace</artifactId>
             <version>1.0</version>
         </dependency>
     </dependencies>
