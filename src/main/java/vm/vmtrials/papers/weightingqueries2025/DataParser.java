@@ -21,8 +21,8 @@ public class DataParser {
     public static final Logger LOG = Logger.getLogger(DataParser.class.getName());
     public static final Boolean IGNORE_SIDES = false;
 
-    public static final String PATH_TO_TRIPLETS = "c:\\Data\\Dansko\\Markéta_data\\triplets.csv";
-    public static final String PATH_TO_ANSWERS = "c:\\Data\\Dansko\\Markéta_data\\answers_from_users.csv";
+    public static final String PATH_TO_TRIPLETS = "c:\\Data\\Dansko_Aarhus\\Markéta_data\\triplets.csv";
+    public static final String PATH_TO_ANSWERS = "c:\\Data\\Dansko_Aarhus\\Markéta_data\\answers_from_users.csv";
     /**
      * triplet_id to triplet
      */
