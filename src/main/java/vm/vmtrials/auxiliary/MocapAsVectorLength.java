@@ -7,8 +7,8 @@ package vm.vmtrials.auxiliary;
 import java.util.Iterator;
 import java.util.List;
 import vm.fs.dataset.FSDatasetInstances;
-import vm.metricSpace.AbstractMetricSpace;
-import vm.metricSpace.Dataset;
+import vm.searchSpace.AbstractSearchSpace;
+import vm.searchSpace.Dataset;
 
 /**
  *
@@ -27,11 +27,11 @@ public class MocapAsVectorLength {
     private static void printAverageLength(Dataset dataset) {
         long sum = 0;
         int movements = 0;
-        Iterator obj = dataset.getMetricObjectsFromDataset();
-        AbstractMetricSpace metricSpace = dataset.getMetricSpace();
+        Iterator obj = dataset.getSearchObjectsFromDataset();
+        AbstractSearchSpace metricSpace = dataset.getSearchSpace();
         while (obj.hasNext()) {
             Object next = obj.next();
-            List<float[][]> data = (List) metricSpace.getDataOfMetricObject(next);
+            List<float[][]> data = (List) metricSpace.getDataOfObject(next);
             long poses = data.size();
             if (poses > 0) {
                 float[][] pose = data.get(0);
