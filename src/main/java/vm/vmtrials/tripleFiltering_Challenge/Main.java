@@ -312,7 +312,7 @@ public class Main {
         }
 
         @Override
-        public final List<Object> getPivots(int objLoadedCount) {
+        public final List<Object> getPivots(int objLoadedCount, Object ... params) {
             if (cache.pivotsLoaded()) {
                 return cache.getPivots(objLoadedCount);
             }
@@ -320,7 +320,7 @@ public class Main {
         }
 
         @Override
-        public List<Object> getSampleOfDataset(int objCount) {
+        public List<Object> getSampleOfDataset(int objCount, Object ... params) {
             Iterator<Object> it = getSearchObjectsFromDataset();
             return Tools.getObjectsFromIterator(it, objCount);
         }
