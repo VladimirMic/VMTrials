@@ -23,12 +23,12 @@ public class CheckPrecomputedDists {
     private static void check(String s1, String s2) {
         FSPrecomputedDistancesMatrixSerializatorImpl loader = new FSPrecomputedDistancesMatrixSerializatorImpl();
         File file = new File(s1);
-        float[][] pd1 = loader.loadPrecomPivotsToObjectsDists(file, null, -1);
+        float[][] pd1 = loader.loadPrecomPivotsToObjectsDists(file, null, -1).getDists();
         Map<Comparable, Integer> rowHeaders1 = loader.getRowHeaders();
         Map<Comparable, Integer> columnHeaders1 = loader.getColumnHeaders();
 
         file = new File(s2);
-        float[][] pd2 = loader.loadPrecomPivotsToObjectsDists(file, null, -1);
+        float[][] pd2 = loader.loadPrecomPivotsToObjectsDists(file, null, -1).getDists();
         Map<Comparable, Integer> rowHeaders2 = loader.getRowHeaders();
         Map<Comparable, Integer> columnHeaders2 = loader.getColumnHeaders();
 
