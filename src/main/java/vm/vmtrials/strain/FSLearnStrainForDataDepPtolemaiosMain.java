@@ -13,7 +13,7 @@ import vm.searchSpace.AbstractSearchSpace;
 import vm.searchSpace.Dataset;
 import vm.searchSpace.distance.DistanceFunctionInterface;
 import vm.searchSpace.distance.bounding.twopivots.impl.DataDependentPtolemaicFiltering;
-import vm.searchSpace.distance.storedPrecomputedDistances.AbstractPrecomputedDistancesMatrixLoader;
+import vm.searchSpace.distance.storedPrecomputedDistances.AbstractPrecomputedDistancesMatrixSerializator;
 
 /**
  *
@@ -47,7 +47,7 @@ public class FSLearnStrainForDataDepPtolemaiosMain {
 
         FSKNNQueriesSeqScanWithFilteringMain.initPODists(dataset, pivotCount, dataset.getRecommendedNumberOfPivotsForFiltering(), pivots);
         float[][] poDists = FSKNNQueriesSeqScanWithFilteringMain.getPoDists();
-        AbstractPrecomputedDistancesMatrixLoader pd = FSKNNQueriesSeqScanWithFilteringMain.getPd();
+        AbstractPrecomputedDistancesMatrixSerializator pd = FSKNNQueriesSeqScanWithFilteringMain.getPd();
 
         for (int i = 0; i < 3; i++) {
             KNNSearchWithPtolemaicFilteringLearnSkittle alg = new KNNSearchWithPtolemaicFilteringLearnSkittle(metricSpace, filter, pivots, poDists, pd.getRowHeaders(), df);

@@ -6,7 +6,7 @@ package vm.vmtrials.checking;
 
 import java.io.File;
 import java.util.Map;
-import vm.fs.store.precomputedDists.FSPrecomputedDistancesMatrixLoaderImpl;
+import vm.fs.store.precomputedDists.FSPrecomputedDistancesMatrixSerializatorImpl;
 
 /**
  *
@@ -21,7 +21,7 @@ public class CheckPrecomputedDists {
     }
 
     private static void check(String s1, String s2) {
-        FSPrecomputedDistancesMatrixLoaderImpl loader = new FSPrecomputedDistancesMatrixLoaderImpl();
+        FSPrecomputedDistancesMatrixSerializatorImpl loader = new FSPrecomputedDistancesMatrixSerializatorImpl();
         File file = new File(s1);
         float[][] pd1 = loader.loadPrecomPivotsToObjectsDists(file, null, -1);
         Map<Comparable, Integer> rowHeaders1 = loader.getRowHeaders();
