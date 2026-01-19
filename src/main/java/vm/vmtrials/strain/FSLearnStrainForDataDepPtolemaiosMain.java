@@ -11,7 +11,7 @@ import vm.fs.main.search.perform.FSKNNQueriesSeqScanWithFilteringMain;
 import vm.fs.store.auxiliaryForDistBounding.FSPtolemyInequalityWithLimitedAnglesCoefsStorageImpl;
 import vm.searchSpace.AbstractSearchSpace;
 import vm.searchSpace.Dataset;
-import vm.searchSpace.distance.DistanceFunctionInterface;
+import vm.searchSpace.distance.AbstractDistanceFunction;
 import vm.searchSpace.distance.bounding.twopivots.impl.DataDependentPtolemaicFiltering;
 import vm.searchSpace.distance.storedPrecomputedDistances.AbstractPrecomputedDistancesMatrixSerializator;
 
@@ -39,7 +39,7 @@ public class FSLearnStrainForDataDepPtolemaiosMain {
 
     private static void run(Dataset dataset, int pivotCount) {
         AbstractSearchSpace metricSpace = dataset.getSearchSpace();
-        DistanceFunctionInterface df = dataset.getDistanceFunction();
+        AbstractDistanceFunction df = dataset.getDistanceFunction();
         List pivots = dataset.getPivots(pivotCount);
         DataDependentPtolemaicFiltering filter = initDataDepPtolemaicFilter(pivots, dataset);
 

@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 import vm.datatools.Tools;
 import vm.search.algorithm.SearchingAlgorithm;
 import vm.searchSpace.AbstractSearchSpace;
-import vm.searchSpace.distance.DistanceFunctionInterface;
+import vm.searchSpace.distance.AbstractDistanceFunction;
 import vm.simRel.SimRelInterface;
 import vm.simRel.impl.SimRelEuclideanPCAImplForTesting;
 
@@ -36,9 +36,9 @@ public class SimRelInstantRefinement<T> extends SearchingAlgorithm<T> {
     private int distCompsOfLastExecutedQuery;
     private long simRelEvalCounter;
     private int kPCA;
-    private DistanceFunctionInterface<T> fullDF;
+    private AbstractDistanceFunction<T> fullDF;
 
-    public SimRelInstantRefinement(DistanceFunctionInterface<T> fullDF, SimRelInterface simRelFunc, int kPCA) {
+    public SimRelInstantRefinement(AbstractDistanceFunction<T> fullDF, SimRelInterface simRelFunc, int kPCA) {
         this.fullDF = fullDF;
         this.simRelFunc = simRelFunc;
         this.kPCA = kPCA;

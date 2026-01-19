@@ -25,7 +25,7 @@ import vm.search.algorithm.impl.GroundTruthEvaluator;
 import vm.searchSpace.AbstractSearchSpace;
 import vm.searchSpace.Dataset;
 import vm.searchSpace.DatasetOfCandidates;
-import vm.searchSpace.distance.DistanceFunctionInterface;
+import vm.searchSpace.distance.AbstractDistanceFunction;
 
 /**
  *
@@ -42,7 +42,7 @@ public class LearnStrainForDataDepPtolemaios<T> {
     private final AbstractSearchSpace metricSpace;
     private final List<Object> queriesSamples;
     private final Dataset dataset;
-    private final DistanceFunctionInterface<T> df;
+    private final AbstractDistanceFunction<T> df;
     private final String datasetName;
     private final String querySetName;
     private final int lbCount;

@@ -6,7 +6,7 @@ import vm.fs.dataset.FSDatasetInstances;
 import vm.searchSpace.AbstractSearchSpace;
 import vm.searchSpace.AbstractSearchSpacesStorage;
 import vm.searchSpace.Dataset;
-import vm.searchSpace.distance.DistanceFunctionInterface;
+import vm.searchSpace.distance.AbstractDistanceFunction;
 
 /**
  *
@@ -19,7 +19,7 @@ public class SelectRandomUniformObjects {
         Dataset dataset = new FSDatasetInstances.Yahoo100M_Dataset();
         int count = 5000;
         List list = Tools.randomUniform(dataset.getSearchObjectsFromDataset(), 102050000, count);
-        DistanceFunctionInterface df = dataset.getDistanceFunction();
+        AbstractDistanceFunction df = dataset.getDistanceFunction();
         AbstractSearchSpace metricSpace = dataset.getSearchSpace();
         for (int i = 0; i < list.size() - 1; i++) {
             Object o1 = list.get(i);

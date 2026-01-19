@@ -12,7 +12,7 @@ import vm.searchSpace.AbstractSearchSpace;
 import vm.searchSpace.Dataset;
 import vm.searchSpace.ToolsSpaceDomain;
 import vm.searchSpace.datasetPartitioning.StorageDatasetPartitionsInterface;
-import vm.searchSpace.distance.DistanceFunctionInterface;
+import vm.searchSpace.distance.AbstractDistanceFunction;
 import vm.searchSpace.distance.bounding.onepivot.AbstractOnePivotFilter;
 
 /**
@@ -30,7 +30,7 @@ public class DeleteTrialWithVoronoiFilteringPlusLimitedAngles<T> extends Searchi
     private final Logger LOG = Logger.getLogger(DeleteTrialWithVoronoiFilteringPlusLimitedAngles.class.getName());
 
     private final Map<Comparable, T> pivotsMap;
-    private final DistanceFunctionInterface<T> df;
+    private final AbstractDistanceFunction<T> df;
     private final Map<Comparable, TreeSet<Comparable>> voronoiPartitioning;
 
     private final AbstractOnePivotFilter filter;

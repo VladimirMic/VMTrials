@@ -13,7 +13,7 @@ import vm.search.algorithm.SearchingAlgorithm;
 import vm.simRel.SimRelInterface;
 import vm.simRel.impl.SimRelEuclideanPCAImplForTesting;
 import vm.searchSpace.AbstractSearchSpace;
-import vm.searchSpace.distance.DistanceFunctionInterface;
+import vm.searchSpace.distance.AbstractDistanceFunction;
 
 /**
  * Simple filtering with the simRel function. If o cannot be filtered thanks to
@@ -29,11 +29,11 @@ public class SimRelSeqScanKNNJustLastObjCheckThenFullDistEval<T> extends Searchi
 
     private final Logger LOG = Logger.getLogger(SimRelSeqScanKNNJustLastObjCheckThenFullDistEval.class.getName());
     private final SimRelInterface<T> simRelFunc;
-    private final DistanceFunctionInterface<T> fullDistanceFunction;
+    private final AbstractDistanceFunction<T> fullDistanceFunction;
 
     private int distCounter;
 
-    public SimRelSeqScanKNNJustLastObjCheckThenFullDistEval(SimRelInterface<T> simRelFunc, DistanceFunctionInterface<T> fullDistanceFunction) {
+    public SimRelSeqScanKNNJustLastObjCheckThenFullDistEval(SimRelInterface<T> simRelFunc, AbstractDistanceFunction<T> fullDistanceFunction) {
         this.simRelFunc = simRelFunc;
         this.fullDistanceFunction = fullDistanceFunction;
     }

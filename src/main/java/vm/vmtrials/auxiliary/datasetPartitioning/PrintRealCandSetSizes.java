@@ -12,7 +12,7 @@ import vm.fs.store.partitioning.FSVoronoiPartitioningStorage;
 import vm.searchSpace.AbstractSearchSpace;
 import vm.searchSpace.Dataset;
 import vm.searchSpace.ToolsSpaceDomain;
-import vm.searchSpace.distance.DistanceFunctionInterface;
+import vm.searchSpace.distance.AbstractDistanceFunction;
 
 /**
  *
@@ -36,7 +36,7 @@ public class PrintRealCandSetSizes {
         int pivotCount = 20000;
         FSVoronoiPartitioningStorage storage = new FSVoronoiPartitioningStorage();
         AbstractSearchSpace metricSpace = dataset.getSearchSpace();
-        DistanceFunctionInterface df = dataset.getDistanceFunction();
+        AbstractDistanceFunction df = dataset.getDistanceFunction();
         Map<Comparable, T> queries = ToolsSpaceDomain.getSearchObjectsAsIdDataMap(metricSpace, dataset.getQueryObjects());
         Map<Comparable, T> pivots = ToolsSpaceDomain.getSearchObjectsAsIdDataMap(metricSpace, dataset.getPivots(-1));
 
@@ -46,7 +46,7 @@ public class PrintRealCandSetSizes {
         }
     }
 
-    private static <T> void printNumberOfCandidates(int k, Map.Entry<Comparable, T> fullQuery, Map<Comparable, Collection<Comparable>> voronoiPartitioning, DistanceFunctionInterface df, Map pivots) {
+    private static <T> void printNumberOfCandidates(int k, Map.Entry<Comparable, T> fullQuery, Map<Comparable, Collection<Comparable>> voronoiPartitioning, AbstractDistanceFunction df, Map pivots) {
         String qID = (String) fullQuery.getKey();
         Object qData = fullQuery.getValue();
         Comparable[] pivotPermutation = ToolsSpaceDomain.getPivotIDsPermutation(df, pivots, qData, -1, null);

@@ -8,7 +8,7 @@ import java.util.Iterator;
 import vm.fs.dataset.FSDatasetInstances;
 import vm.searchSpace.AbstractSearchSpace;
 import vm.searchSpace.Dataset;
-import vm.searchSpace.distance.DistanceFunctionInterface;
+import vm.searchSpace.distance.AbstractDistanceFunction;
 
 /**
  *
@@ -22,7 +22,7 @@ public class CheckQScoreDistComp {
         Iterator it = dataset.getSearchObjectsFromDataset();
         Object o1 = it.next();
         Object o2 = it.next();
-        DistanceFunctionInterface df = dataset.getDistanceFunction();
+        AbstractDistanceFunction df = dataset.getDistanceFunction();
         float distance = df.getDistance(o1, o2);
         System.out.print("The distance of " + metricSpace.getIDOfObject(o1) + " and " + metricSpace.getIDOfObject(o2) + " is " + distance);
     }

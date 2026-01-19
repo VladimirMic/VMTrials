@@ -7,7 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import vm.datatools.Tools;
 import vm.searchSpace.ToolsSpaceDomain;
-import vm.searchSpace.distance.DistanceFunctionInterface;
+import vm.searchSpace.distance.AbstractDistanceFunction;
 
 /**
  *
@@ -24,13 +24,13 @@ public class PivotPairStatsLearnHelper<T> {
     private final T p1Data;
     private final T p2Data;
 
-    private final DistanceFunctionInterface<T> df;
+    private final AbstractDistanceFunction<T> df;
 
     private final Set<Point2D.Double>[] coefsForEquations;
 
     private final Logger LOG = Logger.getLogger(PivotPairStatsLearnHelper.class.getName());
 
-    public PivotPairStatsLearnHelper(Object p1ID, Object p2ID, T p1Data, T p2Data, DistanceFunctionInterface<T> df) {
+    public PivotPairStatsLearnHelper(Object p1ID, Object p2ID, T p1Data, T p2Data, AbstractDistanceFunction<T> df) {
         this.p1ID = p1ID;
         this.p2ID = p2ID;
         this.p1Data = p1Data;

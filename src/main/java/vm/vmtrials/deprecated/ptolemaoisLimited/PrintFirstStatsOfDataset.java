@@ -12,7 +12,7 @@ import vm.fs.searchSpaceImpl.FSSearchSpaceImpl;
 import vm.searchSpace.AbstractSearchSpace;
 import vm.searchSpace.Dataset;
 import vm.searchSpace.ToolsSpaceDomain;
-import vm.searchSpace.distance.DistanceFunctionInterface;
+import vm.searchSpace.distance.AbstractDistanceFunction;
 
 /**
  *
@@ -34,7 +34,7 @@ public class PrintFirstStatsOfDataset {
     public static <T> void run(Dataset<T> dataset) throws FileNotFoundException {
         AbstractSearchSpace<T> metricSpace = new FSSearchSpaceImpl<>(null);
 
-        DistanceFunctionInterface df = dataset.getDistanceFunction();
+        AbstractDistanceFunction df = dataset.getDistanceFunction();
 
         File folder = new File(FSGlobal.TRIALS_FOLDER + "Ptolemaions_limited\\EFgetBD\\" + dataset.getDatasetName());
         File file = new File(folder.getAbsolutePath() + "\\Stats_per_pairs_oriented2024_" + NUMBER_OF_TETRAHEDRONS_FOR_EACH_PIVOT_PAIR + "_" + PIVOT_PAIRS + ".csv");

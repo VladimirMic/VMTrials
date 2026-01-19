@@ -22,7 +22,7 @@ import vm.search.algorithm.SearchingAlgorithm;
 import vm.search.algorithm.impl.GroundTruthEvaluator;
 import vm.searchSpace.AbstractSearchSpace;
 import vm.searchSpace.Dataset;
-import vm.searchSpace.distance.DistanceFunctionInterface;
+import vm.searchSpace.distance.AbstractDistanceFunction;
 import vm.searchSpace.distance.bounding.BoundsOnDistanceEstimation;
 
 /**
@@ -56,7 +56,7 @@ public class AccuracyOfStreamFiltering {
         List queries = dataToFilter.getQueryObjects();
         Iterator objects = dataToFilter.getSearchObjectsFromDataset();
         AbstractSearchSpace<T> searchSpace = dataToFilter.getSearchSpace();
-        DistanceFunctionInterface<T> df = searchSpace.getDistanceFunction();
+        AbstractDistanceFunction<T> df = searchSpace.getDistanceFunction();
         SortedMap<Float, Float>[] mapOfAvgAccuracyForAlgs = new TreeMap[algs.length];
         TreeSet<Map.Entry<Comparable, Float>>[][] currAnswers = new TreeSet[algs.length][queries.size()];
         List<Object> batch = Tools.getObjectsFromIterator(objects, k);
@@ -84,7 +84,7 @@ public class AccuracyOfStreamFiltering {
         plotter.storePlotPDF("h:\\Similarity_search\\Plots\\2025_PtolemaiosLimited\\2025_09_Stream_Accuracy_" + dataToFilter.getDatasetName() + "_" + pivotCount + "pivots", plot);
     }
 
-    private static <T> void computePartialGroundTruthAndAccuracy(int oCounter, SortedMap<Float, Float>[] mapOfAvgAccuracyForAlgs, TreeSet<Map.Entry<Comparable, Float>>[][] currAnswers, TreeSet<Map.Entry<Comparable, Float>>[] preciseAnswers, List<Object> batch, AbstractSearchSpace<T> searchSpace, DistanceFunctionInterface df, List queries, int k) {
+    private static <T> void computePartialGroundTruthAndAccuracy(int oCounter, SortedMap<Float, Float>[] mapOfAvgAccuracyForAlgs, TreeSet<Map.Entry<Comparable, Float>>[][] currAnswers, TreeSet<Map.Entry<Comparable, Float>>[] preciseAnswers, List<Object> batch, AbstractSearchSpace<T> searchSpace, AbstractDistanceFunction df, List queries, int k) {
 // computeGroundTruth;
         for (int qCounter = 0; qCounter < queries.size(); qCounter++) {
             Object q = queries.get(qCounter);

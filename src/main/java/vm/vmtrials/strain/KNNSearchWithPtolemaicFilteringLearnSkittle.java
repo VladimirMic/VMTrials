@@ -15,7 +15,7 @@ import vm.datatools.Tools;
 import static vm.search.algorithm.SearchingAlgorithm.adjustAndReturnSearchRadiusAfterAddingOne;
 import vm.search.algorithm.impl.KNNSearchWithPtolemaicFiltering;
 import vm.searchSpace.AbstractSearchSpace;
-import vm.searchSpace.distance.DistanceFunctionInterface;
+import vm.searchSpace.distance.AbstractDistanceFunction;
 import vm.searchSpace.distance.bounding.twopivots.AbstractPtolemaicBasedFiltering;
 
 /**
@@ -27,7 +27,7 @@ public class KNNSearchWithPtolemaicFilteringLearnSkittle<T> extends KNNSearchWit
 
     private final SortedMap<Comparable, QueryLearnStats> queryStats = new TreeMap<>();
 
-    public KNNSearchWithPtolemaicFilteringLearnSkittle(AbstractSearchSpace metricSpace, AbstractPtolemaicBasedFiltering ptolemaicFilter, List pivots, float[][] poDists, Map<Comparable, Integer> rowHeaders, DistanceFunctionInterface df) {
+    public KNNSearchWithPtolemaicFilteringLearnSkittle(AbstractSearchSpace metricSpace, AbstractPtolemaicBasedFiltering ptolemaicFilter, List pivots, float[][] poDists, Map<Comparable, Integer> rowHeaders, AbstractDistanceFunction df) {
         super(metricSpace, ptolemaicFilter, pivots, poDists, rowHeaders, df);
     }
 

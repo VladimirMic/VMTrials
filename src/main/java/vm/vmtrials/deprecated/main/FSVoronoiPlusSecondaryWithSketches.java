@@ -26,7 +26,7 @@ import vm.objTransforms.storeLearned.PivotPairsStoreInterface;
 import vm.searchSpace.AbstractSearchSpace;
 import vm.searchSpace.Dataset;
 import vm.searchSpace.datasetPartitioning.StorageDatasetPartitionsInterface;
-import vm.searchSpace.distance.DistanceFunctionInterface;
+import vm.searchSpace.distance.AbstractDistanceFunction;
 import vm.searchSpace.distance.bounding.nopivot.impl.SecondaryFilteringWithSketches;
 import vm.searchSpace.distance.bounding.nopivot.learning.LearningSecondaryFilteringWithSketches;
 import vm.searchSpace.distance.bounding.nopivot.storeLearned.SecondaryFilteringWithSketchesStoreInterface;
@@ -75,7 +75,7 @@ public class FSVoronoiPlusSecondaryWithSketches {
     private static void run(Dataset fullDataset, Dataset sketchesDataset, float distIntervalForPX, float pCum, int sketchLength, int pivotCountUsedForVoronoiLearning, int voronoiK) {
         int k = 10;
         AbstractSearchSpace metricSpace = fullDataset.getSearchSpace();
-        DistanceFunctionInterface df = fullDataset.getDistanceFunction();
+        AbstractDistanceFunction df = fullDataset.getDistanceFunction();
         StorageDatasetPartitionsInterface voronoiPartitioningStorage = new FSVoronoiPartitioningStorage();
         SearchingAlgorithm voronoi = new VoronoiPartitionsCandSetIdentifier(fullDataset, voronoiPartitioningStorage, pivotCountUsedForVoronoiLearning);
 

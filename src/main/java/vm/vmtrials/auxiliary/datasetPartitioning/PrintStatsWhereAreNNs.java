@@ -18,7 +18,7 @@ import vm.search.algorithm.impl.VoronoiPartitionsCandSetIdentifier;
 import vm.searchSpace.AbstractSearchSpace;
 import vm.searchSpace.Dataset;
 import vm.searchSpace.ToolsSpaceDomain;
-import vm.searchSpace.distance.DistanceFunctionInterface;
+import vm.searchSpace.distance.AbstractDistanceFunction;
 
 /**
  *
@@ -50,7 +50,7 @@ public class PrintStatsWhereAreNNs {
         FSVoronoiPartitioningStorage storage = new FSGRAPPLEPartitioningStorage();
 
         AbstractSearchSpace metricSpace = dataset.getSearchSpace();
-        DistanceFunctionInterface df = dataset.getDistanceFunction();
+        AbstractDistanceFunction df = dataset.getDistanceFunction();
         //
         Map<Comparable, T> pivots = ToolsSpaceDomain.getSearchObjectsAsIdDataMap(metricSpace, dataset.getPivots(pivotCount));
         Map<Comparable, T> queries = ToolsSpaceDomain.getSearchObjectsAsIdDataMap(metricSpace, dataset.getQueryObjects());
@@ -83,7 +83,7 @@ public class PrintStatsWhereAreNNs {
         return count >= limit;
     }
 
-    private static <T> void performForLimit(int limitToFind, Map<Comparable, T> pivots, Map<Comparable, T> queries, Map<Comparable, TreeSet<Map.Entry<Comparable, Float>>> gt, Map<Comparable, TreeSet<Comparable>> voronoiPartitioning, FSVoronoiPartitioningStorage storage, VoronoiPartitionsCandSetIdentifier identifier, String datasetName, int pivotCount, DistanceFunctionInterface df, int k) {
+    private static <T> void performForLimit(int limitToFind, Map<Comparable, T> pivots, Map<Comparable, T> queries, Map<Comparable, TreeSet<Map.Entry<Comparable, Float>>> gt, Map<Comparable, TreeSet<Comparable>> voronoiPartitioning, FSVoronoiPartitioningStorage storage, VoronoiPartitionsCandSetIdentifier identifier, String datasetName, int pivotCount, AbstractDistanceFunction df, int k) {
         LOG.log(Level.INFO, "Evaluation for limit {0}", limitToFind);
         File file = storage.getFile(datasetName, pivotCount, false);
         String name = file.getName() + "whereAre" + limitToFind + "outOf" + k + "closest.csv";
