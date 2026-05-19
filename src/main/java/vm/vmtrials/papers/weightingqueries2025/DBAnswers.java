@@ -99,7 +99,7 @@ public class DBAnswers {
             double[] intsToDoubles = DataTypeConvertor.intsToDoubles(ints);
             float mean = (float) vm.mathtools.Tools.getMean(intsToDoubles);
             float median = (float) vm.mathtools.Tools.getMedian(intsToDoubles);
-            float variance = (float) vm.mathtools.Tools.getVariance(intsToDoubles);
+            float variance = (float) vm.mathtools.Tools.getVariance(intsToDoubles).floatValue();
             float std = (float) Math.sqrt(variance);
             float iqd = (float) vm.mathtools.Tools.getIQD(intsToDoubles);
             AbstractMap.SimpleEntry entryToAdd = new AbstractMap.SimpleEntry(entry.getKey(), new float[]{mean, variance, std, median, iqd, intsToDoubles.length});
