@@ -27,8 +27,8 @@ public class KNNSearchWithPtolemaicFilteringLearnSkittle<T> extends KNNSearchWit
 
     private final SortedMap<Comparable, QueryLearnStats> queryStats = new TreeMap<>();
 
-    public KNNSearchWithPtolemaicFilteringLearnSkittle(AbstractSearchSpace metricSpace, AbstractPtolemaicBasedFiltering ptolemaicFilter, List pivots, float[][] poDists, Map<Comparable, Integer> rowHeaders, AbstractDistanceFunction df) {
-        super(metricSpace, ptolemaicFilter, pivots, poDists, rowHeaders, df);
+    public KNNSearchWithPtolemaicFilteringLearnSkittle(AbstractSearchSpace metricSpace, AbstractPtolemaicBasedFiltering ptolemaicFilter, List pivots, float[][] poDists, Map<Comparable, Integer> rowHeaders, Map<Comparable, Integer> columnHeaders, AbstractDistanceFunction df) {
+        super(metricSpace, ptolemaicFilter, pivots, poDists, rowHeaders, columnHeaders, df);
     }
 
     @Override

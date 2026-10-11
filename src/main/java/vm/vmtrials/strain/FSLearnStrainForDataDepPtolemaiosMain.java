@@ -50,7 +50,7 @@ public class FSLearnStrainForDataDepPtolemaiosMain {
         AbstractPrecomputedDistancesMatrixSerializator pd = FSKNNQueriesSeqScanWithFilteringMain.getPd();
 
         for (int i = 0; i < 3; i++) {
-            KNNSearchWithPtolemaicFilteringLearnSkittle alg = new KNNSearchWithPtolemaicFilteringLearnSkittle(metricSpace, filter, pivots, poDists, pd.getRowHeaders(), df);
+            KNNSearchWithPtolemaicFilteringLearnSkittle alg = new KNNSearchWithPtolemaicFilteringLearnSkittle(metricSpace, filter, pivots, poDists, pd.getRowHeaders(), pd.getColumnHeaders(), df);
             LearnStrainForDataDepPtolemaios evaluator = new LearnStrainForDataDepPtolemaios(alg, dataset, queriesSamples, pivotCount);
             evaluator.learn();
         }
