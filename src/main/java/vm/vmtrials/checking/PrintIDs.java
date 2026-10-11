@@ -16,8 +16,8 @@ import vm.searchSpace.Dataset;
 public class PrintIDs {
 
     public static void main(String[] args) {
-        Dataset dataset = new FSDatasetInstances.LAION_10M_PCA256Dataset();
-        run(dataset, true);
+        Dataset dataset = new FSDatasetInstances.WIKI_BGE_M3_SISAP26();
+        run(dataset, false);
     }
 
     private static <T> void run(Dataset<T> dataset, boolean fromKeyValueStorage) {
