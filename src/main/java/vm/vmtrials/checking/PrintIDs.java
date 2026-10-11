@@ -5,6 +5,9 @@
 package vm.vmtrials.checking;
 
 import java.util.Iterator;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import vm.datatools.Tools;
 import vm.fs.dataset.FSDatasetInstances;
 import vm.searchSpace.AbstractSearchSpace;
 import vm.searchSpace.Dataset;
@@ -16,8 +19,7 @@ import vm.searchSpace.Dataset;
 public class PrintIDs {
 
     public static void main(String[] args) {
-        Dataset dataset = new FSDatasetInstances.WIKI_BGE_M3_SISAP26();
-        run(dataset, false);
+        run(new FSDatasetInstances.MOCAP10FPS(), false);
     }
 
     private static <T> void run(Dataset<T> dataset, boolean fromKeyValueStorage) {
@@ -25,13 +27,15 @@ public class PrintIDs {
         if (fromKeyValueStorage) {
             it = dataset.getSearchObjectsFromDatasetKeyValueStorage();
         } else {
-            it = dataset.getSearchObjectsFromDataset();
+            it = dataset.getPivots(64).iterator();
         }
         AbstractSearchSpace metricSpace = dataset.getSearchSpace();
         Comparable oIdPrev = null;
+        SortedSet<Comparable> set = new TreeSet<>();
         for (int i = 0; it.hasNext(); i++) {
             Object o = it.next();
             Comparable id = metricSpace.getIDOfObject(o);
+            set.add(id);
             System.out.print(i + ": " + id);
             if (oIdPrev == null) {
                 System.out.println();
@@ -40,5 +44,6 @@ public class PrintIDs {
             }
             oIdPrev = id;
         }
+        Tools.printCollection(set, "\n");
     }
 }
