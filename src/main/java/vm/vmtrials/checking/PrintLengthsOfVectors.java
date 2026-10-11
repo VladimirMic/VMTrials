@@ -13,10 +13,11 @@ import vm.searchSpace.Dataset;
 public class PrintLengthsOfVectors {
 
     public static void main(String[] args) {
-        int count = 100;
-        Dataset dataset = new FSDatasetInstances.DeCAFDataset();
+        int count = -1;
+        Dataset dataset = new FSDatasetInstances.MOCAP10FPS();
         AbstractSearchSpace<float[]> metricSpace = dataset.getSearchSpace();
-        List objs = dataset.getSampleOfDataset(count);
+        List objs = dataset.getPivots(count);
+        System.out.println("Count: " + objs.size());
         for (Object obj : objs) {
             Comparable oID = metricSpace.getIDOfObject(obj);
             float[] oData = metricSpace.getDataOfObject(obj);
