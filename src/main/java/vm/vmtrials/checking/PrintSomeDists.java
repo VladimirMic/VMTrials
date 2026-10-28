@@ -5,8 +5,6 @@ import java.io.PrintStream;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Random;
 import java.util.Set;
 import vm.fs.dataset.FSDatasetInstances;
 import vm.searchSpace.AbstractSearchSpace;
@@ -28,20 +26,22 @@ public class PrintSomeDists {
         Map pivotsMap = ToolsSpaceDomain.getSearchObjectsAsIdDataMap(searchSpace, pivots);
         Iterator it = dataset.getSearchObjectsFromDataset();
         System.setOut(new PrintStream("h:\\Similarity_search\\Dataset\\temp.csv"));
-        Object next = it.next();
-        Object oID = searchSpace.getIDOfObject(next);
-        Object oData = searchSpace.getDataOfObject(next);
-        Set ids = pivotsMap.keySet();
-        for (Object id : ids) {
-            System.out.print(";" + id);
+        for (int i = 0; i < 3; i++) {
+            Object next = it.next();
+            Object oID = searchSpace.getIDOfObject(next);
+            Object oData = searchSpace.getDataOfObject(next);
+            Set ids = pivotsMap.keySet();
+            for (Object id : ids) {
+                System.out.print(";" + id);
+            }
+            System.out.println();
+            System.out.print(oID + ";");
+            for (Object id : ids) {
+                Object pivotData = pivotsMap.get(id);
+                float distance = df.getDistance(oData, pivotData);
+                System.out.print(distance + ";");
+            }
+            System.out.println("\n");
         }
-        System.out.println();
-        System.out.print(oID + ";");
-        for (Object id : ids) {
-            Object pivotData = pivotsMap.get(id);
-            float distance = df.getDistance(oData, pivotData);
-            System.out.print(distance + ";");
-        }
-
     }
 }
